@@ -5,28 +5,46 @@ import { useState } from "react";
 export default function FeedbackWidget() {
   const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
   const [text, setText] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!text.trim()) return;
-    const existing = JSON.parse(localStorage.getItem("opticskit_feedback") || "[]");
-    existing.push({
-      text: text.trim(),
-      time: new Date().toISOString(),
-      url: window.location.href,
-    });
-    localStorage.setItem("opticskit_feedback", JSON.stringify(existing));
-    setSent(true);
-    setTimeout(() => {
-      setSent(false);
-      setOpen(false);
-      setText("");
-    }, 2000);
+    setSending(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: text.trim(),
+          url: window.location.href,
+          userAgent: navigator.userAgent,
+        }),
+      });
+
+      if (res.ok) {
+        setSent(true);
+        setTimeout(() => {
+          setSent(false);
+          setOpen(false);
+          setText("");
+          setError("");
+        }, 2500);
+      } else {
+        setError("发送失败，请稍后再试");
+      }
+    } catch {
+      setError("网络错误，请稍后再试");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
     <>
-      {/* Floating button — larger, colored, prominent */}
       <button
         onClick={() => setOpen(!open)}
         className="fixed bottom-5 right-5 z-[100] h-12 px-5 rounded-full bg-[#228BE6] text-white text-[14px] font-semibold flex items-center gap-2 transition-all duration-200 hover:bg-[#1c7ed6] hover:scale-105 shadow-lg shadow-[#228BE6]/25 hover:shadow-xl hover:shadow-[#228BE6]/35"
@@ -52,7 +70,7 @@ export default function FeedbackWidget() {
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
               </svg>
               <p className="text-[14px] text-[#1A1A2E] font-medium">感谢反馈！</p>
-              <p className="text-[12px] text-[#868E96]">已保存到本地浏览器</p>
+              <p className="text-[12px] text-[#868E96]">已发送，我会尽快查看 ✨</p>
             </div>
           ) : (
             <>
@@ -63,14 +81,15 @@ export default function FeedbackWidget() {
                 rows={4}
                 className="w-full bg-[#F2F3F5] border border-[#DEE2E6] rounded-xl p-3 text-[13px] text-[#1A1A2E] placeholder-[#ADB5BD] outline-none focus:border-[#228BE6] focus:ring-2 focus:ring-[#228BE6]/10 resize-none transition-all"
               />
+              {error && <p className="text-[12px] text-red-500">{error}</p>}
               <div className="flex items-center justify-between">
-                <span className="text-[11px] text-[#ADB5BD]">保存在浏览器，后续会支持在线提交</span>
+                <span className="text-[11px] text-[#ADB5BD]">提交后将通过邮件通知我</span>
                 <button
                   onClick={handleSubmit}
-                  disabled={!text.trim()}
+                  disabled={!text.trim() || sending}
                   className="px-5 py-2 rounded-full bg-[#228BE6] text-white text-[13px] font-medium hover:bg-[#1c7ed6] transition-colors disabled:opacity-35 disabled:cursor-not-allowed shadow-sm"
                 >
-                  提交
+                  {sending ? "发送中..." : "提交"}
                 </button>
               </div>
             </>
