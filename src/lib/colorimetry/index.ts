@@ -125,12 +125,21 @@ export function xyToUvPrime(
   };
 }
 
+/**
+ * Convert CIE 1976 (u', v') to CIE 1960 UCS (u, v).
+ * u = u', v = (2/3) * v'
+ */
+export function uvPrimeToUv(uPrime: number, vPrime: number): { u: number; v: number } {
+  return { u: uPrime, v: (2 / 3) * vPrime };
+}
+
 // ─── 4. Correlated Color Temperature (Robertson 1968) ────────────────────────
 
 /**
  * Pre-computed isotemperature line data from Robertson (1968),
  * J. Opt. Soc. Am. 58, 1528-1535.
  *
+ * The table uses CIE 1960 UCS (u, v) coordinates.
  * Each entry: [1e6/T, u_i, v_i, slope m_i]
  * where m_i = -sin(θᵢ) / cos(θᵢ) for the i-th isotemperature line.
  */
@@ -182,14 +191,19 @@ export function cctRobertson(uvPrime: {
   return cctWithDuv(uvPrime).cct;
 }
 
-/** Extended CCT calculation with Duv output. */
+/** Extended CCT calculation with Duv output.
+ * Accepts CIE 1976 UCS (u', v') internally converts to CIE 1960 UCS (u, v)
+ * for the Robertson 1968 table lookup. */
 export function cctWithDuv(uvPrime: {
   uPrime: number;
   vPrime: number;
 }): { cct: number; duv: number } {
-  const { uPrime: us, vPrime: vs } = uvPrime;
+  // Convert u'v' (CIE 1976) → uv (CIE 1960) for Robertson table
+  const { u, v: vs } = uvPrimeToUv(uvPrime.uPrime, uvPrime.vPrime);
+  const us = u;
   const n = ROBERTSON_TABLE.length;
   let bestDi = 0;
+  let bestDj = 0;
 
   for (let i = 0; i < n - 1; i++) {
     const [t1, u1, v1, m1] = ROBERTSON_TABLE[i];
@@ -201,10 +215,12 @@ export function cctWithDuv(uvPrime: {
     if ((di >= 0 && dj < 0) || (di < 0 && dj >= 0)) {
       const f = di / (di - dj);
       const rt = t1 + f * (t2 - t1);
-      bestDi = di; // Duv is the distance to the bounding isotemperature line
+      bestDi = di;
+      bestDj = dj;
       return {
         cct: rt === 0 ? Infinity : 1e6 / rt,
-        duv: di, // Duv = distance from blackbody locus in CIE 1960 UCS
+        // Duv = signed distance from blackbody locus in CIE 1960 UCS (u,v)
+        duv: di,
       };
     }
   }

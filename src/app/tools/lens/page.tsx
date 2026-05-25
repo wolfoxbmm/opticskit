@@ -68,10 +68,15 @@ export default function LensPage() {
     ctx.quadraticCurveTo(rightCx, cy, rightEdgeX, cy - halfD);
     ctx.stroke();
 
-    // Focal points
-    const fpxL = lensX - scale * f;
-    const fpxR = lensX + scale * f;
-    [{ x: fpxL, label: isConcave ? "F" : "F'" }, { x: fpxR, label: isConcave ? "F'" : "F" }].forEach(fp => {
+    // Focal points — F = object-side focal point, F' = image-side focal point
+    // For convex lens (f>0): F left of lens, F' right of lens
+    // For concave lens (f<0): F right of lens, F' left of lens
+    const fObjX = lensX - scale * f;  // object-side focal point (F)
+    const fImgX = lensX + scale * f;  // image-side focal point (F')
+    [
+      { x: fObjX, label: isConcave ? "F'" : "F" },
+      { x: fImgX, label: isConcave ? "F" : "F'" }
+    ].forEach(fp => {
       if (fp.x > 20 && fp.x < w - 20) {
         ctx.fillStyle = "#FFD740";
         ctx.beginPath(); ctx.arc(fp.x, cy, 4 * scale, 0, Math.PI * 2); ctx.fill();
@@ -131,7 +136,7 @@ export default function LensPage() {
       ctx.strokeStyle = "#00E676"; ctx.setLineDash([]);
       ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, hitY); ctx.stroke();
       ctx.setLineDash([3, 3]);
-      ctx.beginPath(); ctx.moveTo(lensX, hitY); ctx.lineTo(isConcave ? fpxL : fpxR, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(lensX, hitY); ctx.lineTo(isConcave ? fObjX : fImgX, cy); ctx.stroke();
 
       // Ray 2: straight through center
       ctx.setLineDash([3, 3]); ctx.strokeStyle = "#FFD740";
@@ -144,7 +149,7 @@ export default function LensPage() {
       }
 
       // Ray 3: through focal point → parallel
-      const focalEntrance = isConcave ? fpxR : fpxL;
+      const focalEntrance = isConcave ? fImgX : fObjX;
       ctx.strokeStyle = "#FF6B00"; ctx.setLineDash([3, 3]);
       ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(focalEntrance, cy); ctx.stroke();
       ctx.setLineDash([]);

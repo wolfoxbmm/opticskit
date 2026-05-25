@@ -53,9 +53,16 @@ export default function DiffractionPage() {
         const beta = (Math.PI * a * sinTheta) / wl;
         const gamma = (Math.PI * d * sinTheta) / wl;
         const sinc = Math.abs(beta) < 1e-9 ? 1 : Math.sin(beta) / beta;
-        const num = Math.sin(slitCount * gamma);
-        const denom = Math.abs(Math.sin(gamma)) < 1e-9 ? 1e-9 : Math.sin(gamma);
-        I = Math.pow(sinc, 2) * Math.pow(num / denom, 2) / (slitCount * slitCount);
+        const absSinGamma = Math.abs(Math.sin(gamma));
+        let interference: number;
+        if (absSinGamma < 1e-9) {
+          interference = 1;
+        } else {
+          const num = Math.sin(slitCount * gamma);
+          const denom = Math.sin(gamma);
+          interference = (num / denom) * (num / denom) / (slitCount * slitCount);
+        }
+        I = Math.pow(sinc, 2) * interference;
       }
 
       // Map intensity to brightness (0-255), with gamma for visibility
@@ -131,9 +138,16 @@ export default function DiffractionPage() {
         const beta = (Math.PI * a * sinTheta) / wl;
         const gamma = (Math.PI * d * sinTheta) / wl;
         const sinc = Math.abs(beta) < 1e-9 ? 1 : Math.sin(beta) / beta;
-        const num = Math.sin(slitCount * gamma);
-        const denom = Math.abs(Math.sin(gamma)) < 1e-9 ? 1e-9 : Math.sin(gamma);
-        I = Math.pow(sinc, 2) * Math.pow(num / denom, 2) / (slitCount * slitCount);
+        const absSinGamma = Math.abs(Math.sin(gamma));
+        let interference: number;
+        if (absSinGamma < 1e-9) {
+          interference = 1;
+        } else {
+          const num = Math.sin(slitCount * gamma);
+          const denom = Math.sin(gamma);
+          interference = (num / denom) * (num / denom) / (slitCount * slitCount);
+        }
+        I = Math.pow(sinc, 2) * interference;
       }
       maxI = Math.max(maxI, I);
       points.push([px, I]);
@@ -187,7 +201,7 @@ export default function DiffractionPage() {
         {/* Display area */}
         <div className="flex-1 flex flex-col min-h-0">
           {/* Diffraction pattern */}
-          <div className="flex-1 relative min-h-[200px]">
+          <div className="flex-1 relative" style={{ minHeight: 300 }}>
             <canvas ref={patternCanvasRef} className="w-full h-full absolute inset-0" style={{ width: "100%", height: "100%" }} />
           </div>
           {/* Intensity curve */}
