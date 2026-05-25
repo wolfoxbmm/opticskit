@@ -265,6 +265,11 @@ export default function DiffractionPage() {
           </div>
 
           <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-3 text-xs text-[#868E96] space-y-1">
+            <p className="text-[#495057] font-medium mb-1">📖 使用说明</p>
+            <p>拖动右侧滑块调整参数，上方区域实时显示衍射条纹图样，下方曲线为光强分布 I/I₀。</p>
+            <p>顶部的「单缝/双缝/多缝」可切换衍射模式。</p>
+          </div>
+          <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-3 text-xs text-[#868E96] space-y-1">
             <p className="text-[#495057] font-medium mb-1">公式</p>
             {mode === "single" && (
               <p>I = I₀ · [sin(β)/β]²</p>
