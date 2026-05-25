@@ -1,0 +1,32 @@
+import type { Metadata } from "next";
+import FeedbackWidget from "@/components/FeedbackWidget";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "OpticsKit — 光学工具箱",
+  description: "为中国光学研究者打造的免费在线计算与可视化工具集。CIE色度图、衍射模拟、光谱分析、光源指标、透镜成像。",
+  keywords: "光学工具箱, CIE色度图, 衍射模拟, 色温计算, CRI, 光谱分析, 透镜成像, 光学计算, 色度学",
+  openGraph: {
+    title: "OpticsKit — 光学工具箱",
+    description: "用光的语言，理解颜色与波前",
+    type: "website",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="zh-CN" className="h-full antialiased">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet" />
+      </head>
+      <body className="min-h-full flex flex-col bg-[#F2F3F5] text-[#1A1A2E]">
+        {children}
+        <FeedbackWidget />
+      </body>
+    </html>
+  );
+}

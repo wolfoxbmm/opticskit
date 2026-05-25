@@ -1,0 +1,251 @@
+@import "tailwindcss";
+
+/* ============================================================
+   OpticsKit Design System v2 — Academic Light
+   参考：Notion 暖白极简 · Desmos 学术工具 · Apple Human Interface
+   核心理念：白底、克制色彩、清晰层次、呼吸感留白
+   ============================================================ */
+
+:root {
+  /* 主色调 */
+  --bg-root: #F2F3F5;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F1F3F5;
+  --bg-hover: #E9ECEF;
+  --bg-active: #DEE2E6;
+
+  /* 边框 */
+  --border-subtle: #E9ECEF;
+  --border-default: #DEE2E6;
+  --border-strong: #CED4DA;
+
+  /* 文字 — 不使用纯黑，护眼的近黑色 */
+  --text-primary: #1A1A2E;
+  --text-secondary: #495057;
+  --text-tertiary: #868E96;
+  --text-disabled: #ADB5BD;
+
+  /* 强调色 — 光学主题：电光蓝 + 青色点缀 */
+  --accent: #228BE6;
+  --accent-light: #E7F5FF;
+  --accent-glow: rgba(34, 139, 230, 0.08);
+
+  --accent-teal: #0CA678;
+  --accent-teal-light: #E6FCF5;
+
+  --accent-amber: #F08C00;
+  --accent-amber-light: #FFF4E6;
+
+  --accent-violet: #7950F2;
+  --accent-violet-light: #F3F0FF;
+
+  --accent-rose: #E64980;
+  --accent-rose-light: #FFF0F6;
+
+  /* 阴影 */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+
+  /* 圆角 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+body {
+  background: var(--bg-root);
+  color: var(--text-primary);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+}
+
+/* 精细滚动条 — 浅色版 */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+
+::selection {
+  background: rgba(34, 139, 230, 0.15);
+  color: var(--text-primary);
+}
+
+/* ============================================================
+   Typography
+   ============================================================ */
+h1 { font-weight: 650; letter-spacing: -0.025em; line-height: 1.15; }
+h2 { font-weight: 600; letter-spacing: -0.015em; line-height: 1.25; }
+
+/* ============================================================
+   Links
+   ============================================================ */
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+a:hover {
+  color: #1c7ed6;
+  text-decoration: none;
+}
+
+/* ============================================================
+   Focus
+   ============================================================ */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   Card Component — 浅色学术卡片
+   ============================================================ */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-sm);
+}
+.card:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* Tool card — 带彩条顶部装饰 */
+.tool-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 28px 24px 24px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.tool-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--card-accent, var(--accent));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.tool-card:hover::before { opacity: 1; }
+.tool-card:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: -0.01em;
+  box-shadow: 0 2px 8px rgba(34, 139, 230, 0.2);
+}
+.btn-primary:hover {
+  background: #1c7ed6;
+  box-shadow: 0 4px 14px rgba(34, 139, 230, 0.3);
+  transform: translateY(-1px);
+  color: #fff;
+}
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-secondary:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-elevated);
+}
+
+/* ============================================================
+   Form Elements
+   ============================================================ */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--border-default);
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+
+select, textarea, input[type="text"], input[type="number"] {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+select:focus, textarea:focus, input[type="text"]:focus, input[type="number"]:focus {
+  border-color: var(--accent);
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
