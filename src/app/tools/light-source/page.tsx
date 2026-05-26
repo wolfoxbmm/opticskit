@@ -7,26 +7,44 @@ import { spectrumToXYZ, xyzToChromaticity, xyToUvPrime, cctWithDuv } from "@/lib
 // CIE 13.3-1995 TCS (Test Colour Samples) reflectance spectra
 // First 8 samples for CRI Ra calculation
 
-// Simplified Ra calculation using CIE XYZ → u,v chromaticity shift
-function computeCRI(testSPD: number[], testWl: number[]): number {
-  // CIE CRI(Ra) simplified: we need reference illuminant at the same CCT
-  // Full CRI requires 14 TCS samples, CIE 1964 10° CMFs
-  // For this demo we compute a simplified version:
-  //   Ra ≈ 100 - 4.6 ΔE*(uv)  (approximation)
+// CIE Standard Daylight D-series chromaticity (CIE 15:2018)
+// Given CCT, returns (x,y) chromaticity of the D illuminant using standard formulae
+function cieDaylightChromaticity(cct: number): { x: number; y: number } {
+  const T = cct;
+  let xD: number;
+  if (T <= 7000) {
+    xD = -4.6070e9 / (T * T * T) + 2.9678e6 / (T * T) + 0.09911e3 / T + 0.244063;
+  } else {
+    xD = -2.0064e9 / (T * T * T) + 1.9018e6 / (T * T) + 0.24748e3 / T + 0.237040;
+  }
+  const yD = -3.000 * xD * xD + 2.870 * xD - 0.275;
+  return { x: xD, y: yD };
+}
 
+// Simplified Ra estimation using CIE XYZ → u',v' chromaticity shift
+// CCT ≤ 5000K: reference = Planckian (blackbody)
+// CCT > 5000K: reference = CIE Standard Daylight D-series
+function computeCRI(testSPD: number[], testWl: number[]): number {
   const XYZ = spectrumToXYZ(testSPD, testWl);
   const xy = xyzToChromaticity(XYZ);
   const uvTest = xyToUvPrime(xy.x, xy.y);
   const cctResult = cctWithDuv(uvTest);
   const cct = Number.isFinite(cctResult.cct) ? cctResult.cct : 6500;
 
-  // Reference: blackbody at same CCT
-  const refWl = Array.from({ length: 81 }, (_, i) => 380 + i * 5);
-  // Compute reference XYZ from planck
-  const refSPD = planckForWavelengths(cct, refWl);
-  const refXYZ = spectrumToXYZ(refSPD as number[], refWl);
-  const refXY = xyzToChromaticity(refXYZ);
-  const uvRef = xyToUvPrime(refXY.x, refXY.y);
+  let uvRef: { uPrime: number; vPrime: number };
+
+  if (cct > 5000) {
+    // CCT > 5000K: use CIE Standard Daylight D-series reference
+    const refXY = cieDaylightChromaticity(cct);
+    uvRef = xyToUvPrime(refXY.x, refXY.y);
+  } else {
+    // CCT ≤ 5000K: use Planckian (blackbody) reference
+    const refWl = Array.from({ length: 81 }, (_, i) => 380 + i * 5);
+    const refSPD = planckForWavelengths(cct, refWl);
+    const refXYZ = spectrumToXYZ(refSPD as number[], refWl);
+    const refXY = xyzToChromaticity(refXYZ);
+    uvRef = xyToUvPrime(refXY.x, refXY.y);
+  }
 
   // Δu'v'
   const du = uvTest.uPrime - uvRef.uPrime;
@@ -36,9 +54,6 @@ function computeCRI(testSPD: number[], testWl: number[]): number {
   // Approximate Ra from chromaticity shift
   // This is a rough approximation; full CRI requires 14 TCS samples
   const ra = Math.max(0, Math.min(100, 100 - dUV * 4600));
-
-  // If CCT > 5000K, reference is CIE Daylight (not blackbody)
-  // For simplicity we still use blackbody here
 
   return Math.round(ra);
 }
@@ -228,19 +243,19 @@ export default function LightSourcePage() {
                     <span className="font-mono text-[#1A1A2E]">
                       {Number.isFinite(result.duv) ? result.duv.toFixed(5) : "—"}
                     </span>
-                    <span className="text-[#868E96]">CRI (Δu'v')</span>
+                    <span className="text-[#868E96]">估计 Ra (Δu'v')</span>
                     <span className={`font-mono text-lg font-bold ${(result.cri >= 90 || !result.cri) ? "text-[#00E676]" : result.cri >= 80 ? "text-[#FFD740]" : "text-[#FF5252]"}`}>
                       {Number.isFinite(result.cri) ? result.cri : "—"}
                     </span>
                   </div>
                   {Number.isFinite(result.cri) && result.cri >= 90 && (
-                    <p className="text-xs text-[#00E676]">✓ 优秀显色性 (CRI ≥ 90)，适合博物馆/医疗/高端照明</p>
+                    <p className="text-xs text-[#00E676]">✓ 估计显色性优秀 (Ra est ≥ 90)，适合博物馆/医疗/高端照明</p>
                   )}
                   {Number.isFinite(result.cri) && result.cri >= 80 && result.cri < 90 && (
-                    <p className="text-xs text-[#FFD740]">○ 良好显色性 (CRI ≥ 80)，适合办公室/商业照明</p>
+                    <p className="text-xs text-[#FFD740]">○ 估计显色性良好 (Ra est ≥ 80)，适合办公室/商业照明</p>
                   )}
                   {Number.isFinite(result.cri) && result.cri < 80 && (
-                    <p className="text-xs text-[#FF5252]">△ 一般 (CRI &lt; 80)，适合户外/工业照明</p>
+                    <p className="text-xs text-[#FF5252]">△ 估计显色性一般 (Ra est &lt; 80)，适合户外/工业照明</p>
                   )}
                 </div>
               </>
