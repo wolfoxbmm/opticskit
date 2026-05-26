@@ -30,9 +30,46 @@ export default function LensPage() {
     ctx.fillStyle = "#0A0A0A";
     ctx.fillRect(0, 0, w, hc);
 
-    const scale = Math.min(w / 800, hc / 400);
+    // Auto-scale: ensure all key elements fit within the canvas
+    // Compute positions at current scale, shrink if things go out of bounds
+    let scale = Math.min(w / 800, hc / 400);
     const cx = w / 2;
     const cy = hc / 2;
+    {
+      const margin = 50; // px padding from edges
+      const tmpLensX = cx + (Math.abs(f) > 200 ? 40 * scale : 0);
+      const objX0 = tmpLensX - scale * u;
+      const imgX0 = tmpLensX + scale * v;
+      const fObjX0 = tmpLensX - scale * f;
+      const fImgX0 = tmpLensX + scale * f;
+      const allX = [objX0, imgX0, fObjX0, fImgX0];
+      const minX = Math.min(...allX);
+      const maxX = Math.max(...allX);
+      if (minX < margin) {
+        const leftSpan = tmpLensX - minX;
+        scale = Math.min(scale, (tmpLensX - margin) / Math.max(leftSpan / scale, 1));
+      }
+      if (maxX > w - margin) {
+        const rightSpan = maxX - tmpLensX;
+        const allowedRight = (w - margin) - tmpLensX;
+        if (rightSpan > 0 && allowedRight > 0) {
+          scale = Math.min(scale, (allowedRight / (rightSpan / scale)));
+        }
+      }
+      // Also check vertical: object height
+      const needTop = scale * h + margin;
+      if (needTop > cy) {
+        scale = Math.min(scale, (cy - margin) / h);
+      }
+      // Image height
+      if (hi > 0) {
+        const needBottom = scale * hi + margin;
+        const availableBot = hc - cy;
+        if (needBottom > availableBot) {
+          scale = Math.min(scale, (availableBot - margin) / hi);
+        }
+      }
+    }
     const lensX = cx + (Math.abs(f) > 200 ? 40 * scale : 0);
 
     // Optical axis
@@ -69,13 +106,13 @@ export default function LensPage() {
     ctx.stroke();
 
     // Focal points — F = object-side focal point, F' = image-side focal point
-    // For convex lens (f>0): F left of lens, F' right of lens
-    // For concave lens (f<0): F right of lens, F' left of lens
-    const fObjX = lensX - scale * f;  // object-side focal point (F)
-    const fImgX = lensX + scale * f;  // image-side focal point (F')
+    // fObjX = lensX - scale*f : for convex (f>0) left of lens; for concave (f<0) right of lens
+    // fImgX = lensX + scale*f : for convex (f>0) right of lens; for concave (f<0) left of lens
+    const fObjX = lensX - scale * f;  // object-side focal point (F) — always
+    const fImgX = lensX + scale * f;  // image-side focal point (F') — always
     [
-      { x: fObjX, label: isConcave ? "F'" : "F" },
-      { x: fImgX, label: isConcave ? "F" : "F'" }
+      { x: fObjX, label: "F" },
+      { x: fImgX, label: "F'" }
     ].forEach(fp => {
       if (fp.x > 20 && fp.x < w - 20) {
         ctx.fillStyle = "#FFD740";
@@ -127,35 +164,142 @@ export default function LensPage() {
     if (showRays && h > 0 && objX > 10) {
       const objTop = cy - scale * h;
       const lensTop = cy - D / 2;
+      const lensBot = cy + D / 2;
       // Where the parallel ray hits the lens (clamped to lens aperture)
-      const hitY = Math.max(objTop, lensTop);
+      const hitY = Math.max(Math.min(objTop, lensBot), lensTop);
       ctx.lineWidth = 0.8;
       ctx.globalAlpha = 0.45;
 
-      // Ray 1: parallel to axis → through (or from) focal point
-      ctx.strokeStyle = "#00E676"; ctx.setLineDash([]);
-      ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, hitY); ctx.stroke();
-      ctx.setLineDash([3, 3]);
-      ctx.beginPath(); ctx.moveTo(lensX, hitY); ctx.lineTo(isConcave ? fObjX : fImgX, cy); ctx.stroke();
+      if (isConcave) {
+        // ＝＝＝ 凹透镜光线追迹 ＝＝＝
+        // 物方焦点F在透镜右侧(fObjX>lensX)，像方焦点F'在透镜左侧(fImgX<lensX)
+        // Ray 1 (绿): 平行主轴 → 经透镜发散，反向延长线过F'
+        //   画实线: 物顶→透镜 → 实线继续向右延伸
+        //   画虚线: 透镜点→F'(cy) 表示反向延长
+        ctx.strokeStyle = "#00E676"; ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, hitY); ctx.stroke();
+        // 实线向右发散延伸
+        const divergeSlope = -(hitY - cy) / (0.001 + Math.abs(fImgX - lensX));
+        const extendLen = 300 * scale;
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(lensX, hitY); ctx.lineTo(lensX + extendLen, hitY + divergeSlope * extendLen); ctx.stroke();
+        // 虚线反向延长到F'
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(lensX, hitY); ctx.lineTo(fImgX, cy); ctx.stroke();
 
-      // Ray 2: straight through center
-      ctx.setLineDash([3, 3]); ctx.strokeStyle = "#FFD740";
-      if (!isVirtual && Math.abs(v) > 0) {
-        const imgTop = cy - scale * hi;
-        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, cy); ctx.moveTo(lensX, cy); ctx.lineTo(imgX, imgTop); ctx.stroke();
-      } else if (isVirtual && Math.abs(v) > 0) {
-        const imgTop = cy + (m < 0 ? -1 : 1) * scale * hi;
-        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(imgX, imgTop); ctx.stroke();
+        // Ray 2 (黄): 过透镜中心，不偏折
+        ctx.setLineDash([3, 3]); ctx.strokeStyle = "#FFD740";
+        if (Math.abs(v) > 0) {
+          const imgTop = cy + (m < 0 ? -1 : 1) * scale * hi;
+          // 实线: 物顶→透镜中心 → 继续向右
+          ctx.setLineDash([]);
+          ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, cy); ctx.stroke();
+          const r2Slope = -(objTop - cy) / (lensX - objX);
+          ctx.beginPath(); ctx.moveTo(lensX, cy); ctx.lineTo(lensX + extendLen, cy + r2Slope * extendLen); ctx.stroke();
+          // 虚线反向延长到虚像
+          ctx.setLineDash([3, 3]);
+          ctx.beginPath(); ctx.moveTo(lensX, cy); ctx.lineTo(imgX, imgTop); ctx.stroke();
+        }
+
+        // Ray 3 (橙): 指向物方焦点F(在透镜右侧) → 经透镜后平行主轴
+        //   虚线: 物顶→F位置 → 实线: 透镜中心(y=cy)平行向右
+        ctx.strokeStyle = "#FF6B00";
+        // 虚线从物顶指向F
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(fObjX, cy); ctx.stroke();
+        // 实线从透镜平行出射
+        const r3HitY = cy + (objTop - cy) * (lensX - fObjX) / (objX - fObjX);
+        // 这根光线实际上从透镜当前位置出来，平行于主轴
+        const actualHitY3 = Math.max(Math.min(r3HitY, lensBot), lensTop);
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(fObjX, cy); ctx.lineTo(lensX, actualHitY3); ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(lensX, actualHitY3); ctx.lineTo(lensX + extendLen, actualHitY3); ctx.stroke();
+
+        // 反向延长线汇聚到虚像点（Ray 2已在上面处理，这里补Ray 1和Ray 3的）
+        if (isVirtual && Math.abs(v) > 0 && imgX > 10 && imgX < w - 10) {
+          const imgTop = cy + (m < 0 ? -1 : 1) * scale * hi;
+          // Ray 1 反向延长到虚像
+          ctx.setLineDash([3, 3]); ctx.strokeStyle = "#00E676";
+          ctx.beginPath(); ctx.moveTo(lensX, hitY); ctx.lineTo(imgX, imgTop); ctx.stroke();
+          // Ray 3 反向延长到虚像
+          ctx.setLineDash([3, 3]); ctx.strokeStyle = "#FF6B00";
+          ctx.beginPath(); ctx.moveTo(lensX, actualHitY3); ctx.lineTo(imgX, imgTop); ctx.stroke();
+        }
+      } else if (!isVirtual) {
+        // ＝＝＝ 凸透镜实像 u>f (v>0, m<0 倒立缩小) ＝＝＝
+        // Ray 1 (绿): 平行主轴 → 经透镜过像方焦点F'
+        ctx.strokeStyle = "#00E676"; ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, hitY); ctx.stroke();
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(lensX, hitY); ctx.lineTo(fImgX, cy); ctx.stroke();
+
+        // Ray 2 (黄): 过透镜中心，不偏折
+        ctx.setLineDash([3, 3]); ctx.strokeStyle = "#FFD740";
+        if (Math.abs(v) > 0) {
+          const imgTop = cy - scale * hi;
+          ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, cy); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(lensX, cy); ctx.lineTo(imgX, imgTop); ctx.stroke();
+        }
+
+        // Ray 3 (橙): 过物方焦点F → 经透镜后平行主轴
+        ctx.strokeStyle = "#FF6B00"; ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(fObjX, cy); ctx.stroke();
+        const r3HitY2 = cy + (objTop - cy) * (lensX - fObjX) / (objX - fObjX);
+        const actualHitY3b = Math.max(Math.min(r3HitY2, lensBot), lensTop);
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(fObjX, cy); ctx.lineTo(lensX, actualHitY3b); ctx.stroke();
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(lensX, actualHitY3b); ctx.lineTo(lensX + 300 * scale, actualHitY3b); ctx.stroke();
+      } else {
+        // ＝＝＝ 凸透镜虚像 u<f (v<0, m>0 正立放大虚像) ＝＝＝
+        // 物方焦点F在透镜左侧(fObjX<lensX)，像方焦点F'在透镜右侧(fImgX>lensX)
+        // Ray 1 (绿): 平行主轴 → 经透镜过像方焦点F'(右侧)
+        ctx.strokeStyle = "#00E676"; ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, hitY); ctx.stroke();
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(lensX, hitY); ctx.lineTo(fImgX, cy); ctx.stroke();
+        // 实线继续向右
+        const slope = -(hitY - cy) / (0.001 + Math.abs(fImgX - lensX));
+        const ext = 300 * scale;
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(lensX, hitY); ctx.lineTo(lensX + ext, hitY + slope * ext); ctx.stroke();
+
+        // Ray 2 (黄): 过透镜中心不偏折
+        ctx.setLineDash([3, 3]); ctx.strokeStyle = "#FFD740";
+        if (Math.abs(v) > 0 && imgX > 10 && imgX < w - 10) {
+          const imgTop = cy + (m < 0 ? -1 : 1) * scale * hi;
+          ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, cy); ctx.stroke();
+          // 实线继续向右
+          const cSlope = -(objTop - cy) / (lensX - objX);
+          ctx.setLineDash([]);
+          ctx.beginPath(); ctx.moveTo(lensX, cy); ctx.lineTo(lensX + ext, cy + cSlope * ext); ctx.stroke();
+          // 虚线反向延长到虚像
+          ctx.setLineDash([3, 3]);
+          ctx.beginPath(); ctx.moveTo(lensX, cy); ctx.lineTo(imgX, imgTop); ctx.stroke();
+        }
+
+        // Ray 3 (橙): 指向物方焦点F(左侧) → 经透镜后平行主轴
+        ctx.strokeStyle = "#FF6B00";
+        // 虚线从物顶→F
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(fObjX, cy); ctx.stroke();
+        const r3HitY3 = cy + (objTop - cy) * (lensX - fObjX) / (objX - fObjX);
+        const actualHitY3c = Math.max(Math.min(r3HitY3, lensBot), lensTop);
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(fObjX, cy); ctx.lineTo(lensX, actualHitY3c); ctx.stroke();
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(lensX, actualHitY3c); ctx.lineTo(lensX + ext, actualHitY3c); ctx.stroke();
+
+        // 反向延长汇聚到虚像
+        if (Math.abs(v) > 0 && imgX > 10 && imgX < w - 10) {
+          const imgTop = cy + (m < 0 ? -1 : 1) * scale * hi;
+          ctx.setLineDash([3, 3]); ctx.strokeStyle = "#00E676";
+          ctx.beginPath(); ctx.moveTo(lensX, hitY); ctx.lineTo(imgX, imgTop); ctx.stroke();
+          ctx.setLineDash([3, 3]); ctx.strokeStyle = "#FF6B00";
+          ctx.beginPath(); ctx.moveTo(lensX, actualHitY3c); ctx.lineTo(imgX, imgTop); ctx.stroke();
+        }
       }
-
-      // Ray 3: through focal point → parallel
-      const focalEntrance = isConcave ? fImgX : fObjX;
-      ctx.strokeStyle = "#FF6B00"; ctx.setLineDash([3, 3]);
-      ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(focalEntrance, cy); ctx.stroke();
-      ctx.setLineDash([]);
-      ctx.beginPath(); ctx.moveTo(focalEntrance, cy); ctx.lineTo(lensX, hitY); ctx.stroke();
-      ctx.setLineDash([3, 3]);
-      ctx.beginPath(); ctx.moveTo(lensX, hitY); ctx.lineTo(isConcave ? lensX - 500 * scale : lensX + 500 * scale, hitY); ctx.stroke();
 
       ctx.setLineDash([]);
       ctx.globalAlpha = 1;
