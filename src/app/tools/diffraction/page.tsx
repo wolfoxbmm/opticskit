@@ -165,6 +165,57 @@ export default function DiffractionPage() {
       ctx.lineWidth = 1.5;
       ctx.stroke();
     }
+
+    // Draw dark fringe markers
+    const xRangeHalf = xRange / 2;
+    const xToPx = (x_mm: number) => margin.left + ((x_mm + xRangeHalf) / xRange) * pw;
+
+    const drawDarkFringe = (x_mm: number, color: string, label: string) => {
+      if (Math.abs(x_mm) > xRangeHalf) return;
+      const px = xToPx(x_mm);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(px, margin.top);
+      ctx.lineTo(px, margin.top + ph);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // Label at bottom
+      ctx.fillStyle = color;
+      ctx.font = "8px monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(label, px, margin.top + ph + 12);
+    };
+
+    // Single-slit envelope dark fringes: a·sinθ = mλ → x = L·tan(asin(mλ/a))
+    const drawEnvelopeDarkFringes = (color: string, labelPrefix: string) => {
+      for (let m = 1; m <= 8; m++) {
+        const sinThetaM = (m * wl) / a;
+        if (sinThetaM < 1) {
+          const x_mm = L * Math.tan(Math.asin(sinThetaM)) * 1e3; // convert to mm
+          drawDarkFringe(x_mm, color, `${labelPrefix}${m}`);
+          drawDarkFringe(-x_mm, color, `${labelPrefix}${m}`);
+        }
+      }
+    };
+
+    if (mode === "single") {
+      // Single slit: only envelope dark fringes
+      drawEnvelopeDarkFringes("#FF4444", "m");
+    } else if (mode === "double" || mode === "grating") {
+      // Envelope dark fringes (red)
+      drawEnvelopeDarkFringes("#FF4444", "e");
+      // Interference dark fringes (orange): d·sinθ = (m+0.5)λ → x = L·tan(asin((m+0.5)λ/d))
+      for (let m = 0; m <= 8; m++) {
+        const sinThetaM = ((m + 0.5) * wl) / d;
+        if (sinThetaM < 1) {
+          const x_mm = L * Math.tan(Math.asin(sinThetaM)) * 1e3;
+          drawDarkFringe(x_mm, "#FF8800", `i${m}`);
+          drawDarkFringe(-x_mm, "#FF8800", `i${m}`);
+        }
+      }
+    }
   }, [mode, wavelength, slitWidth, slitSep, slitCount, screenDist]);
 
   useEffect(() => {
@@ -296,6 +347,35 @@ export default function DiffractionPage() {
             )}
             <p>β = πa sin(θ)/λ</p>
             {(mode === "double" || mode === "grating") && <p>γ = πd sin(θ)/λ</p>}
+          </div>
+
+          <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-3 text-xs space-y-1">
+            <p className="text-[#495057] font-medium mb-1">🌑 暗纹条件</p>
+            {mode === "single" && (
+              <>
+                <p><span className="text-red-400">━</span> 单缝衍射暗纹 a·sinθ = mλ</p>
+                <p className="text-[#868E96]">m = ±1, ±2, ±3, …</p>
+                <p className="text-[#868E96]">位置 x = L·tan(arcsin(mλ/a))</p>
+              </>
+            )}
+            {mode === "double" && (
+              <>
+                <p><span className="text-red-400">━</span> 单缝包络暗纹 a·sinθ = mλ</p>
+                <p className="text-[#868E96]">m = ±1, ±2, ±3, …</p>
+                <p className="mt-1"><span className="text-orange-400">━</span> 干涉暗纹 d·sinθ = (m+½)λ</p>
+                <p className="text-[#868E96]">m = 0, 1, 2, 3, …</p>
+                <p className="text-[#868E96] mt-0.5">x = L·tan(arcsin((m+½)λ/d))</p>
+              </>
+            )}
+            {mode === "grating" && (
+              <>
+                <p><span className="text-red-400">━</span> 单缝包络暗纹 a·sinθ = mλ</p>
+                <p className="text-[#868E96]">m = ±1, ±2, ±3, …</p>
+                <p className="mt-1"><span className="text-orange-400">━</span> 干涉暗纹 d·sinθ = (m+½)λ</p>
+                <p className="text-[#868E96]">m = 0, 1, 2, 3, …</p>
+                <p className="text-[#868E96] mt-0.5">x = L·tan(arcsin((m+½)λ/d))</p>
+              </>
+            )}
           </div>
 
           <p className="text-xs text-[#ADB5BD] pt-2">
