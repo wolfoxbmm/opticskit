@@ -54,76 +54,120 @@ const typeColors: Record<string, string> = {
   "光纤": "border-red-500/30 text-red-400",
 };
 
-// 波长分布概览组件
+// 波长分布概览组件 — 对数刻度版本
 function WavelengthBand({ filtered }: { filtered: LaserEntry[] }) {
   const allWls = filtered.flatMap(l => l.wavelengths);
   if (allWls.length === 0) return null;
 
-  const minWl = 100;   // 最低约 193nm（ArF），取整到 100
+  const minWl = 100;    // 100nm 覆盖 ArF 193nm
   const maxWl = 12000;  // 最高约 12000nm（QCL）
-  const range = maxWl - minWl;
+  const logMin = Math.log10(minWl);
+  const logMax = Math.log10(maxWl);
+  const logRange = logMax - logMin;
 
-  const toPercent = (wl: number) => ((wl - minWl) / range) * 100;
+  const toPercentLog = (wl: number) => ((Math.log10(wl) - logMin) / logRange) * 100;
 
-  // 波段边界百分比
-  const uvEnd = toPercent(400);
-  const visEnd = toPercent(700);
+  // 波段边界百分比（对数坐标）
+  const uvEnd = toPercentLog(400);
+  const visEnd = toPercentLog(700);
 
-  const BAR_HEIGHT = 40;
+  // 可见光渐变：7 个 color-stop，对齐物理波长
+  const visStopWls = [400, 460, 520, 570, 595, 635, 700];
+  const visStops = visStopWls.map(wl => toPercentLog(wl));
+  const visColors = ["#5B00C8", "#0033FF", "#00CC33", "#CCDD00", "#E6A800", "#FF5500", "#CC0000"];
+
+  // 刻度线位置（对数坐标上的关键波长）
+  const tickWls = [100, 200, 400, 700, 1000, 2000, 5000, 10000, 12000];
+
+  // 构建每个波长的来源信息
+  const wlInfo = filtered.flatMap(l =>
+    l.wavelengths.map(wl => ({ wl, name: l.name, type: l.type }))
+  );
+
+  const BAR_HEIGHT = 48;
+  const [hoveredLaser, setHoveredLaser] = useState<string | null>(null);
 
   return (
     <div className="mb-6">
       <div className="flex items-center gap-2 mb-1.5">
-        <span className="text-xs text-[#868E96]">波长分布概览</span>
+        <span className="text-xs text-[#868E96]">波长分布概览（对数刻度）</span>
         <span className="text-xs text-[#ADB5BD]">({allWls.length} 条谱线)</span>
+        {hoveredLaser && (
+          <span className="text-xs text-[#00BFFF] font-mono ml-2">→ {hoveredLaser}</span>
+        )}
       </div>
       <div
         className="relative rounded-lg overflow-hidden border border-[#E9ECEF]"
         style={{ height: BAR_HEIGHT }}
+        onMouseLeave={() => setHoveredLaser(null)}
       >
         {/* 三区背景 */}
         <div className="absolute inset-0 flex">
           <div
-            style={{ width: `${uvEnd}%`, backgroundColor: "rgba(147,51,234,0.15)" }}
+            style={{ width: `${uvEnd}%`, backgroundColor: "rgba(147,51,234,0.12)" }}
             className="h-full"
           />
           <div
             style={{
               width: `${visEnd - uvEnd}%`,
-              background: "linear-gradient(90deg, #8B00FF, #0000FF, #00FF00, #FFFF00, #FFA500, #FF0000)",
-              opacity: 0.15,
+              background: `linear-gradient(90deg, ${visColors.map((c, i) => `${c} ${((visStops[i] - uvEnd) / (visEnd - uvEnd)) * 100}%`).join(", ")})`,
+              opacity: 0.13,
             }}
             className="h-full"
           />
           <div
-            style={{ width: `${100 - visEnd}%`, backgroundColor: "rgba(239,68,68,0.15)" }}
+            style={{ width: `${100 - visEnd}%`, backgroundColor: "rgba(239,68,68,0.12)" }}
             className="h-full"
           />
         </div>
 
+        {/* 刻度虚线 */}
+        {tickWls.map(tw => {
+          const pct = toPercentLog(tw);
+          return (
+            <div
+              key={`tick-${tw}`}
+              className="absolute top-0 h-full pointer-events-none"
+              style={{
+                left: `${pct}%`,
+                width: "1px",
+                backgroundColor: "rgba(255,255,255,0.08)",
+              }}
+            />
+          );
+        })}
+
         {/* 波长标记线 */}
-        {allWls.map((wl, i) => {
-          const pct = toPercent(wl);
+        {wlInfo.map((info, i) => {
+          const pct = toPercentLog(info.wl);
+          const isHovered = hoveredLaser === info.name;
+
           // 根据波长着色
           let color: string;
-          if (wl < 400) color = "#a855f7";      // UV 紫色
-          else if (wl < 450) color = "#6366f1"; // 紫蓝
-          else if (wl < 500) color = "#3b82f6"; // 蓝
-          else if (wl < 570) color = "#22c55e"; // 绿
-          else if (wl < 600) color = "#eab308"; // 黄
-          else if (wl < 700) color = "#f97316"; // 橙
-          else color = "#ef4444";                // IR 红
+          if (info.wl < 400) color = "#a855f7";
+          else if (info.wl < 460) color = "#6366f1";
+          else if (info.wl < 500) color = "#3b82f6";
+          else if (info.wl < 570) color = "#22c55e";
+          else if (info.wl < 595) color = "#eab308";
+          else if (info.wl < 700) color = "#f97316";
+          else if (info.wl < 2000) color = "#ef4444";
+          else color = "#dc2626";
 
           return (
             <div
               key={i}
-              className="absolute top-0 bottom-0"
+              className="absolute top-1 cursor-pointer transition-opacity duration-150"
               style={{
                 left: `${pct}%`,
-                width: "2px",
+                width: isHovered ? "3px" : "1.5px",
+                height: isHovered ? `calc(100% - 2px)` : "60%",
+                top: isHovered ? "1px" : "20%",
                 backgroundColor: color,
+                opacity: isHovered ? 1 : 0.8,
+                zIndex: isHovered ? 10 : 1,
               }}
-              title={`${wl} nm`}
+              title={`${info.wl} nm · ${info.name}`}
+              onMouseEnter={() => setHoveredLaser(info.name)}
             />
           );
         })}
@@ -131,22 +175,32 @@ function WavelengthBand({ filtered }: { filtered: LaserEntry[] }) {
         {/* 波段标签 */}
         <div className="absolute inset-0 flex pointer-events-none">
           <div style={{ width: `${uvEnd}%` }} className="flex items-center justify-center">
-            <span className="text-[10px] text-purple-400/60 font-mono">UV</span>
+            <span className="text-[10px] text-purple-400/50 font-medium tracking-wider">UV</span>
           </div>
           <div style={{ width: `${visEnd - uvEnd}%` }} className="flex items-center justify-center">
-            <span className="text-[10px] text-white/40 font-mono">Visible</span>
+            <span className="text-[10px] text-white/30 font-medium tracking-wider">Visible</span>
           </div>
           <div style={{ width: `${100 - visEnd}%` }} className="flex items-center justify-center">
-            <span className="text-[10px] text-red-400/60 font-mono">IR</span>
+            <span className="text-[10px] text-red-400/50 font-medium tracking-wider">IR</span>
           </div>
         </div>
       </div>
-      {/* 底部刻度参考 */}
-      <div className="flex justify-between text-[9px] text-[#495057] font-mono mt-0.5 px-1">
-        <span>{minWl}nm</span>
-        <span>400nm</span>
-        <span>700nm</span>
-        <span>{maxWl}nm</span>
+
+      {/* 底部刻度参考 — 对数标尺 */}
+      <div className="relative h-4 mt-0.5 mx-[-2px]">
+        {tickWls.map(tw => {
+          const pct = toPercentLog(tw);
+          const label = tw >= 1000 ? `${tw / 1000}μm` : `${tw}nm`;
+          return (
+            <span
+              key={`tl-${tw}`}
+              className="absolute text-[9px] text-[#495057] font-mono"
+              style={{ left: `${pct}%`, transform: "translateX(-50%)" }}
+            >
+              {label}
+            </span>
+          );
+        })}
       </div>
     </div>
   );
