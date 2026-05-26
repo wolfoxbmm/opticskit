@@ -13,6 +13,25 @@ export default function SpectrumPage() {
   const [xyzResult, setXyzResult] = useState<{ X: number; Y: number; Z: number; x: number; y: number } | null>(null);
   const [overlayBB, setOverlayBB] = useState(true);
 
+  const exportCSV = useCallback(() => {
+    if (!uploadedData) return;
+    const { wl, val } = uploadedData;
+    const header = "wavelength(nm),intensity";
+    const rows = wl.map((w, i) => `${w},${val[i]}`);
+    const csv = [header, ...rows].join("\n");
+    const now = new Date();
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    const ts = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    const filename = `spd_export_${ts}.csv`;
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [uploadedData]);
+
   const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -280,13 +299,19 @@ export default function SpectrumPage() {
                 <p className="text-xs text-[#495057]">
                   {uploadedData.wl.length} 个数据点 · {uploadedData.wl[0]}–{uploadedData.wl[uploadedData.wl.length - 1]} nm
                 </p>
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap">
                   <button onClick={() => setShowData(!showData)} className="text-xs text-[#228BE6] hover:underline">
                     {showData ? "✕ 隐藏" : "✓ 显示"}
                   </button>
                   <label className="flex items-center gap-1 text-xs text-[#495057] cursor-pointer">
                     <input type="checkbox" checked={overlayBB} onChange={e => setOverlayBB(e.target.checked)} className="accent-[#FF6B00]" />叠加黑体
                   </label>
+                  <button
+                    onClick={exportCSV}
+                    className="text-xs bg-[#228BE6] text-white rounded px-3 py-1 hover:bg-[#1c7ed6] transition-colors"
+                  >
+                    ⬇ 导出 CSV
+                  </button>
                 </div>
                 {xyzResult && (
                   <div className="text-xs text-[#868E96] border-t border-[#E9ECEF] pt-2 mt-1">

@@ -124,6 +124,38 @@ export default function ChromaticityPage() {
   const [showSRGB, setShowSRGB] = useState(true);
   const [showP3, setShowP3] = useState(false);
   const [showBlackbody, setShowBlackbody] = useState(true);
+  const [inputX, setInputX] = useState("");
+  const [inputY, setInputY] = useState("");
+
+  // 共享的点击/定位逻辑
+  const locatePoint = useCallback(
+    (xy: Point) => {
+      const uv = xyToUvPrime(xy.x, xy.y);
+      const cctResult = cctWithDuv(uv);
+      const cctVal = Number.isFinite(cctResult.cct) ? cctResult.cct : 0;
+      const duv = cctResult.duv;
+      const yy = 1.0;
+      const denom = xy.y || 1e-9;
+      const xyz = { X: (xy.x / denom) * yy, Y: yy, Z: ((1 - xy.x - xy.y) / denom) * yy };
+      const srgb = xyzToSRGB({ X: xyz.X / 100, Y: xyz.Y / 100, Z: xyz.Z / 100 });
+      const inGamut = srgb.r >= 0 && srgb.r <= 1 && srgb.g >= 0 && srgb.g <= 1 && srgb.b >= 0 && srgb.b <= 1;
+      const cr = Math.max(0, Math.min(255, Math.round(srgb.r * 255)));
+      const cg = Math.max(0, Math.min(255, Math.round(srgb.g * 255)));
+      const cb = Math.max(0, Math.min(255, Math.round(srgb.b * 255)));
+
+      setClickInfo({
+        x: xy.x,
+        y: xy.y,
+        uPrime: uv.uPrime,
+        vPrime: uv.vPrime,
+        cct: cctVal,
+        duv,
+        color: `rgb(${cr},${cg},${cb})`,
+        inGamut,
+      });
+    },
+    []
+  );
 
   const w2c = useCallback((canvas: HTMLCanvasElement, px: number, py: number): Point | null => {
     const w = canvas.width;
@@ -359,31 +391,9 @@ export default function ChromaticityPage() {
       const my = e.clientY - rect.top;
       const xy = w2c(canvas, mx, my);
       if (!xy) return;
-      const uv = xyToUvPrime(xy.x, xy.y);
-      const cctResult = cctWithDuv(uv);
-      const cctVal = Number.isFinite(cctResult.cct) ? cctResult.cct : 0;
-      const duv = cctResult.duv;
-      const yy = 1.0;
-      const denom = xy.y || 1e-9;
-      const xyz = { X: (xy.x / denom) * yy, Y: yy, Z: ((1 - xy.x - xy.y) / denom) * yy };
-      const srgb = xyzToSRGB({ X: xyz.X / 100, Y: xyz.Y / 100, Z: xyz.Z / 100 });
-      const inGamut = srgb.r >= 0 && srgb.r <= 1 && srgb.g >= 0 && srgb.g <= 1 && srgb.b >= 0 && srgb.b <= 1;
-      const cr = Math.max(0, Math.min(255, Math.round(srgb.r * 255)));
-      const cg = Math.max(0, Math.min(255, Math.round(srgb.g * 255)));
-      const cb = Math.max(0, Math.min(255, Math.round(srgb.b * 255)));
-
-      setClickInfo({
-        x: xy.x,
-        y: xy.y,
-        uPrime: uv.uPrime,
-        vPrime: uv.vPrime,
-        cct: cctVal,
-        duv,
-        color: `rgb(${cr},${cg},${cb})`,
-        inGamut,
-      });
+      locatePoint(xy);
     },
-    [w2c]
+    [w2c, locatePoint]
   );
 
   useEffect(() => {
@@ -491,6 +501,57 @@ export default function ChromaticityPage() {
               <span className="inline-block w-2.5 h-2.5 rounded-sm bg-[#FF6B00]" />
               黑体轨迹
             </label>
+          </div>
+
+          {/* Coordinate input */}
+          <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-4 space-y-3">
+            <h3 className="text-sm font-semibold text-[#1A1A2E]">坐标输入定位</h3>
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <label className="text-xs text-[#868E96] block mb-0.5">x</label>
+                <input
+                  type="number"
+                  min={0}
+                  max={0.8}
+                  step={0.0001}
+                  value={inputX}
+                  onChange={e => setInputX(e.target.value)}
+                  placeholder="0.3127"
+                  className="w-full bg-white border border-[#DEE2E6] rounded px-2 py-1.5 text-sm font-mono text-[#1A1A2E] outline-none focus:border-[#228BE6]"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-xs text-[#868E96] block mb-0.5">y</label>
+                <input
+                  type="number"
+                  min={0}
+                  max={0.9}
+                  step={0.0001}
+                  value={inputY}
+                  onChange={e => setInputY(e.target.value)}
+                  placeholder="0.3290"
+                  className="w-full bg-white border border-[#DEE2E6] rounded px-2 py-1.5 text-sm font-mono text-[#1A1A2E] outline-none focus:border-[#228BE6]"
+                />
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                const x = parseFloat(inputX);
+                const y = parseFloat(inputY);
+                if (isNaN(x) || isNaN(y)) return;
+                if (x < 0 || x > 0.8 || y < 0 || y > 0.9) return;
+                locatePoint({ x, y });
+              }}
+              className="w-full bg-[#228BE6] text-white text-sm font-medium rounded-lg py-2 hover:bg-[#1c7ed6] transition-colors"
+            >
+              定位
+            </button>
+            <div className="text-xs text-[#ADB5BD] leading-relaxed">
+              <p className="mb-1">示例坐标：</p>
+              <p>D65: <span className="font-mono text-[#495057]">0.3127, 0.3290</span></p>
+              <p>等能白: <span className="font-mono text-[#495057]">0.3333, 0.3333</span></p>
+              <p>sRGB 红: <span className="font-mono text-[#495057]">0.6400, 0.3300</span></p>
+            </div>
           </div>
 
           {/* Click result */}

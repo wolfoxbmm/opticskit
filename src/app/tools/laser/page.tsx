@@ -54,6 +54,104 @@ const typeColors: Record<string, string> = {
   "光纤": "border-red-500/30 text-red-400",
 };
 
+// 波长分布概览组件
+function WavelengthBand({ filtered }: { filtered: LaserEntry[] }) {
+  const allWls = filtered.flatMap(l => l.wavelengths);
+  if (allWls.length === 0) return null;
+
+  const minWl = 100;   // 最低约 193nm（ArF），取整到 100
+  const maxWl = 12000;  // 最高约 12000nm（QCL）
+  const range = maxWl - minWl;
+
+  const toPercent = (wl: number) => ((wl - minWl) / range) * 100;
+
+  // 波段边界百分比
+  const uvEnd = toPercent(400);
+  const visEnd = toPercent(700);
+
+  const BAR_HEIGHT = 40;
+
+  return (
+    <div className="mb-6">
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className="text-xs text-[#868E96]">波长分布概览</span>
+        <span className="text-xs text-[#ADB5BD]">({allWls.length} 条谱线)</span>
+      </div>
+      <div
+        className="relative rounded-lg overflow-hidden border border-[#E9ECEF]"
+        style={{ height: BAR_HEIGHT }}
+      >
+        {/* 三区背景 */}
+        <div className="absolute inset-0 flex">
+          <div
+            style={{ width: `${uvEnd}%`, backgroundColor: "rgba(147,51,234,0.15)" }}
+            className="h-full"
+          />
+          <div
+            style={{
+              width: `${visEnd - uvEnd}%`,
+              background: "linear-gradient(90deg, #8B00FF, #0000FF, #00FF00, #FFFF00, #FFA500, #FF0000)",
+              opacity: 0.15,
+            }}
+            className="h-full"
+          />
+          <div
+            style={{ width: `${100 - visEnd}%`, backgroundColor: "rgba(239,68,68,0.15)" }}
+            className="h-full"
+          />
+        </div>
+
+        {/* 波长标记线 */}
+        {allWls.map((wl, i) => {
+          const pct = toPercent(wl);
+          // 根据波长着色
+          let color: string;
+          if (wl < 400) color = "#a855f7";      // UV 紫色
+          else if (wl < 450) color = "#6366f1"; // 紫蓝
+          else if (wl < 500) color = "#3b82f6"; // 蓝
+          else if (wl < 570) color = "#22c55e"; // 绿
+          else if (wl < 600) color = "#eab308"; // 黄
+          else if (wl < 700) color = "#f97316"; // 橙
+          else color = "#ef4444";                // IR 红
+
+          return (
+            <div
+              key={i}
+              className="absolute top-0 bottom-0"
+              style={{
+                left: `${pct}%`,
+                width: "2px",
+                backgroundColor: color,
+              }}
+              title={`${wl} nm`}
+            />
+          );
+        })}
+
+        {/* 波段标签 */}
+        <div className="absolute inset-0 flex pointer-events-none">
+          <div style={{ width: `${uvEnd}%` }} className="flex items-center justify-center">
+            <span className="text-[10px] text-purple-400/60 font-mono">UV</span>
+          </div>
+          <div style={{ width: `${visEnd - uvEnd}%` }} className="flex items-center justify-center">
+            <span className="text-[10px] text-white/40 font-mono">Visible</span>
+          </div>
+          <div style={{ width: `${100 - visEnd}%` }} className="flex items-center justify-center">
+            <span className="text-[10px] text-red-400/60 font-mono">IR</span>
+          </div>
+        </div>
+      </div>
+      {/* 底部刻度参考 */}
+      <div className="flex justify-between text-[9px] text-[#495057] font-mono mt-0.5 px-1">
+        <span>{minWl}nm</span>
+        <span>400nm</span>
+        <span>700nm</span>
+        <span>{maxWl}nm</span>
+      </div>
+    </div>
+  );
+}
+
 export default function LaserPage() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("全部");
@@ -97,7 +195,7 @@ export default function LaserPage() {
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3 mb-6">
+        <div className="flex flex-wrap gap-3 mb-4">
           <input
             type="text"
             placeholder="搜索名称 / 波长 / 应用..."
@@ -130,6 +228,9 @@ export default function LaserPage() {
             {filtered.length} / {laserData.length} 结果
           </span>
         </div>
+
+        {/* Wavelength distribution overview */}
+        <WavelengthBand filtered={filtered} />
 
         {/* Table */}
         <div className="overflow-x-auto rounded-xl border border-[#E9ECEF]">
