@@ -172,16 +172,16 @@ function WavelengthBand({ filtered }: { filtered: LaserEntry[] }) {
           );
         })}
 
-        {/* 波段标签 */}
-        <div className="absolute inset-0 flex pointer-events-none">
-          <div style={{ width: `${uvEnd}%` }} className="flex items-center justify-center">
-            <span className="text-[10px] text-purple-400/50 font-medium tracking-wider">UV</span>
+        {/* 波段标签 — 放在波段区域上方，用绝对定位避免溢出 */}
+        <div className="absolute top-0 left-0 right-0 h-full flex pointer-events-none">
+          <div style={{ width: `${uvEnd}%` }} className="relative h-full">
+            <span className="absolute top-0.5 left-1/2 -translate-x-1/2 text-[9px] text-purple-400/60 font-medium">UV</span>
           </div>
-          <div style={{ width: `${visEnd - uvEnd}%` }} className="flex items-center justify-center">
-            <span className="text-[10px] text-white/30 font-medium tracking-wider">Visible</span>
+          <div style={{ width: `${visEnd - uvEnd}%` }} className="relative h-full overflow-hidden">
+            <span className="absolute top-0.5 left-1/2 -translate-x-1/2 text-[9px] text-white/50 font-medium whitespace-nowrap">VIS</span>
           </div>
-          <div style={{ width: `${100 - visEnd}%` }} className="flex items-center justify-center">
-            <span className="text-[10px] text-red-400/50 font-medium tracking-wider">IR</span>
+          <div style={{ width: `${100 - visEnd}%` }} className="relative h-full">
+            <span className="absolute top-0.5 left-1/2 -translate-x-1/2 text-[9px] text-red-400/60 font-medium">IR</span>
           </div>
         </div>
       </div>
