@@ -202,18 +202,20 @@ export default function LensPage() {
           ctx.beginPath(); ctx.moveTo(lensX, cy); ctx.lineTo(imgX, imgTop); ctx.stroke();
         }
 
-        // Ray 3 (橙): 指向物方焦点F(在透镜右侧) → 经透镜后平行主轴
-        //   虚线: 物顶→F位置 → 实线: 透镜中心(y=cy)平行向右
+        // Ray 3 (橙): 入射光延长线过物方焦点F(透镜右侧) → 出射平行主轴
+        //   实线: 物顶→透镜入射点(实际光线)
+        //   虚线: 入射光反向延长线→F
+        //   实线: 透镜→平行出射
         ctx.strokeStyle = "#FF6B00";
-        // 虚线从物顶指向F
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(fObjX, cy); ctx.stroke();
-        // 实线从透镜平行出射
         const r3HitY = cy + (objTop - cy) * (lensX - fObjX) / (objX - fObjX);
-        // 这根光线实际上从透镜当前位置出来，平行于主轴
         const actualHitY3 = Math.max(Math.min(r3HitY, lensBot), lensTop);
+        // 实线: 物顶→透镜
+        ctx.setLineDash([]);
+        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, actualHitY3); ctx.stroke();
+        // 虚线: 反向延长到F
         ctx.setLineDash([3, 3]);
-        ctx.beginPath(); ctx.moveTo(fObjX, cy); ctx.lineTo(lensX, actualHitY3); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(lensX, actualHitY3); ctx.lineTo(fObjX, cy); ctx.stroke();
+        // 实线: 透镜→平行出射
         ctx.setLineDash([]);
         ctx.beginPath(); ctx.moveTo(lensX, actualHitY3); ctx.lineTo(lensX + extendLen, actualHitY3); ctx.stroke();
 
@@ -244,13 +246,20 @@ export default function LensPage() {
         }
 
         // Ray 3 (橙): 过物方焦点F → 经透镜后平行主轴
-        ctx.strokeStyle = "#FF6B00"; ctx.setLineDash([3, 3]);
-        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(fObjX, cy); ctx.stroke();
+        //   实线: 物顶→透镜(实际光线过F)
+        //   虚线: 透镜出射段延长过F(表示过焦点关系)
+        //   实线: 透镜→平行出射
+        ctx.strokeStyle = "#FF6B00";
         const r3HitY2 = cy + (objTop - cy) * (lensX - fObjX) / (objX - fObjX);
         const actualHitY3b = Math.max(Math.min(r3HitY2, lensBot), lensTop);
+        // 实线: 物顶→透镜
         ctx.setLineDash([]);
-        ctx.beginPath(); ctx.moveTo(fObjX, cy); ctx.lineTo(lensX, actualHitY3b); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, actualHitY3b); ctx.stroke();
+        // 虚线: 表示光线过F(穿过)的关系
         ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(lensX, actualHitY3b); ctx.lineTo(fObjX, cy); ctx.stroke();
+        // 实线: 透镜→平行出射
+        ctx.setLineDash([]);
         ctx.beginPath(); ctx.moveTo(lensX, actualHitY3b); ctx.lineTo(lensX + 300 * scale, actualHitY3b); ctx.stroke();
       } else {
         // ＝＝＝ 凸透镜虚像 u<f (v<0, m>0 正立放大虚像) ＝＝＝
@@ -280,16 +289,21 @@ export default function LensPage() {
           ctx.beginPath(); ctx.moveTo(lensX, cy); ctx.lineTo(imgX, imgTop); ctx.stroke();
         }
 
-        // Ray 3 (橙): 指向物方焦点F(左侧) → 经透镜后平行主轴
+        // Ray 3 (橙): 入射光延长线过物方焦点F(左侧) → 出射平行主轴
+        //   实线: 物顶→透镜(实际光线)
+        //   虚线: 入射光反向延长线→F(物在F内侧时需延伸)
+        //   实线: 透镜→平行出射
         ctx.strokeStyle = "#FF6B00";
-        // 虚线从物顶→F
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(fObjX, cy); ctx.stroke();
         const r3HitY3 = cy + (objTop - cy) * (lensX - fObjX) / (objX - fObjX);
         const actualHitY3c = Math.max(Math.min(r3HitY3, lensBot), lensTop);
+        // 实线: 物顶→透镜
         ctx.setLineDash([]);
-        ctx.beginPath(); ctx.moveTo(fObjX, cy); ctx.lineTo(lensX, actualHitY3c); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, actualHitY3c); ctx.stroke();
+        // 虚线: 反向延长线→F
         ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(lensX, actualHitY3c); ctx.lineTo(fObjX, cy); ctx.stroke();
+        // 实线: 透镜→平行出射
+        ctx.setLineDash([]);
         ctx.beginPath(); ctx.moveTo(lensX, actualHitY3c); ctx.lineTo(lensX + ext, actualHitY3c); ctx.stroke();
 
         // 反向延长汇聚到虚像
