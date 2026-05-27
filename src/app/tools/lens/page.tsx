@@ -149,16 +149,18 @@ export default function LensPage() {
       ctx.fillText("虚像", imgX - 18 * scale, cy - 6 * scale);
     } else if (Math.abs(v) > 0 && imgX > 10 && imgX < w - 10) {
       // 实像: m < 0 为倒立(向下), m > 0 为正立(向上)
+      // imgTop 在 cy 上方时朝上, 在 cy 下方时朝下
       const imgTop = cy + (m < 0 ? 1 : -1) * scale * hi;
+      const capDir = imgTop > cy ? -1 : 1; // cap goes opposite to arrow direction
       ctx.strokeStyle = "#FF5252"; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(imgX, cy); ctx.lineTo(imgX, imgTop); ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(imgX, imgTop); ctx.lineTo(imgX - 5 * scale, imgTop + 8 * scale);
-      ctx.moveTo(imgX, imgTop); ctx.lineTo(imgX + 5 * scale, imgTop + 8 * scale);
+      ctx.moveTo(imgX, imgTop); ctx.lineTo(imgX - 5 * scale, imgTop + capDir * 8 * scale);
+      ctx.moveTo(imgX, imgTop); ctx.lineTo(imgX + 5 * scale, imgTop + capDir * 8 * scale);
       ctx.stroke();
       ctx.fillStyle = "#FF5252";
       ctx.font = `${10 * scale}px sans-serif`;
-      ctx.fillText("实像" + (m < 0 ? " (倒立)" : ""), imgX - 22 * scale, imgTop - 6 * scale);
+      ctx.fillText("实像" + (m < 0 ? " (倒立)" : ""), imgX - 22 * scale, imgTop - capDir * 6 * scale);
     }
 
     // Principal rays
