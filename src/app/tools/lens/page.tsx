@@ -148,7 +148,8 @@ export default function LensPage() {
       ctx.font = `${10 * scale}px sans-serif`;
       ctx.fillText("虚像", imgX - 18 * scale, cy - 6 * scale);
     } else if (Math.abs(v) > 0 && imgX > 10 && imgX < w - 10) {
-      const imgTop = cy - scale * hi;
+      // 实像: m < 0 为倒立(向下), m > 0 为正立(向上)
+      const imgTop = cy + (m < 0 ? 1 : -1) * scale * hi;
       ctx.strokeStyle = "#FF5252"; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(imgX, cy); ctx.lineTo(imgX, imgTop); ctx.stroke();
       ctx.beginPath();
@@ -237,7 +238,7 @@ export default function LensPage() {
         // Ray 2 (黄): 过透镜中心，不偏折
         ctx.setLineDash([3, 3]); ctx.strokeStyle = "#FFD740";
         if (Math.abs(v) > 0) {
-          const imgTop = cy - scale * hi;
+          const imgTop = cy + (m < 0 ? 1 : -1) * scale * hi;
           ctx.beginPath(); ctx.moveTo(objX, objTop); ctx.lineTo(lensX, cy); ctx.stroke();
           ctx.beginPath(); ctx.moveTo(lensX, cy); ctx.lineTo(imgX, imgTop); ctx.stroke();
         }
