@@ -18,7 +18,7 @@ export default function AboutPage() {
           <h1 className="text-2xl font-bold text-[#1A1A2E] mb-3">关于 OpticsKit</h1>
           <p className="text-sm text-[#495057] leading-relaxed">
             OpticsKit 光学工具箱是一套为中国光学研究者打造的免费在线计算与可视化工具集。
-            覆盖色度学、光谱分析、成像光学和激光技术方向。
+            覆盖色度学、光谱分析、薄膜光学、成像光学、激光技术和材料数据库方向。目前共 8 个工具模块。
           </p>
         </div>
 
@@ -32,6 +32,22 @@ export default function AboutPage() {
                 <li>相关色温 CCT — Robertson (1968) 算法</li>
                 <li>CRI — Δu'v' 近似估计（非标准 CIE 13.3-1995 Ra）</li>
                 <li>sRGB 矩阵 — IEC 61966-2-1:1999</li>
+              </ul>
+            </div>
+            <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-4">
+              <p className="text-[#495057] font-medium mb-2">薄膜光学</p>
+              <ul className="list-disc list-inside space-y-1 text-xs">
+                <li>传输矩阵法 (TMM) — Macleod, "Thin-Film Optical Filters" (2017)</li>
+                <li>正入射单层膜反射率计算，支持 13 种预设场景</li>
+              </ul>
+            </div>
+            <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-4">
+              <p className="text-[#495057] font-medium mb-2">光学材料数据库</p>
+              <ul className="list-disc list-inside space-y-1 text-xs">
+                <li>数据来源：refractiveindex.info (CC0 1.0 公共领域)</li>
+                <li>304 种材料，1,229 条色散数据，中英文双语检索</li>
+                <li>Sellmeier 色散公式与 n(λ)/k(λ) 图表</li>
+                <li>每条数据附带原始 SCI 论文引用</li>
               </ul>
             </div>
             <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-4">
