@@ -81,7 +81,7 @@ const tools = [
   },
   {
     name: "光学材料折射率数据库",
-    desc: "304 种光学材料的折射率 n(λ) 与消光系数 k(λ)，数据来源 CC0 公共领域",
+    desc: "460 种光学材料的折射率 n(λ) 与消光系数 k(λ)，含 Schott 玻璃库，数据来源 CC0 公共领域",
     href: "/tools/material-db",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

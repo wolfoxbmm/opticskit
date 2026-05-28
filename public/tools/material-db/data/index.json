@@ -5093,5 +5093,2033 @@
   "wl_min": 0.5,
   "wl_max": 1.75,
   "dataset_count": 2
+ },
+ {
+  "id": "glass/P-SF68",
+  "names_en": [
+   "P-SF68"
+  ],
+  "name_cn": "",
+  "formula": "P-SF68",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=2.0052, v_d=21",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF55",
+  "names_en": [
+   "N-LASF55"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF55",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.9538, v_d=30.56",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF66",
+  "names_en": [
+   "N-SF66"
+  ],
+  "name_cn": "",
+  "formula": "N-SF66",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.9229, v_d=20.88",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF46B",
+  "names_en": [
+   "N-LASF46B"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF46B",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.9037, v_d=31.32",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF31A",
+  "names_en": [
+   "N-LASF31A"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF31A",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8830, v_d=40.76",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF9",
+  "names_en": [
+   "N-LASF9"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF9",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8502, v_d=32.17",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF57",
+  "names_en": [
+   "N-SF57"
+  ],
+  "name_cn": "",
+  "formula": "N-SF57",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8467, v_d=23.78",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF57HT",
+  "names_en": [
+   "N-SF57HT"
+  ],
+  "name_cn": "",
+  "formula": "N-SF57HT",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8467, v_d=23.78",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF57HTultra",
+  "names_en": [
+   "N-SF57HTultra"
+  ],
+  "name_cn": "",
+  "formula": "N-SF57HTultra",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8467, v_d=23.78",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF57",
+  "names_en": [
+   "SF57"
+  ],
+  "name_cn": "",
+  "formula": "SF57",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8467, v_d=23.83",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF57HTultra",
+  "names_en": [
+   "SF57HTultra"
+  ],
+  "name_cn": "",
+  "formula": "SF57HTultra",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8467, v_d=23.83",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF41",
+  "names_en": [
+   "N-LASF41"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF41",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8350, v_d=43.13",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF40",
+  "names_en": [
+   "N-LASF40"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF40",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8340, v_d=37.3",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF6G05",
+  "names_en": [
+   "SF6G05"
+  ],
+  "name_cn": "",
+  "formula": "SF6G05",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8091, v_d=25.27",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF43",
+  "names_en": [
+   "N-LASF43"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF43",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8061, v_d=40.61",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-LASF47",
+  "names_en": [
+   "P-LASF47"
+  ],
+  "name_cn": "",
+  "formula": "P-LASF47",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8061, v_d=40.9",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF6",
+  "names_en": [
+   "N-SF6"
+  ],
+  "name_cn": "",
+  "formula": "N-SF6",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8052, v_d=25.36",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF6HT",
+  "names_en": [
+   "N-SF6HT"
+  ],
+  "name_cn": "",
+  "formula": "N-SF6HT",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8052, v_d=25.36",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF6HTultra",
+  "names_en": [
+   "N-SF6HTultra"
+  ],
+  "name_cn": "",
+  "formula": "N-SF6HTultra",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8052, v_d=25.36",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF6",
+  "names_en": [
+   "SF6"
+  ],
+  "name_cn": "",
+  "formula": "SF6",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8052, v_d=25.43",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF6HT",
+  "names_en": [
+   "SF6HT"
+  ],
+  "name_cn": "",
+  "formula": "SF6HT",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8052, v_d=25.43",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF44",
+  "names_en": [
+   "N-LASF44"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF44",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8042, v_d=46.5",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF45",
+  "names_en": [
+   "N-LASF45"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF45",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8011, v_d=34.97",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAF21",
+  "names_en": [
+   "N-LAF21"
+  ],
+  "name_cn": "",
+  "formula": "N-LAF21",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7880, v_d=47.49",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAF33",
+  "names_en": [
+   "N-LAF33"
+  ],
+  "name_cn": "",
+  "formula": "N-LAF33",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7858, v_d=44.05",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF11",
+  "names_en": [
+   "N-SF11"
+  ],
+  "name_cn": "",
+  "formula": "N-SF11",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7847, v_d=25.68",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF11",
+  "names_en": [
+   "SF11"
+  ],
+  "name_cn": "",
+  "formula": "SF11",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7847, v_d=25.76",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF56A",
+  "names_en": [
+   "SF56A"
+  ],
+  "name_cn": "",
+  "formula": "SF56A",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7847, v_d=26.08",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAF34",
+  "names_en": [
+   "N-LAF34"
+  ],
+  "name_cn": "",
+  "formula": "N-LAF34",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7725, v_d=49.62",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF14",
+  "names_en": [
+   "N-SF14"
+  ],
+  "name_cn": "",
+  "formula": "N-SF14",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7618, v_d=26.53",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-LAF37",
+  "names_en": [
+   "P-LAF37"
+  ],
+  "name_cn": "",
+  "formula": "P-LAF37",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7555, v_d=45.66",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF4",
+  "names_en": [
+   "SF4"
+  ],
+  "name_cn": "",
+  "formula": "SF4",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7552, v_d=27.58",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF4",
+  "names_en": [
+   "N-SF4"
+  ],
+  "name_cn": "",
+  "formula": "N-SF4",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7551, v_d=27.38",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK33B",
+  "names_en": [
+   "N-LAK33B"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK33B",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7550, v_d=52.3",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAF7",
+  "names_en": [
+   "N-LAF7"
+  ],
+  "name_cn": "",
+  "formula": "N-LAF7",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7495, v_d=34.82",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK28",
+  "names_en": [
+   "N-LAK28"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK28",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7443, v_d=50.77",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAF2",
+  "names_en": [
+   "N-LAF2"
+  ],
+  "name_cn": "",
+  "formula": "N-LAF2",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7440, v_d=44.85",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF3",
+  "names_en": [
+   "SF3"
+  ],
+  "name_cn": "",
+  "formula": "SF3",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7400, v_d=28.2",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK34",
+  "names_en": [
+   "N-LAK34"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK34",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7292, v_d=54.5",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF10",
+  "names_en": [
+   "N-SF10"
+  ],
+  "name_cn": "",
+  "formula": "N-SF10",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7283, v_d=28.53",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF10",
+  "names_en": [
+   "SF10"
+  ],
+  "name_cn": "",
+  "formula": "SF10",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7283, v_d=28.41",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-SF69",
+  "names_en": [
+   "P-SF69"
+  ],
+  "name_cn": "",
+  "formula": "P-SF69",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7225, v_d=29.23",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-KZFS8",
+  "names_en": [
+   "N-KZFS8"
+  ],
+  "name_cn": "",
+  "formula": "N-KZFS8",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7205, v_d=34.7",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK10",
+  "names_en": [
+   "N-LAK10"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK10",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7200, v_d=50.62",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF1",
+  "names_en": [
+   "N-SF1"
+  ],
+  "name_cn": "",
+  "formula": "N-SF1",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7174, v_d=29.62",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF1",
+  "names_en": [
+   "SF1"
+  ],
+  "name_cn": "",
+  "formula": "SF1",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7174, v_d=29.51",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK8",
+  "names_en": [
+   "N-LAK8"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK8",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7130, v_d=53.83",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BASF64",
+  "names_en": [
+   "N-BASF64"
+  ],
+  "name_cn": "",
+  "formula": "N-BASF64",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7040, v_d=39.38",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF15",
+  "names_en": [
+   "N-SF15"
+  ],
+  "name_cn": "",
+  "formula": "N-SF15",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6989, v_d=30.2",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK14",
+  "names_en": [
+   "N-LAK14"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK14",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6968, v_d=55.41",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-LAK35",
+  "names_en": [
+   "P-LAK35"
+  ],
+  "name_cn": "",
+  "formula": "P-LAK35",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6935, v_d=53.2",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK9",
+  "names_en": [
+   "N-LAK9"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK9",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6910, v_d=54.71",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/LAK9G15",
+  "names_en": [
+   "LAK9G15"
+  ],
+  "name_cn": "",
+  "formula": "LAK9G15",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6906, v_d=54.76",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF8",
+  "names_en": [
+   "N-SF8"
+  ],
+  "name_cn": "",
+  "formula": "N-SF8",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6889, v_d=31.31",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK12",
+  "names_en": [
+   "N-LAK12"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK12",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6779, v_d=55.2",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF5",
+  "names_en": [
+   "N-SF5"
+  ],
+  "name_cn": "",
+  "formula": "N-SF5",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6727, v_d=32.25",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF5",
+  "names_en": [
+   "SF5"
+  ],
+  "name_cn": "",
+  "formula": "SF5",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6727, v_d=32.21",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BAF10",
+  "names_en": [
+   "N-BAF10"
+  ],
+  "name_cn": "",
+  "formula": "N-BAF10",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6700, v_d=47.11",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BASF2",
+  "names_en": [
+   "N-BASF2"
+  ],
+  "name_cn": "",
+  "formula": "N-BASF2",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6645, v_d=36",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SSK5",
+  "names_en": [
+   "N-SSK5"
+  ],
+  "name_cn": "",
+  "formula": "N-SSK5",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6584, v_d=50.88",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-KZFS5",
+  "names_en": [
+   "N-KZFS5"
+  ],
+  "name_cn": "",
+  "formula": "N-KZFS5",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6541, v_d=39.7",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BAF51",
+  "names_en": [
+   "N-BAF51"
+  ],
+  "name_cn": "",
+  "formula": "N-BAF51",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6522, v_d=44.96",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK7",
+  "names_en": [
+   "N-LAK7"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK7",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6516, v_d=58.52",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK22",
+  "names_en": [
+   "N-LAK22"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK22",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6511, v_d=55.89",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF2",
+  "names_en": [
+   "N-SF2"
+  ],
+  "name_cn": "",
+  "formula": "N-SF2",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6477, v_d=33.82",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF2",
+  "names_en": [
+   "SF2"
+  ],
+  "name_cn": "",
+  "formula": "SF2",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6477, v_d=33.85",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK21",
+  "names_en": [
+   "N-LAK21"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK21",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6405, v_d=60.1",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-KZFS11",
+  "names_en": [
+   "N-KZFS11"
+  ],
+  "name_cn": "",
+  "formula": "N-KZFS11",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6377, v_d=42.41",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SSK20",
+  "names_en": [
+   "N-SSK20"
+  ],
+  "name_cn": "",
+  "formula": "N-SSK20",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6257, v_d=50.2",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SSK2",
+  "names_en": [
+   "N-SSK2"
+  ],
+  "name_cn": "",
+  "formula": "N-SSK2",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6223, v_d=53.27",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/F2G12",
+  "names_en": [
+   "F2G12"
+  ],
+  "name_cn": "",
+  "formula": "F2G12",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6207, v_d=36.56",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SK16",
+  "names_en": [
+   "N-SK16"
+  ],
+  "name_cn": "",
+  "formula": "N-SK16",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6204, v_d=60.32",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-F2",
+  "names_en": [
+   "N-F2"
+  ],
+  "name_cn": "",
+  "formula": "N-F2",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6201, v_d=36.43",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/F2",
+  "names_en": [
+   "F2"
+  ],
+  "name_cn": "",
+  "formula": "F2",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6200, v_d=36.37",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/F2HT",
+  "names_en": [
+   "F2HT"
+  ],
+  "name_cn": "",
+  "formula": "F2HT",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6200, v_d=36.37",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/F2HTi",
+  "names_en": [
+   "F2HTi"
+  ],
+  "name_cn": "",
+  "formula": "F2HTi",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6200, v_d=36.37",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-PSK53A",
+  "names_en": [
+   "N-PSK53A"
+  ],
+  "name_cn": "",
+  "formula": "N-PSK53A",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6180, v_d=63.39",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SSK8",
+  "names_en": [
+   "N-SSK8"
+  ],
+  "name_cn": "",
+  "formula": "N-SSK8",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6177, v_d=49.83",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-KZFS4",
+  "names_en": [
+   "N-KZFS4"
+  ],
+  "name_cn": "",
+  "formula": "N-KZFS4",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6134, v_d=44.49",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SK4",
+  "names_en": [
+   "N-SK4"
+  ],
+  "name_cn": "",
+  "formula": "N-SK4",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6127, v_d=58.63",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-SK60",
+  "names_en": [
+   "P-SK60"
+  ],
+  "name_cn": "",
+  "formula": "P-SK60",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6103, v_d=57.9",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BAF52",
+  "names_en": [
+   "N-BAF52"
+  ],
+  "name_cn": "",
+  "formula": "N-BAF52",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6086, v_d=46.6",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SK2",
+  "names_en": [
+   "N-SK2"
+  ],
+  "name_cn": "",
+  "formula": "N-SK2",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6074, v_d=56.65",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SK2HT",
+  "names_en": [
+   "N-SK2HT"
+  ],
+  "name_cn": "",
+  "formula": "N-SK2HT",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6074, v_d=56.65",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BAF4",
+  "names_en": [
+   "N-BAF4"
+  ],
+  "name_cn": "",
+  "formula": "N-BAF4",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6057, v_d=43.72",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/F5",
+  "names_en": [
+   "F5"
+  ],
+  "name_cn": "",
+  "formula": "F5",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6034, v_d=38.03",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SK14",
+  "names_en": [
+   "N-SK14"
+  ],
+  "name_cn": "",
+  "formula": "N-SK14",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6031, v_d=60.6",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/LF5G19",
+  "names_en": [
+   "LF5G19"
+  ],
+  "name_cn": "",
+  "formula": "LF5G19",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5966, v_d=39.89",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SK5",
+  "names_en": [
+   "N-SK5"
+  ],
+  "name_cn": "",
+  "formula": "N-SK5",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5891, v_d=61.27",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SK5HTi",
+  "names_en": [
+   "N-SK5HTi"
+  ],
+  "name_cn": "",
+  "formula": "N-SK5HTi",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5891, v_d=61.27",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-SK57",
+  "names_en": [
+   "P-SK57"
+  ],
+  "name_cn": "",
+  "formula": "P-SK57",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5870, v_d=59.6",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/LF5",
+  "names_en": [
+   "LF5"
+  ],
+  "name_cn": "",
+  "formula": "LF5",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5814, v_d=40.85",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/LF5HTi",
+  "names_en": [
+   "LF5HTi"
+  ],
+  "name_cn": "",
+  "formula": "LF5HTi",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5814, v_d=40.89",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BALF4",
+  "names_en": [
+   "N-BALF4"
+  ],
+  "name_cn": "",
+  "formula": "N-BALF4",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5796, v_d=53.87",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BAK1",
+  "names_en": [
+   "N-BAK1"
+  ],
+  "name_cn": "",
+  "formula": "N-BAK1",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5725, v_d=57.55",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BAK4",
+  "names_en": [
+   "N-BAK4"
+  ],
+  "name_cn": "",
+  "formula": "N-BAK4",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5688, v_d=55.98",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BAK4HT",
+  "names_en": [
+   "N-BAK4HT"
+  ],
+  "name_cn": "",
+  "formula": "N-BAK4HT",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5688, v_d=55.98",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SK11",
+  "names_en": [
+   "N-SK11"
+  ],
+  "name_cn": "",
+  "formula": "N-SK11",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5638, v_d=60.8",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-KZFS2",
+  "names_en": [
+   "N-KZFS2"
+  ],
+  "name_cn": "",
+  "formula": "N-KZFS2",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5584, v_d=54.01",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-PSK3",
+  "names_en": [
+   "N-PSK3"
+  ],
+  "name_cn": "",
+  "formula": "N-PSK3",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5523, v_d=63.46",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/LLF1HTi",
+  "names_en": [
+   "LLF1HTi"
+  ],
+  "name_cn": "",
+  "formula": "LLF1HTi",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5481, v_d=45.9",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/LLF1",
+  "names_en": [
+   "LLF1"
+  ],
+  "name_cn": "",
+  "formula": "LLF1",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5481, v_d=45.75",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BALF5",
+  "names_en": [
+   "N-BALF5"
+  ],
+  "name_cn": "",
+  "formula": "N-BALF5",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5474, v_d=53.63",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BAK2",
+  "names_en": [
+   "N-BAK2"
+  ],
+  "name_cn": "",
+  "formula": "N-BAK2",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5400, v_d=59.71",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-PK51",
+  "names_en": [
+   "N-PK51"
+  ],
+  "name_cn": "",
+  "formula": "N-PK51",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5286, v_d=76.98",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-KF9",
+  "names_en": [
+   "N-KF9"
+  ],
+  "name_cn": "",
+  "formula": "N-KF9",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5235, v_d=51.54",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/K5G20",
+  "names_en": [
+   "K5G20"
+  ],
+  "name_cn": "",
+  "formula": "K5G20",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5234, v_d=56.76",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-K5",
+  "names_en": [
+   "N-K5"
+  ],
+  "name_cn": "",
+  "formula": "N-K5",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5225, v_d=59.48",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/BK7G18",
+  "names_en": [
+   "BK7G18"
+  ],
+  "name_cn": "",
+  "formula": "BK7G18",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5197, v_d=63.58",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BK7",
+  "names_en": [
+   "N-BK7"
+  ],
+  "name_cn": "",
+  "formula": "N-BK7",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5168, v_d=64.17",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BK7HT",
+  "names_en": [
+   "N-BK7HT"
+  ],
+  "name_cn": "",
+  "formula": "N-BK7HT",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5168, v_d=64.17",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BK7HTi",
+  "names_en": [
+   "N-BK7HTi"
+  ],
+  "name_cn": "",
+  "formula": "N-BK7HTi",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5168, v_d=64.17",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BK7HTSultra",
+  "names_en": [
+   "N-BK7HTSultra"
+  ],
+  "name_cn": "",
+  "formula": "N-BK7HTSultra",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5168, v_d=64.17",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-ZK7A",
+  "names_en": [
+   "N-ZK7A"
+  ],
+  "name_cn": "",
+  "formula": "N-ZK7A",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5081, v_d=61.04",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/K10",
+  "names_en": [
+   "K10"
+  ],
+  "name_cn": "",
+  "formula": "K10",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5014, v_d=56.41",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BK10",
+  "names_en": [
+   "N-BK10"
+  ],
+  "name_cn": "",
+  "formula": "N-BK10",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.4978, v_d=66.95",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-PK52A",
+  "names_en": [
+   "N-PK52A"
+  ],
+  "name_cn": "",
+  "formula": "N-PK52A",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.4970, v_d=81.61",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-FK5",
+  "names_en": [
+   "N-FK5"
+  ],
+  "name_cn": "",
+  "formula": "N-FK5",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.4875, v_d=70.41",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/FK5HTi",
+  "names_en": [
+   "FK5HTi"
+  ],
+  "name_cn": "",
+  "formula": "FK5HTi",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.4875, v_d=70.47",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-FK51A",
+  "names_en": [
+   "N-FK51A"
+  ],
+  "name_cn": "",
+  "formula": "N-FK51A",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.4866, v_d=84.47",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-FK58",
+  "names_en": [
+   "N-FK58"
+  ],
+  "name_cn": "",
+  "formula": "N-FK58",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.4560, v_d=90.9",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SCHOTT RealView® 2.0 ",
+  "names_en": [
+   "SCHOTT RealView® 2.0 "
+  ],
+  "name_cn": "",
+  "formula": "SCHOTT RealView® 2.0 ",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=2.0010, v_d=29.14",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/FK3",
+  "names_en": [
+   "FK3"
+  ],
+  "name_cn": "",
+  "formula": "FK3",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.4645, v_d=65.77",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-BAF3",
+  "names_en": [
+   "N-BAF3"
+  ],
+  "name_cn": "",
+  "formula": "N-BAF3",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5827, v_d=46.64",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/BAFN6",
+  "names_en": [
+   "BAFN6"
+  ],
+  "name_cn": "",
+  "formula": "BAFN6",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5890, v_d=48.45",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-KZFS4HT",
+  "names_en": [
+   "N-KZFS4HT"
+  ],
+  "name_cn": "",
+  "formula": "N-KZFS4HT",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6134, v_d=44.49",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-PSK53",
+  "names_en": [
+   "N-PSK53"
+  ],
+  "name_cn": "",
+  "formula": "N-PSK53",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6201, v_d=63.48",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SK10",
+  "names_en": [
+   "N-SK10"
+  ],
+  "name_cn": "",
+  "formula": "N-SK10",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6228, v_d=56.98",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SK15",
+  "names_en": [
+   "N-SK15"
+  ],
+  "name_cn": "",
+  "formula": "N-SK15",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6230, v_d=58.02",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/KZFSN5",
+  "names_en": [
+   "KZFSN5"
+  ],
+  "name_cn": "",
+  "formula": "KZFSN5",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6541, v_d=39.63",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF19",
+  "names_en": [
+   "N-SF19"
+  ],
+  "name_cn": "",
+  "formula": "N-SF19",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6668, v_d=33.12",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/KZFS12",
+  "names_en": [
+   "KZFS12"
+  ],
+  "name_cn": "",
+  "formula": "KZFS12",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6960, v_d=36.29",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF64",
+  "names_en": [
+   "N-SF64"
+  ],
+  "name_cn": "",
+  "formula": "N-SF64",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7059, v_d=30.23",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAF3",
+  "names_en": [
+   "N-LAF3"
+  ],
+  "name_cn": "",
+  "formula": "N-LAF3",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7170, v_d=47.96",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAK33A",
+  "names_en": [
+   "N-LAK33A"
+  ],
+  "name_cn": "",
+  "formula": "N-LAK33A",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7539, v_d=52.27",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-SF56",
+  "names_en": [
+   "N-SF56"
+  ],
+  "name_cn": "",
+  "formula": "N-SF56",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7847, v_d=26.1",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAF36",
+  "names_en": [
+   "N-LAF36"
+  ],
+  "name_cn": "",
+  "formula": "N-LAF36",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7995, v_d=42.37",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF45HT",
+  "names_en": [
+   "N-LASF45HT"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF45HT",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8011, v_d=34.97",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SFL6",
+  "names_en": [
+   "SFL6"
+  ],
+  "name_cn": "",
+  "formula": "SFL6",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8052, v_d=25.39",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SFL57",
+  "names_en": [
+   "SFL57"
+  ],
+  "name_cn": "",
+  "formula": "SFL57",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8467, v_d=23.62",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/SF57HT",
+  "names_en": [
+   "SF57HT"
+  ],
+  "name_cn": "",
+  "formula": "SF57HT",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8467, v_d=23.83",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF9HT",
+  "names_en": [
+   "N-LASF9HT"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF9HT",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8502, v_d=32.17",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LASF46A",
+  "names_en": [
+   "N-LASF46A"
+  ],
+  "name_cn": "",
+  "formula": "N-LASF46A",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.9037, v_d=31.32",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-ZK7",
+  "names_en": [
+   "N-ZK7"
+  ],
+  "name_cn": "",
+  "formula": "N-ZK7",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5085, v_d=61.19",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/K7",
+  "names_en": [
+   "K7"
+  ],
+  "name_cn": "",
+  "formula": "K7",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5111, v_d=60.41",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-BK7",
+  "names_en": [
+   "P-BK7"
+  ],
+  "name_cn": "",
+  "formula": "P-BK7",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5164, v_d=64.06",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-LASF50",
+  "names_en": [
+   "P-LASF50"
+  ],
+  "name_cn": "",
+  "formula": "P-LASF50",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8086, v_d=40.46",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-LASF51",
+  "names_en": [
+   "P-LASF51"
+  ],
+  "name_cn": "",
+  "formula": "P-LASF51",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.8100, v_d=40.93",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-SF8",
+  "names_en": [
+   "P-SF8"
+  ],
+  "name_cn": "",
+  "formula": "P-SF8",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.6889, v_d=31.25",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-SK58A",
+  "names_en": [
+   "P-SK58A"
+  ],
+  "name_cn": "",
+  "formula": "P-SK58A",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5891, v_d=61.15",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-PK53",
+  "names_en": [
+   "P-PK53"
+  ],
+  "name_cn": "",
+  "formula": "P-PK53",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5269, v_d=66.22",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-SK57Q1",
+  "names_en": [
+   "P-SK57Q1"
+  ],
+  "name_cn": "",
+  "formula": "P-SK57Q1",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5860, v_d=59.5",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/P-SF67",
+  "names_en": [
+   "P-SF67"
+  ],
+  "name_cn": "",
+  "formula": "P-SF67",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.9068, v_d=21.4",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/LAFN7",
+  "names_en": [
+   "LAFN7"
+  ],
+  "name_cn": "",
+  "formula": "LAFN7",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7495, v_d=34.95",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/LF5G15",
+  "names_en": [
+   "LF5G15"
+  ],
+  "name_cn": "",
+  "formula": "LF5G15",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.5840, v_d=40.83",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
+ },
+ {
+  "id": "glass/N-LAF35",
+  "names_en": [
+   "N-LAF35"
+  ],
+  "name_cn": "",
+  "formula": "N-LAF35",
+  "category": "glass",
+  "about": "Schott optical glass. n_d=1.7433, v_d=49.4",
+  "wl_min": 0.3,
+  "wl_max": 2.5,
+  "dataset_count": 1
  }
 ]
