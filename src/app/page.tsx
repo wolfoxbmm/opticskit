@@ -80,23 +80,24 @@ const tools = [
     color: "cyan",
   },
   {
+    name: "光学材料折射率数据库",
+    desc: "304 种光学材料的折射率 n(λ) 与消光系数 k(λ)，数据来源 CC0 公共领域",
+    href: "/tools/material-db",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        <line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="14" y2="11"/>
+      </svg>
+    ),
+    color: "violet",
+  },
+  {
     name: "你需要什么工具？",
     desc: "",
     href: "#",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-      </svg>
-    ),
-    color: "slate",
-  },
-  {
-    name: "反馈给我们",
-    desc: "",
-    href: "#",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
       </svg>
     ),
     color: "slate",
@@ -138,7 +139,7 @@ export default function Home() {
         <div className="max-w-2xl mx-auto space-y-5">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#DEE2E6] bg-white text-[12px] text-[#495057] font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-[#0CA678]" />
-            免费 · 开源 · 7 个工具
+            免费 · 开源 · 8 个工具
           </div>
           <h1 className="text-[42px] leading-[1.12] font-semibold tracking-[-0.03em] text-[#1A1A2E]">
             用光的语言
@@ -181,7 +182,8 @@ export default function Home() {
                     </h3>
                   </div>
                   {isFeedback ? (
-                    <div className="flex-1 flex flex-col items-center justify-center text-center">
+                    <div className="flex-1 flex flex-col items-center justify-center text-center gap-1">
+                      <p className="text-[12px] text-[#ADB5BD]">右下角反馈给我们</p>
                     </div>
                   ) : (
                     <p className="text-[13px] text-[#868E96] leading-relaxed flex-1">

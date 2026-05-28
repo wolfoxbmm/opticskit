@@ -1,0 +1,1 @@
+[{"source": "Palik", "ref_short": "Handbook", "ref_full": "Handbook of Optical Constants of Solids, Edward D. Palik, ed. Academic Press, Boston, 1985", "comments": "25 °C", "wl_min": 0.57, "wl_max": 39.4, "type": "formula1", "coeffs": [3.744239, 0.2079603, 0.9189162, 0.3765643, 12.5444602, 165.6525518]}]
