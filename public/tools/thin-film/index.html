@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>薄膜干涉模拟 - Thin Film Interference</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0a0a0f;
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .container {
+    display: flex;
+    gap: 32px;
+    padding: 40px;
+    max-width: 1240px;
+    width: 100%;
+  }
+
+  /* ---- Control Panel ---- */
+  .controls {
+    background: #13131a;
+    border-radius: 16px;
+    padding: 28px;
+    width: 360px;
+    flex-shrink: 0;
+    border: 1px solid #1e1e2a;
+    overflow-y: auto;
+    max-height: 90vh;
+    scrollbar-width: thin;
+    scrollbar-color: #1e1e2a #0a0a0f;
+  }
+  .controls h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #fff;
+  }
+  .controls .subtitle {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 20px;
+  }
+
+  .param-group {
+    margin-bottom: 18px;
+  }
+  .param-group label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 6px;
+  }
+  .param-group label .val {
+    color: #4fc3f7;
+    font-weight: 600;
+    font-size: 12px;
+    background: rgba(79,195,247,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .param-group input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #1e1e2a;
+    outline: none;
+    cursor: pointer;
+  }
+  .param-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #4fc3f7;
+    border: 2px solid #0a0a0f;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(79,195,247,0.4);
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 3px;
+  }
+  .info-row .highlight {
+    color: #ff8a65;
+    font-weight: 500;
+  }
+  .info-row .highlight-blue {
+    color: #4fc3f7;
+    font-weight: 500;
+  }
+  .info-row .highlight-green {
+    color: #81c784;
+    font-weight: 500;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #1e1e2a;
+    margin: 16px 0;
+  }
+
+  .section-title {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .preset-btn {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border: 1px solid #1e1e2a;
+    border-radius: 8px;
+    background: #13131a;
+    color: #aaa;
+    font-size: 11px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .preset-btn:hover {
+    background: #1a1a24;
+    color: #fff;
+    border-color: #4fc3f7;
+  }
+  .preset-btn.active {
+    background: rgba(79,195,247,0.1);
+    border-color: #4fc3f7;
+    color: #4fc3f7;
+  }
+  .preset-btn .preset-desc {
+    font-size: 10px;
+    color: #555;
+    margin-top: 2px;
+  }
+
+  /* Preset dropdown */
+  .preset-select-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  .preset-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #1e1e2a;
+    border-radius: 8px;
+    background: #0a0a0f;
+    color: #e0e0e0;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color 0.2s;
+  }
+  .preset-select:hover {
+    border-color: #4fc3f7;
+  }
+  .preset-select:focus {
+    border-color: #4fc3f7;
+    box-shadow: 0 0 0 2px rgba(79,195,247,0.15);
+  }
+  .preset-select option {
+    background: #13131a;
+    color: #e0e0e0;
+    padding: 8px;
+  }
+  .preset-select-wrapper::after {
+    content: '▾';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 10px;
+    pointer-events: none;
+  }
+
+  /* Explanation box */
+  .explain-box {
+    background: rgba(255,138,101,0.06);
+    border: 1px solid rgba(255,138,101,0.15);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 12px;
+  }
+  .explain-box .explain-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #ff8a65;
+    margin-bottom: 6px;
+  }
+  .explain-box .explain-text {
+    font-size: 11px;
+    color: #999;
+    line-height: 1.6;
+  }
+  .explain-box .explain-highlight {
+    color: #ffcc80;
+    font-weight: 500;
+  }
+
+  .mode-toggle {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+    background: #0a0a0f;
+    border-radius: 8px;
+    padding: 3px;
+  }
+  .mode-btn {
+    flex: 1;
+    padding: 7px 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #666;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mode-btn.active {
+    background: #1a1a24;
+    color: #fff;
+  }
+
+  /* ---- Chart Area ---- */
+  .chart-area {
+    flex: 1;
+    background: #13131a;
+    border-radius: 16px;
+    border: 1px solid #1e1e2a;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .chart-area h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+  .chart-area .chart-subtitle {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 12px;
+  }
+  .chart-area canvas {
+    flex: 1;
+    width: 100%;
+    border-radius: 8px;
+    background: #0a0a0f;
+  }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+    font-size: 10px;
+    color: #888;
+  }
+  .legend span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  /* QWOT marker on chart style (handled in canvas) */
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Controls -->
+  <div class="controls">
+    <h2>薄膜干涉 v2.1</h2>
+    <p class="subtitle">Thin Film Interference · 正入射 TMM</p>
+
+    <div class="mode-toggle">
+      <button class="mode-btn active" data-mode="spectrum">反射光谱</button>
+      <button class="mode-btn" data-mode="thickness">厚度扫描</button>
+    </div>
+
+    <div class="param-group">
+      <label>薄膜折射率 n₁ <span class="val" id="n1Val">1.38</span></label>
+      <input type="range" id="n1" min="1.2" max="3.5" step="0.01" value="1.38">
+    </div>
+
+    <div class="param-group">
+      <label>薄膜厚度 d <span class="val" id="dVal">100 nm</span></label>
+      <input type="range" id="thickness" min="10" max="800" step="1" value="100">
+    </div>
+
+    <div class="param-group">
+      <label>基底折射率 n₂ <span class="val" id="n2Val">1.52</span></label>
+      <input type="range" id="n2" min="1.3" max="5.0" step="0.01" value="1.52">
+    </div>
+
+    <div class="info-row">
+      <span>λ/4 光学厚度 @ 550nm</span>
+      <span class="highlight-blue" id="quarterWave">99.6 nm</span>
+    </div>
+    <div class="info-row">
+      <span>裸基底反射率 @ 550nm</span>
+      <span class="highlight-green" id="bareR">4.26%</span>
+    </div>
+    <div class="info-row">
+      <span>最小反射率 @ <span id="minRLambda" class="highlight">550 nm</span></span>
+      <span class="highlight" id="minRVal">1.26%</span>
+    </div>
+
+    <!-- Explanation box: why R ≠ 0 -->
+    <div class="explain-box" id="explainBox">
+      <div class="explain-title">💡 为什么反射率降不到零？</div>
+      <div class="explain-text" id="explainText">
+        完美增透需要 <span class="explain-highlight">n₁ = √(n₀ × n₂)</span>。<br>
+        当前 n₁=<b id="explainN1">1.38</b>，理想值 = √(1.0×1.52) = <b id="explainIdeal">1.23</b>。<br>
+        偏差 12%，真实材料无法完美匹配，所以 R<sub>min</sub> > 0。
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <p class="section-title">预设场景</p>
+    <div class="preset-select-wrapper">
+      <select class="preset-select" id="presetSelect">
+        <optgroup label="—— 教学经典 ——">
+          <option value="mgh2">MgF₂ 单层增透 / BK7 — 经典单层增透膜</option>
+          <option value="tio2">TiO₂ / BK7 — 高折射率膜的反射增强效应 ⚠</option>
+          <option value="soap">肥皂泡（水膜/空气）— 日常干涉现象</option>
+          <option value="oil">油膜 / 水面 — 折射率接近时干涉消失</option>
+        </optgroup>
+        <optgroup label="—— 光学器件 ——">
+          <option value="camera">相机镜头 MgF₂ — 为什么镜头是紫色的</option>
+          <option value="si3n4">Si₃N₄ 增透 / Si — 完美折射率匹配 R→0</option>
+          <option value="germanium">ZnS / Ge 基底 — 红外光学高折射率</option>
+        </optgroup>
+        <optgroup label="—— 理论极限 ——">
+          <option value="arMulti">理想增透膜 — n₁=√(n₀n₂) 理论极限</option>
+          <option value="nearzero">近零反射 — n₁=n₂ 消膜效应</option>
+        </optgroup>
+        <optgroup label="—— 更多材料 ——">
+          <option value="al2o3">Al₂O₃ / 玻璃 — 蓝宝石膜（中等折射率）</option>
+          <option value="ta2o5">Ta₂O₅ / SiO₂ — 高折射率氧化物（增反）⚠</option>
+          <option value="sio2_glass">SiO₂ / 玻璃 — 最常用低折射率增透膜</option>
+          <option value="zns_si">ZnS / Si — 红外探测器增透窗口</option>
+        </optgroup>
+      </select>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-area">
+    <h3 id="chartTitle">反射率 vs 波长</h3>
+    <p class="chart-subtitle" id="chartSubtitle">380 – 780 nm 可见光波段</p>
+    <canvas id="chart"></canvas>
+    <div class="legend" id="legendBar">
+      <span><span class="dot" style="background:#4fc3f7"></span> 当前膜系</span>
+      <span><span class="dot" style="background:#333"></span> 裸基底（无膜）</span>
+      <span style="margin-left:auto;color:#ff8a65">◆ 最小反射率点</span>
+      <span style="color:#81c784;margin-left:12px">┆ λ/4 参考线</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ Physics Engine ============
+
+/**
+ * Single-layer thin film reflectance at normal incidence.
+ * Airy formula: R = (r01² + r12² + 2·r01·r12·cos(2δ)) / (1 + r01²·r12² + 2·r01·r12·cos(2δ))
+ */
+function reflectance(lambda, n1, d, n2) {
+  const n0 = 1.0;
+  const r01 = (n0 - n1) / (n0 + n1);
+  const r12 = (n1 - n2) / (n1 + n2);
+  const delta = (2 * Math.PI * n1 * d) / lambda;
+  const cos2d = Math.cos(2 * delta);
+  const num = r01*r01 + r12*r12 + 2*r01*r12*cos2d;
+  const den = 1 + r01*r01*r12*r12 + 2*r01*r12*cos2d;
+  return num / den;
+}
+
+function reflectanceBare(lambda, n2) {
+  const n0 = 1.0;
+  const r = (n0 - n2) / (n0 + n2);
+  return r * r;
+}
+
+function findMinR(n1, d, n2, λStart, λEnd, step) {
+  λStart = λStart || 380;
+  λEnd = λEnd || 780;
+  step = step || 1;
+  let bestLambda = λStart, bestR = Infinity;
+  for (let λ = λStart; λ <= λEnd; λ += step) {
+    const R = reflectance(λ, n1, d, n2);
+    if (R < bestR) { bestR = R; bestLambda = λ; }
+  }
+  return { lambda: bestLambda, R: bestR };
+}
+
+// ============ Chart Rendering ============
+const canvas = document.getElementById('chart');
+const ctx = canvas.getContext('2d');
+let W, H, padLeft, padRight, padTop, padBottom;
+let currentMode = 'spectrum'; // 'spectrum' | 'thickness'
+
+function resize() {
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = (rect.width - 48) * dpr;
+  canvas.height = (Math.max(rect.height - 155, 250)) * dpr;
+  canvas.style.width = (rect.width - 48) + 'px';
+  canvas.style.height = Math.max(rect.height - 155, 250) + 'px';
+  W = canvas.width; H = canvas.height;
+  padLeft = 64 * dpr; padRight = 30 * dpr;
+  padTop = 30 * dpr; padBottom = 48 * dpr;
+  render();
+}
+
+function xForLambda(lambda) {
+  return padLeft + ((lambda - 380) / 400) * (W - padLeft - padRight);
+}
+
+function xForThickness(d) {
+  return padLeft + ((d - 10) / 790) * (W - padLeft - padRight);
+}
+
+function yForR(R) {
+  const Rmax = 0.40;
+  return padTop + (1 - R / Rmax) * (H - padTop - padBottom);
+}
+
+// ============ Wavelength to RGB ============
+function wavelengthToColor(wavelength) {
+  let r, g, b;
+  if (wavelength >= 380 && wavelength < 440) {
+    r = -(wavelength - 440) / (440 - 380); g = 0; b = 1;
+  } else if (wavelength >= 440 && wavelength < 490) {
+    r = 0; g = (wavelength - 440) / (490 - 440); b = 1;
+  } else if (wavelength >= 490 && wavelength < 510) {
+    r = 0; g = 1; b = -(wavelength - 510) / (510 - 490);
+  } else if (wavelength >= 510 && wavelength < 580) {
+    r = (wavelength - 510) / (580 - 510); g = 1; b = 0;
+  } else if (wavelength >= 580 && wavelength < 645) {
+    r = 1; g = -(wavelength - 645) / (645 - 580); b = 0;
+  } else if (wavelength >= 645 && wavelength <= 780) {
+    r = 1; g = 0; b = 0;
+  } else { return '#000'; }
+  let factor;
+  if (wavelength >= 380 && wavelength < 420) {
+    factor = 0.3 + 0.7 * (wavelength - 380) / (420 - 380);
+  } else if (wavelength >= 645 && wavelength <= 780) {
+    factor = 0.3 + 0.7 * (780 - wavelength) / (780 - 645);
+  } else { factor = 1; }
+  const toHex = (v) => {
+    const val = Math.round(Math.max(0, Math.min(1, v * factor)) * 255);
+    return val.toString(16).padStart(2, '0');
+  };
+  return '#' + toHex(r) + toHex(g) + toHex(b);
+}
+
+// ============ Spectrum Mode Render ============
+function renderSpectrum(dpr, n1, d, n2) {
+  const Rmax = 0.40;
+
+  // Spectrum bar
+  const spectrumGrad = ctx.createLinearGradient(padLeft, 0, W - padRight, 0);
+  for (let λ = 380; λ <= 780; λ += 5) {
+    spectrumGrad.addColorStop((λ-380)/400, wavelengthToColor(λ));
+  }
+  ctx.fillStyle = spectrumGrad;
+  ctx.fillRect(padLeft, padTop - 14*dpr, W - padLeft - padRight, 10*dpr);
+
+  // Horizontal grid
+  ctx.strokeStyle = '#1a1a24'; ctx.lineWidth = 1; ctx.font = `${10*dpr}px Inter, sans-serif`;
+  for (let R = 0; R <= Rmax + 0.01; R += 0.05) {
+    const y = yForR(R);
+    ctx.beginPath(); ctx.moveTo(padLeft, y); ctx.lineTo(W - padRight, y); ctx.stroke();
+    ctx.textAlign = 'right'; ctx.fillStyle = '#555';
+    ctx.fillText((R*100).toFixed(0) + '%', padLeft - 8*dpr, y + 3*dpr);
+  }
+
+  // Zero line
+  ctx.beginPath(); ctx.moveTo(padLeft, yForR(0)); ctx.lineTo(W - padRight, yForR(0));
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 0.5; ctx.stroke();
+  ctx.fillStyle = '#444'; ctx.textAlign = 'right';
+  ctx.fillText('0%', padLeft - 8*dpr, yForR(0) + 3*dpr);
+
+  // Vertical grid
+  const bands = [380, 450, 495, 570, 590, 620, 750];
+  for (const λ of bands) {
+    const x = xForLambda(λ);
+    ctx.beginPath(); ctx.moveTo(x, padTop); ctx.lineTo(x, H - padBottom);
+    ctx.strokeStyle = '#151520'; ctx.stroke();
+    ctx.textAlign = 'center'; ctx.fillStyle = '#555';
+    ctx.fillText(λ, x, H - padBottom + 16*dpr);
+  }
+
+  // Axes
+  ctx.fillStyle = '#888'; ctx.textAlign = 'center';
+  ctx.fillText('波长 (nm)', W / 2, H - 4*dpr);
+  ctx.save(); ctx.translate(14*dpr, H / 2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('反射率 R', 0, 0); ctx.restore();
+
+  // Bare substrate dashed curve
+  ctx.beginPath(); ctx.strokeStyle = '#333'; ctx.lineWidth = 1.5;
+  ctx.setLineDash([4*dpr, 4*dpr]);
+  let first = true;
+  for (let λ = 380; λ <= 780; λ += 1) {
+    const x = xForLambda(λ), y = yForR(reflectanceBare(λ, n2));
+    if (first) { ctx.moveTo(x, y); first = false; } else { ctx.lineTo(x, y); }
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // Film curve
+  const curveData = [];
+  for (let λ = 380; λ <= 780; λ += 1) {
+    const R = reflectance(λ, n1, d, n2);
+    curveData.push({ λ, R, x: xForLambda(λ), y: yForR(Math.min(R, Rmax)) });
+  }
+  // Fill
+  ctx.beginPath();
+  for (let i = 0; i < curveData.length; i++) {
+    if (i === 0) ctx.moveTo(curveData[i].x, curveData[i].y);
+    else ctx.lineTo(curveData[i].x, curveData[i].y);
+  }
+  ctx.lineTo(curveData[curveData.length-1].x, H - padBottom);
+  ctx.lineTo(curveData[0].x, H - padBottom); ctx.closePath();
+  const grad = ctx.createLinearGradient(0, padTop, 0, H - padBottom);
+  grad.addColorStop(0, 'rgba(79,195,247,0.25)'); grad.addColorStop(1, 'rgba(79,195,247,0.02)');
+  ctx.fillStyle = grad; ctx.fill();
+  // Stroke
+  ctx.beginPath(); ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 2;
+  for (let i = 0; i < curveData.length; i++) {
+    if (i === 0) ctx.moveTo(curveData[i].x, curveData[i].y);
+    else ctx.lineTo(curveData[i].x, curveData[i].y);
+  }
+  ctx.stroke();
+
+  // --- QWOT reference line ---
+  const qwotLambda = 550;
+  const qwotXDpr = xForLambda(qwotLambda);
+  ctx.beginPath();
+  ctx.moveTo(qwotXDpr, padTop);
+  ctx.lineTo(qwotXDpr, H - padBottom);
+  ctx.strokeStyle = 'rgba(129,199,132,0.35)';
+  ctx.lineWidth = 1; ctx.setLineDash([3*dpr, 5*dpr]); ctx.stroke(); ctx.setLineDash([]);
+  // QWOT label at top
+  const bareR550 = reflectanceBare(qwotLambda, n2);
+  const filmR550 = reflectance(qwotLambda, n1, d, n2);
+  const yBare = yForR(bareR550);
+  const yFilm = yForR(Math.min(filmR550, Rmax));
+  // Connect bare→film with vertical line & circle markers
+  ctx.beginPath(); ctx.moveTo(qwotXDpr, yBare); ctx.lineTo(qwotXDpr, yFilm);
+  ctx.strokeStyle = 'rgba(129,199,132,0.6)'; ctx.lineWidth = 1.5; ctx.setLineDash([]); ctx.stroke();
+  // Bare marker
+  ctx.beginPath(); ctx.arc(qwotXDpr, yBare, 4*dpr, 0, Math.PI*2); ctx.fillStyle = '#555'; ctx.fill();
+  // Film marker
+  ctx.beginPath(); ctx.arc(qwotXDpr, yFilm, 4*dpr, 0, Math.PI*2); ctx.fillStyle = '#81c784'; ctx.fill();
+  // Labels
+  ctx.font = `${10*dpr}px Inter, sans-serif`; ctx.textAlign = 'left';
+  ctx.fillStyle = '#81c784';
+  ctx.fillText(`R₀=${(bareR550*100).toFixed(1)}% → R=${(filmR550*100).toFixed(1)}%`, qwotXDpr + 8*dpr, yBare + (yFilm-yBare)/2 + 3*dpr);
+
+  // --- Minimum reflectance marker (diamond) ---
+  const minR = findMinR(n1, d, n2);
+  const minX = xForLambda(minR.lambda);
+  const minY = yForR(Math.min(minR.R, Rmax));
+  ctx.beginPath();
+  ctx.moveTo(minX, minY - 8*dpr); ctx.lineTo(minX + 6*dpr, minY);
+  ctx.lineTo(minX, minY + 8*dpr); ctx.lineTo(minX - 6*dpr, minY);
+  ctx.closePath();
+  ctx.fillStyle = '#ff8a65'; ctx.fill();
+  ctx.strokeStyle = '#ff8a65'; ctx.lineWidth = 1.5; ctx.stroke();
+  // Label
+  const labelX = minX + 10*dpr; const labelY = minY - 12*dpr;
+  ctx.fillStyle = '#ff8a65'; ctx.font = `${11*dpr}px Inter, sans-serif`; ctx.textAlign = 'left';
+  ctx.fillText(`λ=${minR.lambda}nm, R=${(minR.R*100).toFixed(2)}%`, labelX, labelY);
+}
+
+// ============ Thickness Scan Mode ============
+function renderThicknessScan(dpr, n1, dCurrent, n2) {
+  const Rmax = 0.40;
+
+  // Horizontal grid
+  ctx.strokeStyle = '#1a1a24'; ctx.lineWidth = 1; ctx.font = `${10*dpr}px Inter, sans-serif`;
+  for (let R = 0; R <= Rmax + 0.01; R += 0.05) {
+    const y = yForR(R);
+    ctx.beginPath(); ctx.moveTo(padLeft, y); ctx.lineTo(W - padRight, y); ctx.stroke();
+    ctx.textAlign = 'right'; ctx.fillStyle = '#555';
+    ctx.fillText((R*100).toFixed(0) + '%', padLeft - 8*dpr, y + 3*dpr);
+  }
+
+  // Vertical grid
+  for (let dTick = 50; dTick <= 800; dTick += 50) {
+    const x = xForThickness(dTick);
+    ctx.beginPath(); ctx.moveTo(x, padTop); ctx.lineTo(x, H - padBottom);
+    ctx.strokeStyle = '#151520'; ctx.stroke();
+    ctx.textAlign = 'center'; ctx.fillStyle = '#555';
+    ctx.fillText(dTick, x, H - padBottom + 16*dpr);
+  }
+
+  // Axes
+  ctx.fillStyle = '#888'; ctx.textAlign = 'center';
+  ctx.fillText('薄膜厚度 d (nm)', W / 2, H - 4*dpr);
+  ctx.save(); ctx.translate(14*dpr, H / 2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('反射率 @550nm R', 0, 0); ctx.restore();
+
+  // R(d) @ 550nm curve
+  const targetLambda = 550;
+  const curveData = [];
+  for (let _d = 10; _d <= 800; _d += 1) {
+    const R = reflectance(targetLambda, n1, _d, n2);
+    curveData.push({ d: _d, R, x: xForThickness(_d), y: yForR(Math.min(R, Rmax)) });
+  }
+
+  // Fill
+  ctx.beginPath();
+  for (let i = 0; i < curveData.length; i++) {
+    if (i === 0) ctx.moveTo(curveData[i].x, curveData[i].y);
+    else ctx.lineTo(curveData[i].x, curveData[i].y);
+  }
+  ctx.lineTo(curveData[curveData.length-1].x, H - padBottom);
+  ctx.lineTo(curveData[0].x, H - padBottom); ctx.closePath();
+  const grad = ctx.createLinearGradient(0, padTop, 0, H - padBottom);
+  grad.addColorStop(0, 'rgba(79,195,247,0.25)'); grad.addColorStop(1, 'rgba(79,195,247,0.02)');
+  ctx.fillStyle = grad; ctx.fill();
+
+  // Stroke
+  ctx.beginPath(); ctx.strokeStyle = '#4fc3f7'; ctx.lineWidth = 2;
+  for (let i = 0; i < curveData.length; i++) {
+    if (i === 0) ctx.moveTo(curveData[i].x, curveData[i].y);
+    else ctx.lineTo(curveData[i].x, curveData[i].y);
+  }
+  ctx.stroke();
+
+  // Bare substrate reference line
+  const bareR = reflectanceBare(targetLambda, n2);
+  const yBare = yForR(bareR);
+  ctx.beginPath(); ctx.moveTo(padLeft, yBare); ctx.lineTo(W - padRight, yBare);
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 1.5; ctx.setLineDash([4*dpr, 4*dpr]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#555'; ctx.textAlign = 'left'; ctx.font = `${10*dpr}px Inter, sans-serif`;
+  ctx.fillText(`裸基底 R=${(bareR*100).toFixed(2)}%`, W - padRight - 130*dpr, yBare - 6*dpr);
+
+  // Current thickness marker
+  const xCur = xForThickness(dCurrent);
+  const Rcur = reflectance(targetLambda, n1, dCurrent, n2);
+  const yCur = yForR(Math.min(Rcur, Rmax));
+  ctx.beginPath(); ctx.moveTo(xCur, padTop); ctx.lineTo(xCur, H - padBottom);
+  ctx.strokeStyle = 'rgba(255,138,101,0.4)'; ctx.lineWidth = 1; ctx.setLineDash([3*dpr, 3*dpr]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.beginPath(); ctx.arc(xCur, yCur, 5*dpr, 0, Math.PI*2); ctx.fillStyle = '#ff8a65'; ctx.fill();
+  ctx.font = `${11*dpr}px Inter, sans-serif`; ctx.fillStyle = '#ff8a65'; ctx.textAlign = 'left';
+  ctx.fillText(`d=${dCurrent}nm, R=${(Rcur*100).toFixed(2)}%`, xCur + 8*dpr, yCur + 4*dpr);
+
+  // Period annotation
+  const period = targetLambda / (2 * n1);
+  ctx.fillStyle = '#555'; ctx.textAlign = 'left'; ctx.font = `${10*dpr}px Inter, sans-serif`;
+  ctx.fillText(`周期 = λ/(2n₁) = ${period.toFixed(1)} nm`, padLeft + 10*dpr, padTop + 16*dpr);
+
+  // Current R at target
+  const qwotPhys = targetLambda / (4 * n1);
+  const xQwot = xForThickness(qwotPhys);
+  ctx.beginPath(); ctx.moveTo(xQwot, padTop); ctx.lineTo(xQwot, H - padBottom);
+  ctx.strokeStyle = 'rgba(129,199,132,0.35)'; ctx.lineWidth = 1; ctx.setLineDash([3*dpr, 5*dpr]); ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#81c784'; ctx.textAlign = 'left'; ctx.font = `${10*dpr}px Inter, sans-serif`;
+  ctx.fillText(`λ/4 = ${qwotPhys.toFixed(1)}nm`, xQwot + 4*dpr, padTop + 30*dpr);
+}
+
+// ============ Main render ============
+function render() {
+  const dpr = window.devicePixelRatio || 1;
+  const n1 = parseFloat(document.getElementById('n1').value);
+  const d = parseInt(document.getElementById('thickness').value);
+  const n2 = parseFloat(document.getElementById('n2').value);
+
+  ctx.clearRect(0, 0, W, H);
+
+  if (currentMode === 'spectrum') {
+    renderSpectrum(dpr, n1, d, n2);
+  } else {
+    renderThicknessScan(dpr, n1, d, n2);
+  }
+}
+
+// ============ Explanation box ============
+function updateExplainBox() {
+  const n1 = parseFloat(document.getElementById('n1').value);
+  const n2 = parseFloat(document.getElementById('n2').value);
+  const n0 = 1.0;
+  const idealN1 = Math.sqrt(n0 * n2);
+
+  // Only update text content of existing elements, never recreate them
+  const elExplainN1 = document.getElementById('explainN1');
+  const elExplainIdeal = document.getElementById('explainIdeal');
+  
+  if (elExplainN1) elExplainN1.textContent = n1.toFixed(2);
+  if (elExplainIdeal) elExplainIdeal.textContent = idealN1.toFixed(2);
+
+  const diffPct = Math.abs((n1 - idealN1) / idealN1 * 100);
+  const explainText = document.getElementById('explainText');
+  if (!explainText) return;
+  
+  if (diffPct < 5) {
+    explainText.innerHTML =
+      `完美增透需要 <span class="explain-highlight">n₁ = √(n₀ × n₂)</span>。<br>
+       当前 n₁=<b>${n1.toFixed(2)}</b>，理想值 = √(${n0.toFixed(1)}×${n2.toFixed(2)}) = <b>${idealN1.toFixed(2)}</b>。<br>
+       <span class="explain-highlight">✓ 折射率匹配很好！</span> 反射率接近零。`;
+  } else {
+    explainText.innerHTML =
+      `完美增透需要 <span class="explain-highlight">n₁ = √(n₀ × n₂)</span>。<br>
+       当前 n₁=<b>${n1.toFixed(2)}</b>，理想值 = √(${n0.toFixed(1)}×${n2.toFixed(2)}) = <b>${idealN1.toFixed(2)}</b>。<br>
+       偏差 ${diffPct.toFixed(0)}%，真实材料无法完美匹配，所以 R<sub>min</sub> > 0。`;
+  }
+}
+
+// ============ UI Bindings ============
+function updateUI() {
+  const n1 = parseFloat(document.getElementById('n1').value);
+  const d = parseInt(document.getElementById('thickness').value);
+  const n2 = parseFloat(document.getElementById('n2').value);
+
+  document.getElementById('n1Val').textContent = n1.toFixed(2);
+  document.getElementById('dVal').textContent = d + ' nm';
+  document.getElementById('n2Val').textContent = n2.toFixed(2);
+
+  const qwot = 550 / (4 * n1);
+  document.getElementById('quarterWave').textContent = qwot.toFixed(1) + ' nm';
+
+  const bareR = reflectanceBare(550, n2);
+  document.getElementById('bareR').textContent = (bareR * 100).toFixed(2) + '%';
+
+  const minR = findMinR(n1, d, n2);
+  document.getElementById('minRLambda').textContent = minR.lambda + ' nm';
+  document.getElementById('minRVal').textContent = (minR.R * 100).toFixed(2) + '%';
+
+  updateExplainBox();
+  render();
+}
+
+const presets = {
+  mgh2:       { n1: 1.38, d: 100, n2: 1.52, desc: 'MgF₂ / BK7 单层增透' },
+  tio2:       { n1: 2.30, d: 60,  n2: 1.52, desc: 'TiO₂ / BK7（高折射率对比）' },
+  soap:       { n1: 1.33, d: 320, n2: 1.00, desc: '肥皂泡（水膜/空气）' },
+  oil:        { n1: 1.47, d: 200, n2: 1.33, desc: '油膜/水面（折射率相近）' },
+  camera:     { n1: 1.38, d: 120, n2: 1.52, desc: '相机镜头 MgF₂（绿光消反→紫色反光）' },
+  si3n4:      { n1: 2.00, d: 69,  n2: 3.50, desc: 'Si₃N₄ / Si（完美匹配 R→0）' },
+  germanium:  { n1: 2.20, d: 63,  n2: 4.00, desc: 'ZnS / Ge（红外基底高R）' },
+  arMulti:    { n1: 1.23, d: 112, n2: 1.52, desc: '理想增透（n₁=√1.52≈1.23）' },
+  nearzero:   { n1: 1.52, d: 100, n2: 1.52, desc: 'n₁=n₂ 膜层消失（R=裸基底）' },
+  al2o3:      { n1: 1.76, d: 78,  n2: 1.52, desc: 'Al₂O₃（蓝宝石）/ 玻璃' },
+  ta2o5:      { n1: 2.10, d: 65,  n2: 1.46, desc: 'Ta₂O₅ / SiO₂' },
+  sio2_glass: { n1: 1.46, d: 94,  n2: 1.52, desc: 'SiO₂ / 玻璃（低折射率膜）' },
+  zns_si:     { n1: 2.35, d: 59,  n2: 3.42, desc: 'ZnS / Si（中波红外）' },
+};
+
+// Preset dropdown
+document.getElementById('presetSelect').addEventListener('change', function() {
+  const key = this.value;
+  const p = presets[key];
+  if (!p) return;
+  document.getElementById('n1').value = p.n1;
+  document.getElementById('thickness').value = p.d;
+  document.getElementById('n2').value = p.n2;
+  updateUI();
+});
+
+// Mode toggle
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.dataset.mode;
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (mode === 'spectrum') {
+      document.getElementById('chartTitle').textContent = '反射率 vs 波长';
+      document.getElementById('chartSubtitle').textContent = '380 – 780 nm 可见光波段';
+    } else {
+      document.getElementById('chartTitle').textContent = '反射率 @550nm vs 膜厚';
+      document.getElementById('chartSubtitle').textContent = '看反射率如何随膜厚周期性变化';
+    }
+    render();
+  });
+});
+
+document.getElementById('n1').addEventListener('input', updateUI);
+document.getElementById('thickness').addEventListener('input', updateUI);
+document.getElementById('n2').addEventListener('input', updateUI);
+
+window.addEventListener('resize', resize);
+resize();
+</script>
+</body>
+</html>

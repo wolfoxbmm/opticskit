@@ -67,6 +67,40 @@ const tools = [
     ),
     color: "blue",
   },
+  {
+    name: "薄膜干涉模拟",
+    desc: "TMM 传输矩阵法，单层膜反射率 vs 波长 & 膜厚扫描，13 种预设场景",
+    href: "/tools/thin-film",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 3v18M21 3v18"/><path d="M3 12h18"/><path d="M12 3v18"/>
+        <path d="M6 9l3-3-3-3M18 15l-3 3 3 3"/>
+      </svg>
+    ),
+    color: "cyan",
+  },
+  {
+    name: "你需要什么工具？",
+    desc: "",
+    href: "#",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+    ),
+    color: "slate",
+  },
+  {
+    name: "反馈给我们",
+    desc: "",
+    href: "#",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    ),
+    color: "slate",
+  },
 ];
 
 const colorMap: Record<string, { accent: string; light: string; text: string }> = {
@@ -75,6 +109,8 @@ const colorMap: Record<string, { accent: string; light: string; text: string }> 
   teal:   { accent: "#0CA678", light: "#E6FCF5", text: "#099268" },
   amber:  { accent: "#F08C00", light: "#FFF4E6", text: "#e67700" },
   rose:   { accent: "#E64980", light: "#FFF0F6", text: "#d6336c" },
+  cyan:   { accent: "#1098AD", light: "#E3FAFC", text: "#0b7285" },
+  slate:  { accent: "#868E96", light: "#F1F3F5", text: "#495057" },
 };
 
 export default function Home() {
@@ -102,7 +138,7 @@ export default function Home() {
         <div className="max-w-2xl mx-auto space-y-5">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#DEE2E6] bg-white text-[12px] text-[#495057] font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-[#0CA678]" />
-            免费 · 开源 · 6 个工具
+            免费 · 开源 · 7 个工具
           </div>
           <h1 className="text-[42px] leading-[1.12] font-semibold tracking-[-0.03em] text-[#1A1A2E]">
             用光的语言
@@ -126,14 +162,10 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {tools.map((tool, i) => {
-              const c = colorMap[tool.color];
-              return (
-                <Link
-                  key={tool.href}
-                  href={tool.href}
-                  className="flex flex-col gap-4 p-6 rounded-xl bg-white border border-[#E9ECEF] shadow-sm hover:shadow-md hover:border-[#DEE2E6] hover:-translate-y-0.5 transition-all duration-200 animate-fade-in group no-underline hover:no-underline h-[180px] relative overflow-hidden"
-                  style={{ animationDelay: `${i * 0.06}s` } as React.CSSProperties}
-                >
+              const c = colorMap[tool.color] || { accent: "#868E96", light: "#F1F3F5", text: "#495057" };
+              const isFeedback = tool.href === "#";
+              const CardContent = (
+                <>
                   {/* Top accent bar on hover */}
                   <div
                     className="absolute top-0 left-0 right-0 h-[3px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"
@@ -148,9 +180,42 @@ export default function Home() {
                       {tool.name}
                     </h3>
                   </div>
-                  <p className="text-[13px] text-[#868E96] leading-relaxed flex-1">
-                    {tool.desc}
-                  </p>
+                  {isFeedback ? (
+                    <div className="flex-1 flex flex-col items-center justify-center text-center">
+                      <p className="text-[13px] text-[#868E96] leading-relaxed">
+                        {tool.name === "你需要什么工具？"
+                          ? "告诉我们你需要什么光学工具，我们会尽力实现"
+                          : "通过公众号「光学科技资讯」留言，或发送邮件给我们"}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-[13px] text-[#868E96] leading-relaxed flex-1">
+                      {tool.desc}
+                    </p>
+                  )}
+                </>
+              );
+
+              if (isFeedback) {
+                return (
+                  <div
+                    key={tool.name}
+                    className="flex flex-col gap-4 p-6 rounded-xl bg-[#F8F9FA] border border-dashed border-[#DEE2E6] hover:border-[#ADB5BD] transition-all duration-200 animate-fade-in group h-[180px] relative overflow-hidden"
+                    style={{ animationDelay: `${i * 0.06}s` } as React.CSSProperties}
+                  >
+                    {CardContent}
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={tool.href}
+                  href={tool.href}
+                  className="flex flex-col gap-4 p-6 rounded-xl bg-white border border-[#E9ECEF] shadow-sm hover:shadow-md hover:border-[#DEE2E6] hover:-translate-y-0.5 transition-all duration-200 animate-fade-in group no-underline hover:no-underline h-[180px] relative overflow-hidden"
+                  style={{ animationDelay: `${i * 0.06}s` } as React.CSSProperties}
+                >
+                  {CardContent}
                 </Link>
               );
             })}
