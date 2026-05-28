@@ -182,11 +182,6 @@ export default function Home() {
                   </div>
                   {isFeedback ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-center">
-                      <p className="text-[13px] text-[#868E96] leading-relaxed">
-                        {tool.name === "你需要什么工具？"
-                          ? "告诉我们你需要什么光学工具，我们会尽力实现"
-                          : "通过公众号「光学科技资讯」留言，或发送邮件给我们"}
-                      </p>
                     </div>
                   ) : (
                     <p className="text-[13px] text-[#868E96] leading-relaxed flex-1">
