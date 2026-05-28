@@ -59,6 +59,17 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .src-item .sm{font-size:10px;color:#777}
 .aniso-badge{display:inline-block;padding:1px 5px;border-radius:3px;background:rgba(255,183,77,.15);color:#ffb74d;font-size:9px;margin-left:5px}
 
+/* Data table in detail panel */
+.data-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:6px;grid-column:1/-1}
+.data-table th{text-align:left;color:#777;font-weight:500;padding:4px 8px;border-bottom:1px solid #1e1e2a;font-size:10px}
+.data-table td{padding:3px 8px;color:#ccc;font-family:'Consolas','Monaco',monospace;border-bottom:1px solid #0f0f15}
+.data-table tr:hover td{background:#0f0f18}
+.n-values{display:flex;gap:16px;flex-wrap:wrap;padding:10px 14px;background:#0a0a0f;border-radius:8px;margin-top:8px;grid-column:1/-1}
+.n-values .nv-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.n-values .nv-wl{font-size:10px;color:#777}
+.n-values .nv-n{font-size:16px;font-weight:600;color:#4fc3f7;font-family:'Consolas','Monaco',monospace}
+.n-values .nv-k{font-size:10px;color:#ff8a65}
+
 /* Right: chart */
 .panel-right{flex:2;min-width:400px}
 .pr-header{padding:16px 20px 12px;border-bottom:1px solid #1e1e2a;flex-shrink:0}
@@ -293,6 +304,62 @@ function renderDetail() {
     html += '<button class="copy-btn" onclick="copyCoeffs()">📋 复制</button></div>';
   }
   
+  // === Key wavelength n values ===
+  const keyWavelengths = [0.38, 0.55, 0.78, 1.0, 2.0, 4.0, 10.0];
+  html += '<div class="n-values">';
+  for (const wl of keyWavelengths) {
+    if (ds.wl_min && wl < ds.wl_min - 0.01) continue;
+    if (ds.wl_max && wl > ds.wl_max + 0.01) continue;
+    let n = null, k = null;
+    if (ds.type === 'formula1') {
+      n = sellmeier1(wl, ds.coeffs);
+    } else if (ds.type === 'formula2') {
+      const c = ds.coeffs; const l2 = wl*wl;
+      n = Math.sqrt(Math.max(c[0] + c[1]/(l2-c[2]) + c[3]*l2/(l2-c[4]), 0));
+    } else if (ds.type === 'formula4' && ds.coeffs && ds.coeffs.length >= 11) {
+      const c = ds.coeffs; const l2 = wl*wl;
+      n = Math.sqrt(Math.max(c[0] + c[1]/(l2-c[2]**2) + c[3]/(l2-c[4]**2) + c[5]/(l2-c[6]**2) + c[7]/(l2-c[8]**2) + c[9]*l2, 0));
+    } else if (ds.pts) {
+      // Find closest data point
+      let bestDist = Infinity;
+      for (const pt of ds.pts) {
+        const dist = Math.abs(pt[0] - wl);
+        if (dist < bestDist) { bestDist = dist; n = pt[1]; k = pt.length > 2 ? pt[2] : null; }
+      }
+    }
+    if (n !== null) {
+      const wlStr = wl >= 1 ? wl.toFixed(1) + 'μm' : (wl*1000).toFixed(0) + 'nm';
+      html += `<div class="nv-item"><span class="nv-wl">${wlStr}</span><span class="nv-n">${n.toFixed(4)}</span>`;
+      if (k !== null && k > 1e-6) html += `<span class="nv-k">k=${k.toExponential(2)}</span>`;
+      else if (ds.pts && ds.pts[0] && ds.pts[0].length > 2) html += '<span class="nv-k">k≈0</span>';
+      html += '</div>';
+    }
+  }
+  html += '</div>';
+  
+  // === Tabulated data table (show first 30 rows, click to expand) ===
+  if (ds.pts && ds.pts.length > 0) {
+    const totalRows = ds.pts.length;
+    const showAll = (typeof detailShowAll !== 'undefined' && detailShowAll);
+    const showRows = showAll ? totalRows : Math.min(totalRows, 30);
+    html += '<table class="data-table"><thead><tr>';
+    html += '<th>波长 (μm)</th><th>n</th>';
+    if (ds.pts[0].length > 2) html += '<th>k</th>';
+    html += '</tr></thead><tbody id="dataTableBody">';
+    for (let i = 0; i < showRows; i++) {
+      const pt = ds.pts[i];
+      html += '<tr><td>' + pt[0].toFixed(4) + '</td><td>' + pt[1].toFixed(5);
+      if (pt.length > 2) html += '</td><td>' + pt[2].toExponential(3);
+      html += '</td></tr>';
+    }
+    html += '</tbody></table>';
+    if (totalRows > 30) {
+      html += `<button class="copy-btn" onclick="toggleAllData(${totalRows})" style="position:static;display:block;margin:6px auto 0;padding:5px 14px;font-size:10px">`;
+      html += showAll ? '收起' : `展开全部 ${totalRows} 行`;
+      html += '</button>';
+    }
+  }
+  
   // Full ref (show partial, strip HTML tags)
   if (ds.ref_full) {
     const cleanRef = ds.ref_full.replace(/<[^>]*>/g, '').substring(0, 400);
@@ -318,6 +385,18 @@ function renderDetail() {
   document.querySelectorAll('.src-item').forEach(item => {
     item.addEventListener('click', () => { currentDatasetIdx = parseInt(item.dataset.idx); renderDetail(); renderChart(); });
   });
+}
+
+let detailShowAll = false;
+
+function toggleAllData(totalRows) {
+  detailShowAll = !detailShowAll;
+  renderDetail();
+  // Scroll data table into view
+  setTimeout(() => {
+    const table = document.querySelector('.data-table');
+    if (table) table.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
 }
 
 function copyCoeffs() {
