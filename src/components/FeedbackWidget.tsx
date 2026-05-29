@@ -4,43 +4,27 @@ import { useState } from "react";
 
 export default function FeedbackWidget() {
   const [open, setOpen] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState("");
   const [text, setText] = useState("");
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!text.trim()) return;
-    setSending(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/feedback", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: text.trim(),
-          url: window.location.href,
-          userAgent: navigator.userAgent,
-        }),
-      });
-
-      if (res.ok) {
-        setSent(true);
-        setTimeout(() => {
-          setSent(false);
-          setOpen(false);
-          setText("");
-          setError("");
-        }, 2500);
-      } else {
-        setError("发送失败，请稍后再试");
-      }
-    } catch {
-      setError("网络错误，请稍后再试");
-    } finally {
-      setSending(false);
-    }
+    const title = encodeURIComponent("[用户反馈] " + text.trim().slice(0, 60));
+    const bodyLines = [
+      "## 反馈内容",
+      "",
+      text.trim(),
+      "",
+      "---",
+      "",
+      "**页面地址:** " + window.location.href,
+      "**User Agent:** " + navigator.userAgent,
+    ];
+    const body = encodeURIComponent(bodyLines.join("\n"));
+    const labels = "feedback";
+    const url = "https://github.com/wolfoxbmm/opticskit/issues/new?title=" + title + "&body=" + body + "&labels=" + labels;
+    window.open(url, "_blank");
+    setText("");
+    setOpen(false);
   };
 
   return (
@@ -64,36 +48,23 @@ export default function FeedbackWidget() {
             </button>
           </div>
 
-          {sent ? (
-            <div className="text-center py-8 space-y-2">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0CA678" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-              </svg>
-              <p className="text-[14px] text-[#1A1A2E] font-medium">感谢反馈！</p>
-              <p className="text-[12px] text-[#868E96]">已发送，我会尽快查看 ✨</p>
-            </div>
-          ) : (
-            <>
-              <textarea
-                value={text}
-                onChange={e => setText(e.target.value)}
-                placeholder="有什么 Bug 或功能建议？缺什么光学工具？&#10;告诉我们，帮助 OpticsKit 做得更好 ✨"
-                rows={4}
-                className="w-full bg-[#F2F3F5] border border-[#DEE2E6] rounded-xl p-3 text-[13px] text-[#1A1A2E] placeholder-[#ADB5BD] outline-none focus:border-[#228BE6] focus:ring-2 focus:ring-[#228BE6]/10 resize-none transition-all"
-              />
-              {error && <p className="text-[12px] text-red-500">{error}</p>}
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] text-[#ADB5BD]">提交后将通过邮件通知我</span>
-                <button
-                  onClick={handleSubmit}
-                  disabled={!text.trim() || sending}
-                  className="px-5 py-2 rounded-full bg-[#228BE6] text-white text-[13px] font-medium hover:bg-[#1c7ed6] transition-colors disabled:opacity-35 disabled:cursor-not-allowed shadow-sm"
-                >
-                  {sending ? "发送中..." : "提交"}
-                </button>
-              </div>
-            </>
-          )}
+          <textarea
+            value={text}
+            onChange={e => setText(e.target.value)}
+            placeholder={"有什么 Bug 或功能建议？缺什么光学工具？\n告诉我们，帮助 OpticsKit 做得更好 ✨"}
+            rows={4}
+            className="w-full bg-[#F2F3F5] border border-[#DEE2E6] rounded-xl p-3 text-[13px] text-[#1A1A2E] placeholder-[#ADB5BD] outline-none focus:border-[#228BE6] focus:ring-2 focus:ring-[#228BE6]/10 resize-none transition-all"
+          />
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-[#ADB5BD]">提交后将跳转到 GitHub Issues</span>
+            <button
+              onClick={handleSubmit}
+              disabled={!text.trim()}
+              className="px-5 py-2 rounded-full bg-[#228BE6] text-white text-[13px] font-medium hover:bg-[#1c7ed6] transition-colors disabled:opacity-35 disabled:cursor-not-allowed shadow-sm"
+            >
+              提交
+            </button>
+          </div>
         </div>
       )}
     </>
