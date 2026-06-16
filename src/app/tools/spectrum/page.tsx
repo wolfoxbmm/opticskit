@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { CIE_WAVELENGTHS, CIE_X_BAR, CIE_Y_BAR, CIE_Z_BAR } from "@/lib/colorimetry/cmf-generated";
@@ -118,8 +120,8 @@ export default function SpectrumPage() {
       ctx.moveTo(x, margin.top);
       ctx.lineTo(x, margin.top + ph);
       ctx.stroke();
-      ctx.fillStyle = "#555";
-      ctx.font = "10px monospace";
+      ctx.fillStyle = "#ccc";
+      ctx.font = "bold 12px monospace";
       ctx.fillText(`${wl}`, x - 12, margin.top + ph + 16);
     }
     for (let i = 0; i <= 1; i += 0.25) {
@@ -128,20 +130,30 @@ export default function SpectrumPage() {
       ctx.moveTo(margin.left, y);
       ctx.lineTo(margin.left + pw, y);
       ctx.stroke();
+      ctx.fillStyle = "#ccc";
+      ctx.font = "bold 12px monospace";
       ctx.fillText(i.toFixed(2), margin.left - 30, y + 4);
     }
-    ctx.fillText("Rel. Intensity", margin.left - 56, margin.top + ph / 2);
+    // Y-axis label — vertical
+    ctx.save();
+    ctx.fillStyle = "#aaa";
+    ctx.font = "bold 12px monospace";
+    ctx.textAlign = "center";
+    ctx.translate(14, margin.top + ph / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText("Rel. Intensity", 0, 0);
+    ctx.restore();
 
     // Axis
-    ctx.strokeStyle = "#444";
+    ctx.strokeStyle = "#666";
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(margin.left, margin.top);
     ctx.lineTo(margin.left, margin.top + ph);
     ctx.lineTo(margin.left + pw, margin.top + ph);
     ctx.stroke();
-    ctx.fillStyle = "#999";
-    ctx.font = "11px monospace";
+    ctx.fillStyle = "#bbb";
+    ctx.font = "bold 12px monospace";
     ctx.fillText("Wavelength (nm)", margin.left + pw / 2 - 50, margin.top + ph + 32);
 
     // Blackbody
@@ -235,19 +247,8 @@ export default function SpectrumPage() {
   }, [render]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-[#E9ECEF] bg-white/80 backdrop-blur-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-semibold text-lg no-underline hover:no-underline">
-            <span className="text-[#228BE6]">λ</span>
-            <span className="text-[#1A1A2E]">OpticsKit</span>
-          </Link>
-          <Link href="/" className="text-sm text-[#495057] hover:text-[#1A1A2E]">← 首页</Link>
-        </div>
-      </header>
-
-      <main className="flex-1 flex flex-col lg:flex-row">
-        <div className="flex-1 relative min-h-[400px]">
+    <div className="min-h-[calc(100vh-56px)] flex flex-col"><main className="flex-1 flex flex-col lg:flex-row gap-4 p-3 md:p-4 min-h-0 overflow-hidden">
+        <div className="flex-1 relative min-h-0 rounded-xl overflow-hidden border border-[#E9ECEF]">
           <canvas
             ref={canvasRef}
             className="w-full h-full absolute inset-0"
@@ -255,9 +256,9 @@ export default function SpectrumPage() {
           />
         </div>
 
-        <aside className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-[#E9ECEF] p-6 space-y-4">
+        <aside className="w-full lg:w-[300px] lg:border-l lg:border border-[#E9ECEF] rounded-xl bg-white px-4 py-3 space-y-3 overflow-y-auto flex-shrink-0">
           <div>
-            <h2 className="text-lg font-semibold text-[#1A1A2E] mb-1">📊 光谱数据可视化</h2>
+            <h1 className="text-base font-semibold text-[#1A1A2E]">📊 光谱数据可视化</h1>
             <p className="text-xs text-[#868E96]">导入光谱功率分布 (SPD) 数据，查看曲线。</p>
           </div>
 
@@ -282,7 +283,7 @@ export default function SpectrumPage() {
                   type="file"
                   accept=".csv,.txt,.dat"
                   onChange={handleFileUpload}
-                  className="block w-full text-xs text-[#495057] file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:bg-[#27272a] file:text-[#1A1A2E] hover:file:bg-[#333]"
+                  className="block w-full text-xs text-[#495057] file:mr-3 file:py-1.5 file:px-3 file:rounded file:border file:border-[#DEE2E6] file:text-xs file:bg-white file:text-[#495057] hover:file:bg-[#F2F3F5] file:cursor-pointer file:transition-colors"
                 />
               </label>
               <p className="text-xs text-[#ADB5BD]">CSV或TXT，每行：波长[tab/空格/逗号]强度</p>
@@ -322,6 +323,13 @@ export default function SpectrumPage() {
               </div>
             )}
           </div>
+
+          <a href="/community" className="flex items-center justify-between px-3 py-2 mt-3 rounded-lg bg-[#F8F9FA] border border-[#E9ECEF] hover:border-[#228BE6] hover:bg-[#E7F5FF] transition-all no-underline group">
+              <span className="text-xs text-[#495057] group-hover:text-[#228BE6] flex items-center gap-1.5">
+                <span className="text-sm">💬</span> 有问题或建议？去留言区聊聊
+              </span>
+              <span className="text-[10px] text-[#ADB5BD] group-hover:text-[#228BE6]">→</span>
+            </a>
 
           <p className="text-xs text-[#ADB5BD] pt-4">
             导入格式简单：两列（波长/强度），380–780nm 最佳，步长任意。

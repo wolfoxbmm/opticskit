@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import { useState } from "react";
 import Link from "next/link";
 import { spectrumToXYZ, xyzToChromaticity, xyToUvPrime, cctWithDuv } from "@/lib/colorimetry";
@@ -157,18 +159,7 @@ export default function LightSourcePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-[#E9ECEF] bg-white/80 backdrop-blur-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-semibold text-lg no-underline hover:no-underline">
-            <span className="text-[#228BE6]">λ</span>
-            <span className="text-[#1A1A2E]">OpticsKit</span>
-          </Link>
-          <Link href="/" className="text-sm text-[#495057] hover:text-[#1A1A2E]">← 首页</Link>
-        </div>
-      </header>
-
-      <main className="flex-1 p-6 max-w-5xl mx-auto w-full space-y-6">
+    <div className="min-h-[calc(100vh-56px)] flex flex-col"><main className="flex-1 p-6 max-w-5xl mx-auto w-full space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-[#1A1A2E] mb-2">💡 光源指标计算器</h1>
           <p className="text-sm text-[#868E96]">

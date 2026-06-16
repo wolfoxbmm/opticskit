@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import { useState, useMemo } from "react";
 import Link from "next/link";
 
@@ -231,18 +233,7 @@ export default function LaserPage() {
   }, [search, typeFilter, wlMin, wlMax]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-[#E9ECEF] bg-white/80 backdrop-blur-lg sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-semibold text-lg no-underline hover:no-underline">
-            <span className="text-[#228BE6]">λ</span>
-            <span className="text-[#1A1A2E]">OpticsKit</span>
-          </Link>
-          <Link href="/" className="text-sm text-[#495057] hover:text-[#1A1A2E]">← 首页</Link>
-        </div>
-      </header>
-
-      <main className="flex-1 p-6 max-w-7xl mx-auto w-full">
+    <div className="h-[calc(100vh-56px)] flex flex-col overflow-hidden"><main className="flex-1 p-6 max-w-7xl mx-auto w-full flex flex-col min-h-0 overflow-hidden">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-[#1A1A2E] mb-2">⚡ 激光波长速查</h1>
           <p className="text-sm text-[#868E96]">40+ 种常见激光器参数，按类型/波长/应用搜索。数据来源：Thorlabs、Edmund Optics及公开激光参数手册。</p>
@@ -287,10 +278,10 @@ export default function LaserPage() {
         <WavelengthBand filtered={filtered} />
 
         {/* Table */}
-        <div className="overflow-x-auto rounded-xl border border-[#E9ECEF]">
+        <div className="overflow-auto flex-1 rounded-xl border border-[#E9ECEF]">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#F8F9FA] text-[#495057] text-left">
+              <tr className="bg-[#F8F9FA] text-[#495057] text-left sticky top-0 z-10 shadow-sm">
                 <th className="px-4 py-3 font-normal">激光器</th>
                 <th className="px-4 py-3 font-normal hidden sm:table-cell">类型</th>
                 <th className="px-4 py-3 font-normal">波长 (nm)</th>

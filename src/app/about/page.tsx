@@ -2,23 +2,12 @@ import Link from "next/link";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b border-[#E9ECEF] bg-white/80 backdrop-blur-lg sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-semibold text-lg no-underline hover:no-underline">
-            <span className="text-[#228BE6]">λ</span>
-            <span className="text-[#1A1A2E]">OpticsKit</span>
-          </Link>
-          <Link href="/" className="text-sm text-[#495057] hover:text-[#1A1A2E]">← 首页</Link>
-        </div>
-      </header>
-
-      <main className="flex-1 max-w-3xl mx-auto p-6 space-y-8">
+    <div className="min-h-screen flex flex-col"><main className="flex-1 max-w-3xl mx-auto p-6 space-y-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E] mb-3">关于 OpticsKit</h1>
+          <h1 className="text-2xl font-bold text-[#1A1A2E] mb-3">关于 OpticsKit · 光谱实验室</h1>
           <p className="text-sm text-[#495057] leading-relaxed">
-            OpticsKit 光学工具箱是一套为中国光学研究者打造的免费在线计算与可视化工具集。
-            覆盖色度学、光谱分析、薄膜光学、成像光学、激光技术和材料数据库方向。目前共 8 个工具模块。
+            OpticsKit · 光谱实验室是一套为中国光学研究者打造的免费在线计算与可视化工具集。
+            覆盖色度学、光谱分析、薄膜光学、成像光学、激光技术和材料数据库方向。目前共 9 个工具模块。
           </p>
         </div>
 
@@ -45,7 +34,7 @@ export default function AboutPage() {
               <p className="text-[#495057] font-medium mb-2">光学材料数据库</p>
               <ul className="list-disc list-inside space-y-1 text-xs">
                 <li>数据来源：refractiveindex.info (CC0 1.0 公共领域)</li>
-                <li>304 种材料，1,229 条色散数据，中英文双语检索</li>
+                <li>460 种材料，1,200+ 条色散数据，中英文双语检索</li>
                 <li>Sellmeier 色散公式与 n(λ)/k(λ) 图表</li>
                 <li>每条数据附带原始 SCI 论文引用</li>
               </ul>
@@ -54,7 +43,7 @@ export default function AboutPage() {
               <p className="text-[#495057] font-medium mb-2">成像光学</p>
               <ul className="list-disc list-inside space-y-1 text-xs">
                 <li>薄透镜近轴近似 (1/f = 1/u + 1/v)</li>
-                <li>初级光线追迹（不替代 Zemax、Code V）</li>
+                <li>相机镜头选型计算器 — 传感器靶面 + 工作距离 → 焦距推荐</li>
               </ul>
             </div>
             <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-4">
@@ -76,7 +65,7 @@ export default function AboutPage() {
 
         <div className="border-t border-[#E9ECEF] pt-6">
           <p className="text-sm text-[#868E96]">
-            OpticsKit · 光学工具箱 · 让计算回归理性
+            OpticsKit · 光谱实验室 · 让计算回归理性
           </p>
           <p className="text-sm text-[#868E96] mt-1">
             关注公众号「<span className="text-[#495057]">光学科技资讯</span>」获取更多光学内容
