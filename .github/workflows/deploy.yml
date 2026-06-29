@@ -1,29 +1,24 @@
-name: Deploy to GitHub Pages
+﻿name: Deploy to Alibaba Cloud
 
 on:
   push:
     branches: [main]
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
         with:
-          node-version: 22
-      - run: npm ci
-      - run: npx next build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./out
-      - uses: actions/deploy-pages@v4
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/admin/opticskit
+            git pull origin main
+            npm ci
+            npm run build
+            sudo systemctl restart opticskit
+            echo "Deploy complete"
+            curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/

@@ -14,7 +14,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "camera-lens",
     "material-db",
     "cauchy-fit",
-    "gaussian-beam",
   ];
 
   const toolEntries: MetadataRoute.Sitemap = tools.map((tool) => ({

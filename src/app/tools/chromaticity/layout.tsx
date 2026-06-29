@@ -8,13 +8,21 @@ export const metadata: Metadata = {
     title: "CIE 1931 色度图 | 在线色坐标计算、色域图、色温查询",
     description: "交互式 CIE 1931 色度图，点击查色坐标/色温/Duv，sRGB与DCI-P3色域叠加",
     type: "website",
+    url: "https://opticskit.cn/tools/chromaticity",
   },
-
   alternates: {
-    canonical: "./",
+    canonical: "https://opticskit.cn/tools/chromaticity",
   },
 };
 
-export default function ChromaticityLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+export default function ChromaticityLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      {children}
+    </main>
+  );
 }

@@ -12,9 +12,6 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://opticskit.cn",
   },
-  alternates: {
-    canonical: "/",
-  },
   metadataBase: new URL("https://opticskit.cn"),
 };
 
@@ -24,40 +21,6 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" className="h-full antialiased">
       <head>
-        {/* JSON-LD Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@graph": [
-                {
-                  "@type": "WebSite",
-                  "@id": "https://opticskit.cn/#website",
-                  "url": "https://opticskit.cn/",
-                  "name": "OpticsKit · 光谱实验室",
-                  "description": "为中国光学研究者打造的免费在线光学计算与可视化工具集",
-                  "inLanguage": "zh-CN",
-                  "potentialAction": {
-                    "@type": "SearchAction",
-                    "target": "https://opticskit.cn/search?q={search_term_string}",
-                    "query-input": "required name=search_term_string"
-                  }
-                },
-                {
-                  "@type": "WebApplication",
-                  "@id": "https://opticskit.cn/#app",
-                  "name": "OpticsKit 光学工具箱",
-                  "url": "https://opticskit.cn/",
-                  "description": "提供CIE色度图、光谱分析、衍射干涉模拟、透镜成像、薄膜干涉、材料折射率、激光参数速查等10个免费光学在线工具",
-                  "applicationCategory": "EducationalApplication",
-                  "operatingSystem": "All",
-                  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
-                }
-              ]
-            })
-          }}
-        />
         <meta name="baidu-site-verification" content="codeva-Rjrm7U8PDo" />
         <meta name="msvalidate.01" content="B107E2CE79BF9358C8C9128FD4AFBC09" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -71,7 +34,9 @@ export default function RootLayout({
           <div className="max-w-6xl w-full mx-auto px-3 sm:px-6 flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-1.5 sm:gap-2.5 no-underline hover:no-underline shrink-0">
-              <img src="/logo-header.png" alt="OpticsKit" width="24" height="24" className="sm:w-[24px] sm:h-[24px]" />
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#228BE6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="sm:w-[22px] sm:h-[22px]">
+                <circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="10"/>
+              </svg>
               <span className="text-[13px] sm:text-[16px] font-semibold tracking-[-0.02em] text-[#1A1A2E] whitespace-nowrap">OpticsKit</span>
               <span className="hidden sm:inline text-[14px] sm:text-[16px] font-semibold tracking-[-0.02em] text-[#1A1A2E] whitespace-nowrap">· 光谱实验室</span>
             </Link>

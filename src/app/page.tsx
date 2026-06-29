@@ -160,15 +160,6 @@ const initialSuggestions: Suggestion[] = [
     comments: ["单模光纤和多模光纤都需要", "最好能画出模式场分布图"],
     expanded: false,
   },
-  {
-    id: 100004,
-    title: "高斯光束传播计算器",
-    desc: "束腰、瑞利长度、发散角、q 参数、ABCD 定律，M² 因子",
-    votes: 5,
-    voted: false,
-    comments: [],
-    expanded: false,
-  },
 ];
 
 const BANNED_WORDS = ["广告", "推广", "赚钱", "加群", "加微信", "微信号", "QQ群", "http", "www."];

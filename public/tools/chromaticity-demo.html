@@ -49,6 +49,7 @@ function wavelengthToColor(wl){
   return{r:Math.round(srgbGamma(r*f)*255),g:Math.round(srgbGamma(g*f)*255),b:Math.round(srgbGamma(b*f)*255)};
 }
 
+function safeFormat(v,d,f) { if(typeof v!=='number'||!isFinite(v))return f||'\u2014'; return v.toFixed(d); }
 var ROB=[[0,0.18006,0.26352,-0.24341],[10,0.18066,0.26589,-0.25479],[20,0.18133,0.26846,-0.26876],[30,0.18208,0.27119,-0.28539],[40,0.18293,0.27407,-0.3047],[50,0.18388,0.27709,-0.32675],[60,0.18494,0.28021,-0.35156],[70,0.18611,0.28342,-0.37915],[80,0.1874,0.28668,-0.40955],[90,0.1888,0.28997,-0.44278],[100,0.19032,0.29326,-0.47888],[125,0.19462,0.30141,-0.58204],[150,0.19962,0.30921,-0.70471],[175,0.20525,0.31647,-0.84901],[200,0.21142,0.32312,-1.0182],[225,0.21807,0.32909,-1.2168],[250,0.22511,0.33439,-1.4512],[275,0.23247,0.33904,-1.7306],[300,0.2401,0.34308,-2.0673],[325,0.24792,0.34655,-2.4764],[350,0.25591,0.34951,-2.9773],[375,0.264,0.352,-3.5928],[400,0.27218,0.35407,-4.3544],[425,0.28039,0.35577,-5.3038],[450,0.28863,0.35714,-6.4961],[475,0.29685,0.35823,-8.0056],[500,0.30505,0.35907,-9.934],[525,0.3132,0.35968,-12.42],[550,0.32129,0.36011,-15.654],[575,0.32931,0.36038,-19.908],[600,0.33724,0.36051,-25.59]];
 function estimateCCT(up,vp){var u=up,v=2/3*vp;for(var i=0;i<ROB.length-1;i++){var t1=ROB[i][0],u1=ROB[i][1],v1=ROB[i][2],m1=ROB[i][3],t2=ROB[i+1][0],u2=ROB[i+1][1],v2=ROB[i+1][2],m2=ROB[i+1][3],di=((v-v1)-m1*(u-u1))/Math.sqrt(1+m1*m1),dj=((v-v2)-m2*(u-u2))/Math.sqrt(1+m2*m2);if((di>=0&&dj<0)||(di<0&&dj>=0)){var f=di/(di-dj),rt=t1+f*(t2-t1);return{cct:rt===0?Infinity:1e6/rt,duv:di};}}return{cct:Infinity,duv:0};}
 
@@ -208,10 +209,10 @@ function locatePoint(px,py){
   var cctRes=estimateCCT(uv.up,uv.vp);
   var rgb=xyToRGB(xy.x,xy.y,0.6);
   selectedPoint={x:xy.x,y:xy.y,_origX:xy.x,_origY:xy.y};
-  document.getElementById('r-xy').textContent='('+xy.x.toFixed(4)+', '+xy.y.toFixed(4)+')';
-  document.getElementById('r-uv').textContent='('+uv.up.toFixed(4)+', '+uv.vp.toFixed(4)+')';
-  document.getElementById('r-cct').textContent=Number.isFinite(cctRes.cct)&&cctRes.cct>0?cctRes.cct.toFixed(0)+' K':'—';
-  document.getElementById('r-duv').textContent=Number.isFinite(cctRes.duv)?cctRes.duv.toFixed(5):'—';
+  var sx=safeFormat(xy.x,4),sy=safeFormat(xy.y,4);document.getElementById('r-xy').textContent='('+sx+', '+sy+')';
+  document.getElementById('r-uv').textContent='('+safeFormat(uv.up,4)+', '+safeFormat(uv.vp,4)+')';
+  var ct=safeFormat(cctRes.cct,0,'—');document.getElementById('r-cct').textContent=ct!=='—'?ct+' K':'—';
+  document.getElementById('r-duv').textContent=safeFormat(cctRes.duv,5,'—');
   var sr=Math.round(rgb.r*255),sg=Math.round(rgb.g*255),sb=Math.round(rgb.b*255);
   document.getElementById('r-swatch').style.backgroundColor='rgb('+sr+','+sg+','+sb+')';
   var inSrgb=isInGamut(xy.x,xy.y,DATA.GAMUTS['sRGB']);
@@ -235,8 +236,8 @@ function updateHover(e){
     var bestWl=null,bestDist=Infinity;
     for(var i=0;i<dp.locus.length;i++){var l=dp.locus[i];var d=(pt.x-l.x)*(pt.x-l.x)+(pt.y-l.y)*(pt.y-l.y);if(d<bestDist&&d<0.001){bestDist=d;bestWl=l.wl;}}
     var cctStr='—';
-    if(currentDiagram==='xy'){var uv=xyToUvPrime(pt.x,pt.y);var c=estimateCCT(uv.up,uv.vp);if(Number.isFinite(c.cct)&&c.cct>0)cctStr=c.cct.toFixed(0)+' K';}
-    else{var c=estimateCCT(pt.x,pt.y);if(Number.isFinite(c.cct)&&c.cct>0)cctStr=c.cct.toFixed(0)+' K';}
+    if(currentDiagram==='xy'){var uv=xyToUvPrime(pt.x,pt.y);var c=estimateCCT(uv.up,uv.vp);cctStr=safeFormat(c.cct,0,'—');if(cctStr!=='—')cctStr+=' K';}
+    else{var c2=estimateCCT(pt.x,pt.y);cctStr=safeFormat(c2.cct,0,'—');if(cctStr!=='—')cctStr+=' K';}
     var xy=getXYFromCanvas(mouseCache.cx,mouseCache.cy);
     var rgb=xyToRGB(xy.x,xy.y,0.6);
     var sr=Math.round(rgb.r*255),sg=Math.round(rgb.g*255),sb=Math.round(rgb.b*255);
@@ -303,16 +304,16 @@ function updateDeltaE() {
   var dePt1 = document.getElementById('de-pt1');
   var dePt2 = document.getElementById('de-pt2');
   if (deltaE_pt1) {
-    dePt1.textContent = '(' + deltaE_pt1.x.toFixed(4) + ', ' + deltaE_pt1.y.toFixed(4) + ')';
+    dePt1.textContent = '(' + safeFormat(deltaE_pt1.x,4) + ', ' + safeFormat(deltaE_pt1.y,4) + ')';
   } else { dePt1.textContent = '未选'; }
   if (deltaE_pt2) {
-    dePt2.textContent = '(' + deltaE_pt2.x.toFixed(4) + ', ' + deltaE_pt2.y.toFixed(4) + ')';
+    dePt2.textContent = '(' + safeFormat(deltaE_pt2.x,4) + ', ' + safeFormat(deltaE_pt2.y,4) + ')';
   } else { dePt2.textContent = '未选'; }
   if (deltaE_pt1 && deltaE_pt2) {
     var lab1 = xyToLab(deltaE_pt1.x, deltaE_pt1.y);
     var lab2 = xyToLab(deltaE_pt2.x, deltaE_pt2.y);
     var de = calcDeltaE76(lab1, lab2);
-    deVal.textContent = 'ΔE*ab = ' + de.toFixed(2);
+    deVal.textContent = 'ΔE*ab = ' + safeFormat(de,2,'—');
     deVal.style.color = de < 1 ? '#00e676' : de < 3 ? '#ffd600' : '#ff6b00';
   } else {
     deVal.textContent = '—';
@@ -377,16 +378,16 @@ function updateDeltaE() {
   var dePt1 = document.getElementById('de-pt1');
   var dePt2 = document.getElementById('de-pt2');
   if (deltaE_pt1) {
-    dePt1.textContent = '(' + deltaE_pt1.x.toFixed(4) + ', ' + deltaE_pt1.y.toFixed(4) + ')';
+    dePt1.textContent = '(' + safeFormat(deltaE_pt1.x,4) + ', ' + safeFormat(deltaE_pt1.y,4) + ')';
   } else { dePt1.textContent = '未选'; }
   if (deltaE_pt2) {
-    dePt2.textContent = '(' + deltaE_pt2.x.toFixed(4) + ', ' + deltaE_pt2.y.toFixed(4) + ')';
+    dePt2.textContent = '(' + safeFormat(deltaE_pt2.x,4) + ', ' + safeFormat(deltaE_pt2.y,4) + ')';
   } else { dePt2.textContent = '未选'; }
   if (deltaE_pt1 && deltaE_pt2) {
     var lab1 = xyToLab(deltaE_pt1.x, deltaE_pt1.y);
     var lab2 = xyToLab(deltaE_pt2.x, deltaE_pt2.y);
     var de = calcDeltaE76(lab1, lab2);
-    deVal.textContent = 'ΔE*ab = ' + de.toFixed(2);
+    deVal.textContent = 'ΔE*ab = ' + safeFormat(de,2,'—');
     deVal.style.color = de < 1 ? '#00e676' : de < 3 ? '#ffd600' : '#ff6b00';
   } else {
     deVal.textContent = '—';
@@ -444,15 +445,15 @@ function updateDeltaE() {
   var deVal = document.getElementById('de-val');
   var dePt1 = document.getElementById('de-pt1');
   var dePt2 = document.getElementById('de-pt2');
-  if (deltaE_pt1) { dePt1.textContent = '(' + deltaE_pt1.x.toFixed(4) + ', ' + deltaE_pt1.y.toFixed(4) + ')'; }
+  if (deltaE_pt1) { dePt1.textContent = '(' + safeFormat(deltaE_pt1.x,4) + ', ' + safeFormat(deltaE_pt1.y,4) + ')'; }
   else { dePt1.textContent = '未选'; }
-  if (deltaE_pt2) { dePt2.textContent = '(' + deltaE_pt2.x.toFixed(4) + ', ' + deltaE_pt2.y.toFixed(4) + ')'; }
+  if (deltaE_pt2) { dePt2.textContent = '(' + safeFormat(deltaE_pt2.x,4) + ', ' + safeFormat(deltaE_pt2.y,4) + ')'; }
   else { dePt2.textContent = '未选'; }
   if (deltaE_pt1 && deltaE_pt2) {
     var lab1 = xyToLab(deltaE_pt1.x, deltaE_pt1.y);
     var lab2 = xyToLab(deltaE_pt2.x, deltaE_pt2.y);
     var de = calcDeltaE76(lab1, lab2);
-    deVal.textContent = '\u0394E*ab = ' + de.toFixed(2);
+    deVal.textContent = '\u0394E*ab = ' + safeFormat(de,2,'—');
     deVal.style.color = de < 1 ? '#00e676' : de < 3 ? '#ffd600' : '#ff6b00';
   } else { deVal.textContent = '\u2014'; deVal.style.color = '#00bfff'; }
   draw();
@@ -487,15 +488,15 @@ function updateDeltaE() {
   var deVal = document.getElementById('de-val');
   var dePt1 = document.getElementById('de-pt1');
   var dePt2 = document.getElementById('de-pt2');
-  if (deltaE_pt1) { dePt1.textContent = '(' + deltaE_pt1.x.toFixed(4) + ', ' + deltaE_pt1.y.toFixed(4) + ')'; }
+  if (deltaE_pt1) { dePt1.textContent = '(' + safeFormat(deltaE_pt1.x,4) + ', ' + safeFormat(deltaE_pt1.y,4) + ')'; }
   else { dePt1.textContent = '未选'; }
-  if (deltaE_pt2) { dePt2.textContent = '(' + deltaE_pt2.x.toFixed(4) + ', ' + deltaE_pt2.y.toFixed(4) + ')'; }
+  if (deltaE_pt2) { dePt2.textContent = '(' + safeFormat(deltaE_pt2.x,4) + ', ' + safeFormat(deltaE_pt2.y,4) + ')'; }
   else { dePt2.textContent = '未选'; }
   if (deltaE_pt1 && deltaE_pt2) {
     var lab1 = xyToLab(deltaE_pt1.x, deltaE_pt1.y);
     var lab2 = xyToLab(deltaE_pt2.x, deltaE_pt2.y);
     var de = calcDeltaE76(lab1, lab2);
-    deVal.textContent = '\u0394E*ab = ' + de.toFixed(2);
+    deVal.textContent = '\u0394E*ab = ' + safeFormat(de,2,'—');
     deVal.style.color = de < 1 ? '#00e676' : de < 3 ? '#ffd600' : '#ff6b00';
   } else { deVal.textContent = '\u2014'; deVal.style.color = '#00bfff'; }
   draw();
@@ -530,15 +531,15 @@ function updateDeltaE() {
   var deVal = document.getElementById('de-val');
   var dePt1 = document.getElementById('de-pt1');
   var dePt2 = document.getElementById('de-pt2');
-  if (deltaE_pt1) { dePt1.textContent = '(' + deltaE_pt1.x.toFixed(4) + ', ' + deltaE_pt1.y.toFixed(4) + ')'; }
+  if (deltaE_pt1) { dePt1.textContent = '(' + safeFormat(deltaE_pt1.x,4) + ', ' + safeFormat(deltaE_pt1.y,4) + ')'; }
   else { dePt1.textContent = '未选'; }
-  if (deltaE_pt2) { dePt2.textContent = '(' + deltaE_pt2.x.toFixed(4) + ', ' + deltaE_pt2.y.toFixed(4) + ')'; }
+  if (deltaE_pt2) { dePt2.textContent = '(' + safeFormat(deltaE_pt2.x,4) + ', ' + safeFormat(deltaE_pt2.y,4) + ')'; }
   else { dePt2.textContent = '未选'; }
   if (deltaE_pt1 && deltaE_pt2) {
     var lab1 = xyToLab(deltaE_pt1.x, deltaE_pt1.y);
     var lab2 = xyToLab(deltaE_pt2.x, deltaE_pt2.y);
     var de = calcDeltaE76(lab1, lab2);
-    deVal.textContent = '\u0394E*ab = ' + de.toFixed(2);
+    deVal.textContent = '\u0394E*ab = ' + safeFormat(de,2,'—');
     deVal.style.color = de < 1 ? '#00e676' : de < 3 ? '#ffd600' : '#ff6b00';
   } else { deVal.textContent = '\u2014'; deVal.style.color = '#00bfff'; }
   draw();
@@ -573,15 +574,15 @@ function updateDeltaE() {
   var deVal = document.getElementById('de-val');
   var dePt1 = document.getElementById('de-pt1');
   var dePt2 = document.getElementById('de-pt2');
-  if (deltaE_pt1) { dePt1.textContent = '(' + deltaE_pt1.x.toFixed(4) + ', ' + deltaE_pt1.y.toFixed(4) + ')'; }
+  if (deltaE_pt1) { dePt1.textContent = '(' + safeFormat(deltaE_pt1.x,4) + ', ' + safeFormat(deltaE_pt1.y,4) + ')'; }
   else { dePt1.textContent = '未选'; }
-  if (deltaE_pt2) { dePt2.textContent = '(' + deltaE_pt2.x.toFixed(4) + ', ' + deltaE_pt2.y.toFixed(4) + ')'; }
+  if (deltaE_pt2) { dePt2.textContent = '(' + safeFormat(deltaE_pt2.x,4) + ', ' + safeFormat(deltaE_pt2.y,4) + ')'; }
   else { dePt2.textContent = '未选'; }
   if (deltaE_pt1 && deltaE_pt2) {
     var lab1 = xyToLab(deltaE_pt1.x, deltaE_pt1.y);
     var lab2 = xyToLab(deltaE_pt2.x, deltaE_pt2.y);
     var de = calcDeltaE76(lab1, lab2);
-    deVal.textContent = '\u0394E*ab = ' + de.toFixed(2);
+    deVal.textContent = '\u0394E*ab = ' + safeFormat(de,2,'—');
     deVal.style.color = de < 1 ? '#00e676' : de < 3 ? '#ffd600' : '#ff6b00';
   } else { deVal.textContent = '\u2014'; deVal.style.color = '#00bfff'; }
   draw();
@@ -616,15 +617,15 @@ function updateDeltaE() {
   var deVal = document.getElementById('de-val');
   var dePt1 = document.getElementById('de-pt1');
   var dePt2 = document.getElementById('de-pt2');
-  if (deltaE_pt1) { dePt1.textContent = '(' + deltaE_pt1.x.toFixed(4) + ', ' + deltaE_pt1.y.toFixed(4) + ')'; }
+  if (deltaE_pt1) { dePt1.textContent = '(' + safeFormat(deltaE_pt1.x,4) + ', ' + safeFormat(deltaE_pt1.y,4) + ')'; }
   else { dePt1.textContent = '未选'; }
-  if (deltaE_pt2) { dePt2.textContent = '(' + deltaE_pt2.x.toFixed(4) + ', ' + deltaE_pt2.y.toFixed(4) + ')'; }
+  if (deltaE_pt2) { dePt2.textContent = '(' + safeFormat(deltaE_pt2.x,4) + ', ' + safeFormat(deltaE_pt2.y,4) + ')'; }
   else { dePt2.textContent = '未选'; }
   if (deltaE_pt1 && deltaE_pt2) {
     var lab1 = xyToLab(deltaE_pt1.x, deltaE_pt1.y);
     var lab2 = xyToLab(deltaE_pt2.x, deltaE_pt2.y);
     var de = calcDeltaE76(lab1, lab2);
-    deVal.textContent = '\u0394E*ab = ' + de.toFixed(2);
+    deVal.textContent = '\u0394E*ab = ' + safeFormat(de,2,'—');
     deVal.style.color = de < 1 ? '#00e676' : de < 3 ? '#ffd600' : '#ff6b00';
   } else { deVal.textContent = '\u2014'; deVal.style.color = '#00bfff'; }
   draw();
@@ -659,15 +660,15 @@ function updateDeltaE() {
   var deVal = document.getElementById('de-val');
   var dePt1 = document.getElementById('de-pt1');
   var dePt2 = document.getElementById('de-pt2');
-  if (deltaE_pt1) { dePt1.textContent = '(' + deltaE_pt1.x.toFixed(4) + ', ' + deltaE_pt1.y.toFixed(4) + ')'; }
+  if (deltaE_pt1) { dePt1.textContent = '(' + safeFormat(deltaE_pt1.x,4) + ', ' + safeFormat(deltaE_pt1.y,4) + ')'; }
   else { dePt1.textContent = '未选'; }
-  if (deltaE_pt2) { dePt2.textContent = '(' + deltaE_pt2.x.toFixed(4) + ', ' + deltaE_pt2.y.toFixed(4) + ')'; }
+  if (deltaE_pt2) { dePt2.textContent = '(' + safeFormat(deltaE_pt2.x,4) + ', ' + safeFormat(deltaE_pt2.y,4) + ')'; }
   else { dePt2.textContent = '未选'; }
   if (deltaE_pt1 && deltaE_pt2) {
     var lab1 = xyToLab(deltaE_pt1.x, deltaE_pt1.y);
     var lab2 = xyToLab(deltaE_pt2.x, deltaE_pt2.y);
     var de = calcDeltaE76(lab1, lab2);
-    deVal.textContent = '\u0394E*ab = ' + de.toFixed(2);
+    deVal.textContent = '\u0394E*ab = ' + safeFormat(de,2,'—');
     deVal.style.color = de < 1 ? '#00e676' : de < 3 ? '#ffd600' : '#ff6b00';
   } else { deVal.textContent = '\u2014'; deVal.style.color = '#00bfff'; }
   draw();
@@ -702,15 +703,15 @@ function updateDeltaE() {
   var deVal = document.getElementById('de-val');
   var dePt1 = document.getElementById('de-pt1');
   var dePt2 = document.getElementById('de-pt2');
-  if (deltaE_pt1) { dePt1.textContent = '(' + deltaE_pt1.x.toFixed(4) + ', ' + deltaE_pt1.y.toFixed(4) + ')'; }
+  if (deltaE_pt1) { dePt1.textContent = '(' + safeFormat(deltaE_pt1.x,4) + ', ' + safeFormat(deltaE_pt1.y,4) + ')'; }
   else { dePt1.textContent = '未选'; }
-  if (deltaE_pt2) { dePt2.textContent = '(' + deltaE_pt2.x.toFixed(4) + ', ' + deltaE_pt2.y.toFixed(4) + ')'; }
+  if (deltaE_pt2) { dePt2.textContent = '(' + safeFormat(deltaE_pt2.x,4) + ', ' + safeFormat(deltaE_pt2.y,4) + ')'; }
   else { dePt2.textContent = '未选'; }
   if (deltaE_pt1 && deltaE_pt2) {
     var lab1 = xyToLab(deltaE_pt1.x, deltaE_pt1.y);
     var lab2 = xyToLab(deltaE_pt2.x, deltaE_pt2.y);
     var de = calcDeltaE76(lab1, lab2);
-    deVal.textContent = '\u0394E*ab = ' + de.toFixed(2);
+    deVal.textContent = '\u0394E*ab = ' + safeFormat(de,2,'—');
     deVal.style.color = de < 1 ? '#00e676' : de < 3 ? '#ffd600' : '#ff6b00';
   } else { deVal.textContent = '\u2014'; deVal.style.color = '#00bfff'; }
   draw();
@@ -745,15 +746,15 @@ function updateDeltaE() {
   var deVal = document.getElementById('de-val');
   var dePt1 = document.getElementById('de-pt1');
   var dePt2 = document.getElementById('de-pt2');
-  if (deltaE_pt1) { dePt1.textContent = '(' + deltaE_pt1.x.toFixed(4) + ', ' + deltaE_pt1.y.toFixed(4) + ')'; }
+  if (deltaE_pt1) { dePt1.textContent = '(' + safeFormat(deltaE_pt1.x,4) + ', ' + safeFormat(deltaE_pt1.y,4) + ')'; }
   else { dePt1.textContent = '未选'; }
-  if (deltaE_pt2) { dePt2.textContent = '(' + deltaE_pt2.x.toFixed(4) + ', ' + deltaE_pt2.y.toFixed(4) + ')'; }
+  if (deltaE_pt2) { dePt2.textContent = '(' + safeFormat(deltaE_pt2.x,4) + ', ' + safeFormat(deltaE_pt2.y,4) + ')'; }
   else { dePt2.textContent = '未选'; }
   if (deltaE_pt1 && deltaE_pt2) {
     var lab1 = xyToLab(deltaE_pt1.x, deltaE_pt1.y);
     var lab2 = xyToLab(deltaE_pt2.x, deltaE_pt2.y);
     var de = calcDeltaE76(lab1, lab2);
-    deVal.textContent = '\u0394E*ab = ' + de.toFixed(2);
+    deVal.textContent = '\u0394E*ab = ' + safeFormat(de,2,'—');
     deVal.style.color = de < 1 ? '#00e676' : de < 3 ? '#ffd600' : '#ff6b00';
   } else { deVal.textContent = '\u2014'; deVal.style.color = '#00bfff'; }
   draw();

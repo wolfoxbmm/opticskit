@@ -1,4 +1,3 @@
-
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -18,10 +17,15 @@ export const metadata: Metadata = {
 
 export default function CauchyFitPage() {
   return (
-    <iframe
-      src="/tools/cauchy-fit.html"
-      style={{ width: '100%', height: 'calc(100vh - 56px)', border: 'none', background: '#E8EAED' }}
-      title="柯西拟合工具"
-    />
+    <>
+      <h1 style={{ position: "absolute", width: "1px", height: "1px", padding: 0, margin: "-1px", overflow: "hidden", clip: "rect(0,0,0,0)", whiteSpace: "nowrap", border: 0 }}>
+        柯西色散拟合 | 折射率 n(λ) 色散曲线拟合工具
+      </h1>
+      <iframe
+        src="/tools/cauchy-fit.html"
+        style={{ width: "100%", height: "calc(100vh - 56px)", border: "none", background: "#E8EAED" }}
+        title="柯西拟合工具"
+      />
+    </>
   );
 }
