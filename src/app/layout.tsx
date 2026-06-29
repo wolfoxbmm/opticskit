@@ -63,7 +63,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet" />
-        <script defer src="https://cloud.umami.is/script.js" data-website-id="e5d4a374-05f1-43da-bf5a-466bb2e7b40b"></script>
+        <script defer src="/umami.js" data-website-id="a1b2c3d4-e5f6-7890-abcd-ef1234567890"></script>
         <script defer src="/analytics.js"></script>
       </head>
       <body className="min-h-full flex flex-col bg-[#F2F3F5] text-[#1A1A2E]">

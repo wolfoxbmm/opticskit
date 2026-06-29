@@ -8,7 +8,7 @@ import { useState } from "react";
 
 const tools = [
   {
-    name: "CIE 色度图",
+    name: "色度分析工具",
     desc: "交互式马蹄图，点击查色坐标 / 色温 / Duv，sRGB & DCI-P3 色域叠加",
     href: "/tools/chromaticity",
     icon: (
