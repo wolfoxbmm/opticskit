@@ -212,11 +212,10 @@ export default function SpectrumPage() {
     // Blackbody radiation overlay
     if (overlayBB) {
       const bbWl: number[] = [];
-      const bbVal: number[] = [];
       for (let wl = 380; wl <= 780; wl += 2) {
         bbWl.push(wl);
-        bbVal.push(planckSpectrum(wl * 1e-9, cct));
       }
+      const bbVal = planckSpectrum(cct, bbWl);
       const maxBB = Math.max(...bbVal);
       const normBB = maxBB > 0 ? 1 / maxBB : 1;
 
