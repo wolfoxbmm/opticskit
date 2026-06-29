@@ -368,11 +368,19 @@ export default function SpectrumPage() {
                   >
                     ⬇ 导出 CSV
                   </button>
+                </div>
+                {/* Light Source CTA */}
+                <div className="border-t border-[#E9ECEF] pt-3">
                   <button
                     onClick={openInLightSource}
-                    className="text-xs bg-[#0CA678] text-white rounded px-3 py-1 hover:bg-[#099268] transition-colors"
+                    className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg bg-gradient-to-r from-[#0CA678] to-[#099268] hover:from-[#0b8e67] hover:to-[#087f5b] text-white transition-all shadow-sm hover:shadow-md group"
                   >
-                    💡 计算光源指标
+                    <span className="text-lg flex-shrink-0">💡</span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-semibold block">计算光源指标</span>
+                      <span className="text-xs text-white/70 block">CCT · Duv · 近似 CRI 全链路分析</span>
+                    </div>
+                    <span className="text-white/50 group-hover:translate-x-0.5 transition-transform flex-shrink-0">→</span>
                   </button>
                 </div>
                 {xyzResult && (
