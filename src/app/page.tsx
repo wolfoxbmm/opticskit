@@ -393,7 +393,7 @@ export default function Home() {
           OpticsKit 是一套免费的光学工具箱在线，提供光学计算器、色度图在线、光谱分析工具、
           光学模拟等专业功能。涵盖 CIE 色度图在线计算、衍射干涉模拟、光谱数据可视化、
           光源光谱对比、激光光束计算、薄膜干涉模拟、光学材料折射率数据库、
-          柯西色散拟合、相机镜头选型计算器等 10 个光学在线工具。
+          柯西色散拟合、相机镜头选型计算器等 9 个光学在线工具。
         </p>
       </section>
 
@@ -402,7 +402,7 @@ export default function Home() {
         <div className="max-w-2xl mx-auto space-y-5">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#DEE2E6] bg-white text-[13px] text-[#495057] font-semibold">
             <span className="w-1.5 h-1.5 rounded-full bg-[#0CA678]" />
-            免费 · 10 个光学在线工具
+            免费 · 9 个光学在线工具
           </div>
           <h1 className="text-[42px] leading-[1.12] font-semibold tracking-[-0.03em] text-[#1A1A2E]">
             光学工具箱
