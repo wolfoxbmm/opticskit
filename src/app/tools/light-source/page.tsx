@@ -5,6 +5,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { spectrumToXYZ, xyzToChromaticity, xyToUvPrime, cctWithDuv } from "@/lib/colorimetry";
+import { formatValue } from "@/lib/utils/number";
 
 // CIE 13.3-1995 TCS (Test Colour Samples) reflectance spectra
 // First 8 samples for CRI Ra calculation
@@ -93,7 +94,7 @@ export default function LightSourcePage() {
       const blue = 60 * Math.exp(-((w - 450) ** 2) / (2 * 15 ** 2));
       const yellow = 120 * Math.exp(-((w - 580) ** 2) / (2 * 50 ** 2));
       wl += w + "\n";
-      spd += (blue + yellow).toFixed(2) + "\n";
+      spd += formatValue(blue + yellow, { precision: 2 }) + "\n";
     }
     setWlInput(wl.trim());
     setSpdInput(spd.trim());
@@ -216,23 +217,23 @@ export default function LightSourcePage() {
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                     <span className="text-[#868E96]">X, Y, Z</span>
                     <span className="font-mono text-[#1A1A2E]">
-                      {result.X.toFixed(2)}, {result.Y.toFixed(2)}, {result.Z.toFixed(2)}
+                      {formatValue(result.X, { precision: 2 })}, {formatValue(result.Y, { precision: 2 })}, {formatValue(result.Z, { precision: 2 })}
                     </span>
                     <span className="text-[#868E96]">x, y (1931)</span>
                     <span className="font-mono text-[#1A1A2E]">
-                      ({result.x.toFixed(4)}, {result.y.toFixed(4)})
+                      ({formatValue(result.x, { precision: 4 })}, {formatValue(result.y, { precision: 4 })})
                     </span>
                     <span className="text-[#868E96]">u', v' (1976)</span>
                     <span className="font-mono text-[#1A1A2E]">
-                      ({result.uPrime.toFixed(4)}, {result.vPrime.toFixed(4)})
+                      ({formatValue(result.uPrime, { precision: 4 })}, {formatValue(result.vPrime, { precision: 4 })})
                     </span>
                     <span className="text-[#868E96]">CCT</span>
                     <span className="font-mono text-[#FF6B00] text-lg font-bold">
-                      {Number.isFinite(result.cct) && result.cct > 0 ? result.cct.toFixed(0) + " K" : "—"}
+                      {Number.isFinite(result.cct) && result.cct > 0 ? formatValue(result.cct, { precision: 0, unit: " K" }) : "—"}
                     </span>
                     <span className="text-[#868E96]">Duv</span>
                     <span className="font-mono text-[#1A1A2E]">
-                      {Number.isFinite(result.duv) ? result.duv.toFixed(5) : "—"}
+                      {formatValue(result.duv, { precision: 5 })}
                     </span>
                     <span className="text-[#868E96]">估计 Ra (Δu'v')</span>
                     <span className={`font-mono text-lg font-bold ${(result.cri >= 90 || !result.cri) ? "text-[#00E676]" : result.cri >= 80 ? "text-[#FFD740]" : "text-[#FF5252]"}`}>

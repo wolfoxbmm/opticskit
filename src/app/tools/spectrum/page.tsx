@@ -1,9 +1,9 @@
 ﻿"use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { CIE_WAVELENGTHS, CIE_X_BAR, CIE_Y_BAR, CIE_Z_BAR } from "@/lib/colorimetry/cmf-generated";
 import { planckSpectrum, wavelengthToColor, spectrumToXYZ, xyzToChromaticity } from "@/lib/colorimetry";
+import { formatValue, isValidNumber } from "@/lib/utils/number";
 
 export default function SpectrumPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -152,7 +152,7 @@ export default function SpectrumPage() {
       ctx.stroke();
       ctx.fillStyle = "#ccc";
       ctx.font = "bold 12px monospace";
-      ctx.fillText(i.toFixed(2), margin.left - 30, y + 4);
+      ctx.fillText(formatValue(i, { precision: 2 }), margin.left - 30, y + 4);
     }
     // Y-axis label — vertical
     ctx.save();
@@ -363,8 +363,8 @@ export default function SpectrumPage() {
                 </div>
                 {xyzResult && (
                   <div className="text-xs text-[#868E96] border-t border-[#E9ECEF] pt-2 mt-1">
-                    <p>XYZ: ({xyzResult.X.toFixed(1)}, {xyzResult.Y.toFixed(1)}, {xyzResult.Z.toFixed(1)})</p>
-                    <p>xy: ({xyzResult.x.toFixed(4)}, {xyzResult.y.toFixed(4)})</p>
+                    <p>XYZ: ({formatValue(xyzResult.X, { precision: 1 })}, {formatValue(xyzResult.Y, { precision: 1 })}, {formatValue(xyzResult.Z, { precision: 1 })})</p>
+                    <p>xy: ({formatValue(xyzResult.x, { precision: 4 })}, {formatValue(xyzResult.y, { precision: 4 })})</p>
                   </div>
                 )}
               </div>
