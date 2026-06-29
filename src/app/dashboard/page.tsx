@@ -15,7 +15,6 @@ const TOOLS = [
   { slug: 'diffraction', label: '🌊 衍射模拟' },
   { slug: 'camera-lens', label: '📷 相机镜头' },
   { slug: 'chromaticity', label: '🎨 色度分析' },
-  { slug: 'lens', label: '🔍 透镜成像' },
   { slug: 'spectrum', label: '📊 光谱可视化' },
   { slug: 'laser', label: '⚡ 激光波长' },
   { slug: 'light-source', label: '💡 光源指标' },

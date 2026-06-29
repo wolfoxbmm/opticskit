@@ -4,7 +4,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://opticskit.cn";
 
   const tools = [
-    "lens",
     "chromaticity",
     "diffraction",
     "thin-film",

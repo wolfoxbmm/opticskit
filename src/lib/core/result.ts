@@ -120,10 +120,7 @@ export const TOOL_MODEL_META: Record<string, ToolModelMeta> = {
       { label: '波长→颜色映射', status: 'approximate' },
     ],
   },
-  lens: {
-    primary: 'approximate',
-    description: '薄透镜近轴近似 · 高斯公式',
-  },
+
   diffraction: {
     primary: 'approximate',
     description: 'Fraunhofer 远场 · 标量衍射',

@@ -42,7 +42,6 @@ export default function AboutPage() {
             <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-4">
               <p className="text-[#495057] font-medium mb-2">成像光学</p>
               <ul className="list-disc list-inside space-y-1 text-xs">
-                <li>薄透镜近轴近似 (1/f = 1/u + 1/v)</li>
                 <li>相机镜头选型计算器 — 传感器靶面 + 工作距离 → 焦距推荐</li>
               </ul>
             </div>
