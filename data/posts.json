@@ -1,0 +1,92 @@
+[
+  {
+    "id": "mpuxedjfasxdnx",
+    "content": "欢迎留言!",
+    "tag": "suggestion",
+    "author_name": "光学科技资讯",
+    "avatar": "OPTICSKIT_LOGO",
+    "is_pinned": false,
+    "is_official": true,
+    "created_at": "2026-06-01T08:07:31.851Z"
+  },
+  {
+    "id": "mpxlfczty7gryc",
+    "content": "希望能做出一个光学折射率计算器，我提供波长与折射率的曲线数据，你用工具帮忙柯西拟合算出我想要波段的折射率。比如说我提供400nm-800nm的折射率数据，然后你们的工具可以用柯西拟合算出1550nm波段的折射率数据",
+    "tag": "suggestion",
+    "author_name": "匿名用户",
+    "avatar": "🐻",
+    "is_pinned": false,
+    "is_official": false,
+    "created_at": "2026-06-03T04:55:40.937Z"
+  },
+  {
+    "id": "mq92j7riy5smhy",
+    "content": "有离线使用的就更完美了",
+    "tag": "suggestion",
+    "author_name": "匿名用户",
+    "avatar": "🐰",
+    "is_pinned": false,
+    "is_official": false,
+    "created_at": "2026-06-11T05:40:02.190Z"
+  },
+  {
+    "id": "mq96hjnlib4eos",
+    "content": "衍射模拟工具做得很棒！能不能加偏振方向的选择？线偏振 vs 圆偏振对干涉条纹的影响。",
+    "tag": "suggestion",
+    "author_name": "光学爱好者小陈",
+    "avatar": "🦄",
+    "is_pinned": false,
+    "is_official": false,
+    "created_at": "2026-06-11T07:30:42.754Z"
+  },
+  {
+    "id": "mq96hjnqvvyh5m",
+    "content": "透镜成像工具超实用！想问一下之后会加入像差分析功能吗？比如球差和色差的模拟。",
+    "tag": "suggestion",
+    "author_name": "镜头设计小王",
+    "avatar": "🐰",
+    "is_pinned": false,
+    "is_official": false,
+    "created_at": "2026-06-11T07:30:42.758Z"
+  },
+  {
+    "id": "mq96hjnulii5jm",
+    "content": "关于薄膜干涉模拟，是否可以考虑加入多层膜的计算？单层膜只能算增透膜，多层膜能做滤光片设计。",
+    "tag": "suggestion",
+    "author_name": "镀膜工程师老张",
+    "avatar": "🐹",
+    "is_pinned": false,
+    "is_official": false,
+    "created_at": "2026-06-11T07:30:42.763Z"
+  },
+  {
+    "id": "mq96hjny71jhsn",
+    "content": "折射率数据库特别好用！如果能支持不同温度下的折射率变化就更完美了，热光学分析的刚需。",
+    "tag": "suggestion",
+    "author_name": "红外光学李工",
+    "avatar": "🐶",
+    "is_pinned": false,
+    "is_official": false,
+    "created_at": "2026-06-11T07:30:42.766Z"
+  },
+  {
+    "id": "mq96hjo2ad9471",
+    "content": "色度图的 CCT 计算用的是哪个公式？Robertson 还是 McCamy？希望能标注一下计算方法，方便引用。",
+    "tag": "discussion",
+    "author_name": "光学计量小赵",
+    "avatar": "🐨",
+    "is_pinned": false,
+    "is_official": false,
+    "created_at": "2026-06-11T07:30:42.770Z"
+  },
+  {
+    "id": "mqt9ciuv892u7i",
+    "content": "材料自身热辐射和黑体辐射对比",
+    "tag": "suggestion",
+    "author_name": "匿名用户",
+    "avatar": "🐮",
+    "is_pinned": false,
+    "is_official": false,
+    "created_at": "2026-06-25T08:46:10.807Z"
+  }
+]
