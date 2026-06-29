@@ -2,8 +2,10 @@
 
 
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { spectrumToXYZ, xyzToChromaticity, xyToUvPrime, cctWithDuv } from "@/lib/colorimetry";
 import { formatValue } from "@/lib/utils/number";
 
@@ -73,7 +75,7 @@ function planckForWavelengths(T: number, wavelengths: number[]): number[] {
   });
 }
 
-export default function LightSourcePage() {
+function LightSourceContent() {
   const [wlInput, setWlInput] = useState("");
   const [spdInput, setSpdInput] = useState("");
   const [result, setResult] = useState<{
@@ -85,6 +87,22 @@ export default function LightSourcePage() {
     cri: number;
   } | null>(null);
   const [error, setError] = useState("");
+  const searchParams = useSearchParams();
+
+  // Auto-load SPD data from URL parameter
+  useEffect(() => {
+    const spdParam = searchParams.get("spd");
+    if (!spdParam) return;
+    try {
+      const spd = JSON.parse(decodeURIComponent(spdParam));
+      if (spd.wl && spd.val && Array.isArray(spd.wl) && Array.isArray(spd.val) && spd.wl.length === spd.val.length && spd.wl.length > 0) {
+        setWlInput(spd.wl.join("\n"));
+        setSpdInput(spd.val.map((v: number) => v.toString()).join("\n"));
+      }
+    } catch {
+      // Invalid SPD data, ignore
+    }
+  }, [searchParams]);
 
   const loadSampleData = () => {
     // Warm white LED sample
@@ -274,5 +292,14 @@ export default function LightSourcePage() {
         </div>
       </main>
     </div>
+  );
+}
+
+
+export default function LightSourcePage() {
+  return (
+    <Suspense fallback={<div className="min-h-[calc(100vh-56px)] flex items-center justify-center"><p className="text-[#868E96]">加载中...</p></div>}>
+      <LightSourceContent />
+    </Suspense>
   );
 }

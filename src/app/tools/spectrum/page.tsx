@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { CIE_WAVELENGTHS, CIE_X_BAR, CIE_Y_BAR, CIE_Z_BAR } from "@/lib/colorimetry/cmf-generated";
 import { planckSpectrum, wavelengthToColor, spectrumToXYZ, xyzToChromaticity } from "@/lib/colorimetry";
 import { formatValue, isValidNumber } from "@/lib/utils/number";
@@ -14,6 +15,7 @@ export default function SpectrumPage() {
   const [overlayBB, setOverlayBB] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const exportCSV = useCallback(() => {
     if (!uploadedData) return;
@@ -33,6 +35,12 @@ export default function SpectrumPage() {
     a.click();
     URL.revokeObjectURL(url);
   }, [uploadedData]);
+
+  const openInLightSource = useCallback(() => {
+    if (!uploadedData) return;
+    const spd = JSON.stringify({ wl: uploadedData.wl, val: uploadedData.val });
+    router.push(`/tools/light-source?spd=${encodeURIComponent(spd)}`);
+  }, [uploadedData, router]);
 
   const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -359,6 +367,12 @@ export default function SpectrumPage() {
                     className="text-xs bg-[#228BE6] text-white rounded px-3 py-1 hover:bg-[#1c7ed6] transition-colors"
                   >
                     ⬇ 导出 CSV
+                  </button>
+                  <button
+                    onClick={openInLightSource}
+                    className="text-xs bg-[#0CA678] text-white rounded px-3 py-1 hover:bg-[#099268] transition-colors"
+                  >
+                    💡 计算光源指标
                   </button>
                 </div>
                 {xyzResult && (
