@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getReplies, createReply } from '@/lib/db';
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'opticskit2024';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 
 function isAdmin(req: NextRequest): boolean {
   const token = req.cookies.get('opticskit_admin')?.value;

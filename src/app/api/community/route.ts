@@ -34,7 +34,7 @@ const SENSITIVE_PATTERNS = [
   /[a-z0-9]+\.[a-z]{2,}\/[a-z]/i
 ];
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'opticskit2024';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 
 function checkSensitive(text: string): { found: boolean; word: string } {
   for (const word of SENSITIVE_WORDS) {
