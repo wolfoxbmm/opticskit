@@ -1,6 +1,4 @@
-"use client";
-
-
+﻿"use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
@@ -14,6 +12,8 @@ export default function SpectrumPage() {
   const [uploadedData, setUploadedData] = useState<{ wl: number[]; val: number[] } | null>(null);
   const [xyzResult, setXyzResult] = useState<{ X: number; Y: number; Z: number; x: number; y: number } | null>(null);
   const [overlayBB, setOverlayBB] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const exportCSV = useCallback(() => {
     if (!uploadedData) return;
@@ -37,13 +37,17 @@ export default function SpectrumPage() {
   const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setError(null);
+    setLoading(true);
     const reader = new FileReader();
     reader.onload = (ev) => {
       const text = ev.target?.result as string;
       const lines = text.trim().split("\n");
       const wl: number[] = [];
       const val: number[] = [];
+      let lineNum = 0;
       for (const line of lines) {
+        lineNum++;
         const parts = line.trim().split(/[\t, ]+/);
         if (parts.length >= 2) {
           const a = parseFloat(parts[0]);
@@ -54,10 +58,21 @@ export default function SpectrumPage() {
           }
         }
       }
-      if (wl.length > 0) {
-        setUploadedData({ wl, val });
-        setShowData(true);
+      setLoading(false);
+      if (wl.length === 0) {
+        setError("未解析到有效数据。请确保文件包含两列：波长 强度（空格/逗号/Tab 分隔）");
+        return;
       }
+      // Validate wavelength range
+      if (wl[0] < 300 || wl[wl.length - 1] > 830) {
+        setError("部分波长超出可见光范围 (380-780nm)，结果可能不准确");
+      }
+      setUploadedData({ wl, val });
+      setShowData(true);
+    };
+    reader.onerror = () => {
+      setLoading(false);
+      setError("文件读取失败，请重试");
     };
     reader.readAsText(file);
   }, []);
@@ -68,12 +83,17 @@ export default function SpectrumPage() {
         const xyz = spectrumToXYZ(uploadedData.val, uploadedData.wl);
         const xy = xyzToChromaticity(xyz);
         setXyzResult({ X: xyz.X, Y: xyz.Y, Z: xyz.Z, x: xy.x, y: xy.y });
-      } catch { setXyzResult(null); }
+        setError(null);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "XYZ 计算失败，请检查数据格式");
+        setXyzResult(null);
+      }
     } else { setXyzResult(null); }
   }, [uploadedData, showData]);
 
   // Generate sample data (simulated LED spectrum)
   const loadSampleData = useCallback(() => {
+    setError(null);
     const wl: number[] = [];
     const val: number[] = [];
     for (let i = 380; i <= 780; i += 2) {
@@ -143,104 +163,110 @@ export default function SpectrumPage() {
     ctx.rotate(-Math.PI / 2);
     ctx.fillText("Rel. Intensity", 0, 0);
     ctx.restore();
-
-    // Axis
-    ctx.strokeStyle = "#666";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(margin.left, margin.top);
-    ctx.lineTo(margin.left, margin.top + ph);
-    ctx.lineTo(margin.left + pw, margin.top + ph);
-    ctx.stroke();
-    ctx.fillStyle = "#bbb";
+    // X-axis label
+    ctx.fillStyle = "#aaa";
     ctx.font = "bold 12px monospace";
-    ctx.fillText("Wavelength (nm)", margin.left + pw / 2 - 50, margin.top + ph + 32);
+    ctx.textAlign = "center";
+    ctx.fillText("Wavelength (nm)", margin.left + pw / 2, margin.top + ph + 38);
 
-    // Blackbody
-    if (!showData && cct > 0) {
-      const bbWl = Array.from({ length: 401 }, (_, i) => 380 + i);
-      const bbSpd = planckSpectrum(cct, bbWl);
-      const bbMax = Math.max(...bbSpd);
-      ctx.beginPath();
-      for (let i = 0; i < bbWl.length; i++) {
-        const [x, y] = toCanvas(bbWl[i], bbSpd[i] / bbMax);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = "#FF6B00";
-      ctx.lineWidth = 2;
-      ctx.stroke();
+    // Border
+    ctx.strokeStyle = "#2A2A2A";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(margin.left, margin.top, pw, ph);
 
-      ctx.fillStyle = "#FF6B00";
-      ctx.font = "13px sans-serif";
-      ctx.fillText(`黑体辐射 · ${cct} K`, margin.left + 10, margin.top + 20);
-    }
-
-    // Uploaded data
+    // SPD data
     if (showData && uploadedData) {
-      const dataMax = Math.max(...uploadedData.val) || 1;
       const { wl, val } = uploadedData;
-
-      // Shared max: data + optional blackbody
-      let globalMax = dataMax;
-      const bbWl2 = Array.from({ length: 401 }, (_, i) => 380 + i);
-      const bbSpd2 = planckSpectrum(cct, bbWl2);
-      if (overlayBB && cct > 0) {
-        const bbMax2 = Math.max(...bbSpd2, 1);
-        globalMax = Math.max(globalMax, bbMax2);
-      }
-
-      if (overlayBB && cct > 0) {
-        ctx.beginPath();
-        for (let i = 0; i < bbWl2.length; i++) {
-          const [x2, y2] = toCanvas(bbWl2[i], bbSpd2[i] / globalMax);
-          if (i === 0) ctx.moveTo(x2, y2); else ctx.lineTo(x2, y2);
-        }
-        ctx.strokeStyle = "rgba(255,107,0,0.4)";
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([6, 4]);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-
-      // Spectrum curve as gradient
-      ctx.beginPath();
-      for (let i = 0; i < wl.length; i++) {
-        const [x, y] = toCanvas(wl[i], val[i] / globalMax);
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      }
-      const gradient = ctx.createLinearGradient(margin.left, 0, margin.left + pw, 0);
-      for (let wlNm = 380; wlNm <= 780; wlNm += 20) {
-        const col = wavelengthToColor(wlNm);
-        const x = (wlNm - 380) / 400;
-        gradient.addColorStop(x, `rgb(${col.r},${col.g},${col.b})`);
-      }
-      ctx.strokeStyle = gradient;
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
+      const maxVal = Math.max(...val);
+      const norm = maxVal > 0 ? 1 / maxVal : 1;
 
       // Fill under curve
-      ctx.lineTo(toCanvas(wl[wl.length - 1], 0)[0], margin.top + ph);
-      ctx.lineTo(toCanvas(wl[0], 0)[0], margin.top + ph);
+      ctx.beginPath();
+      for (let i = 0; i < wl.length; i++) {
+        const [x, y] = toCanvas(wl[i], val[i] * norm);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      const lastX = margin.left + ((wl[wl.length - 1] - 380) / 400) * pw;
+      ctx.lineTo(lastX, margin.top + ph);
+      ctx.lineTo(margin.left + ((wl[0] - 380) / 400) * pw, margin.top + ph);
       ctx.closePath();
-      ctx.fillStyle = "rgba(0,191,255,0.05)";
+      const gradient = ctx.createLinearGradient(0, margin.top, 0, margin.top + ph);
+      gradient.addColorStop(0, "rgba(34, 139, 230, 0.35)");
+      gradient.addColorStop(1, "rgba(34, 139, 230, 0.02)");
+      ctx.fillStyle = gradient;
       ctx.fill();
 
-      ctx.fillStyle = "#00BFFF";
-      ctx.font = "12px sans-serif";
-      ctx.fillText("光谱数据", margin.left + 10, margin.top + 20);
+      // SPD line
+      ctx.beginPath();
+      ctx.strokeStyle = "#57B8FF";
+      ctx.lineWidth = 2;
+      for (let i = 0; i < wl.length; i++) {
+        const [x, y] = toCanvas(wl[i], val[i] * norm);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
     }
-  }, [cct, showData, uploadedData, overlayBB]);
 
+    // Blackbody radiation overlay
+    if (overlayBB) {
+      const bbWl: number[] = [];
+      const bbVal: number[] = [];
+      for (let wl = 380; wl <= 780; wl += 2) {
+        bbWl.push(wl);
+        bbVal.push(planckSpectrum(wl * 1e-9, cct));
+      }
+      const maxBB = Math.max(...bbVal);
+      const normBB = maxBB > 0 ? 1 / maxBB : 1;
+
+      ctx.beginPath();
+      ctx.strokeStyle = "#FF6B00";
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 4]);
+      for (let i = 0; i < bbWl.length; i++) {
+        const [x, y] = toCanvas(bbWl[i], bbVal[i] * normBB);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // CCT label
+      ctx.fillStyle = "#FF6B00";
+      ctx.font = "bold 11px monospace";
+      ctx.textAlign = "right";
+      ctx.fillText(`${cct} K`, margin.left + pw - 6, margin.top + 18);
+    }
+
+    // Horizontal zero line
+    ctx.strokeStyle = "#333";
+    ctx.lineWidth = 1;
+    const [, y0] = toCanvas(400, 0);
+    ctx.beginPath();
+    ctx.moveTo(margin.left, y0);
+    ctx.lineTo(margin.left + pw, y0);
+    ctx.stroke();
+  }, [showData, uploadedData, cct, overlayBB]);
+
+  // Resize handling
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
     const handleResize = () => {
-      canvas.width = canvas.clientWidth * (window.devicePixelRatio || 1);
-      canvas.height = canvas.clientHeight * (window.devicePixelRatio || 1);
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const parent = canvas.parentElement;
+      if (!parent) return;
+      const { width, height } = parent.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      const ctx = canvas.getContext("2d");
+      if (ctx) ctx.scale(dpr, dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
       render();
     };
+
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -253,12 +279,14 @@ export default function SpectrumPage() {
             ref={canvasRef}
             className="w-full h-full absolute inset-0"
             style={{ width: "100%", height: "100%" }}
+            aria-label="光谱数据可视化图表"
+            role="img"
           />
         </div>
 
         <aside className="w-full lg:w-[300px] lg:border-l lg:border border-[#E9ECEF] rounded-xl bg-white px-4 py-3 space-y-3 overflow-y-auto flex-shrink-0">
           <div>
-            <h1 className="text-base font-semibold text-[#1A1A2E]">📊 光谱数据可视化</h1>
+            <h1 className="text-base font-semibold text-[#1A1A2E]">📈 光谱数据可视化</h1>
             <p className="text-xs text-[#868E96]">导入光谱功率分布 (SPD) 数据，查看曲线。</p>
           </div>
 
@@ -291,9 +319,29 @@ export default function SpectrumPage() {
                 onClick={loadSampleData}
                 className="text-xs text-[#228BE6] hover:underline"
               >
-                ↗ 加载示例LED数据
+                → 加载示例LED数据
               </button>
             </div>
+
+            {/* Loading indicator */}
+            {loading && (
+              <div className="bg-[#F8F9FA] border border-[#E9ECEF] rounded-lg p-3">
+                <p className="text-xs text-[#868E96] animate-pulse">正在解析文件...</p>
+              </div>
+            )}
+
+            {/* Error message */}
+            {error && (
+              <div className="bg-[#FFF5F5] border border-[#FFC9C9] rounded-lg p-3">
+                <p className="text-xs text-[#E03131]">⚠ {error}</p>
+                <button
+                  onClick={() => setError(null)}
+                  className="text-xs text-[#868E96] mt-1 hover:underline"
+                >
+                  关闭
+                </button>
+              </div>
+            )}
 
             {uploadedData && (
               <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-3 space-y-2">
@@ -302,7 +350,7 @@ export default function SpectrumPage() {
                 </p>
                 <div className="flex gap-3 flex-wrap">
                   <button onClick={() => setShowData(!showData)} className="text-xs text-[#228BE6] hover:underline">
-                    {showData ? "✕ 隐藏" : "✓ 显示"}
+                    {showData ? "✓ 隐藏" : "✓ 显示"}
                   </button>
                   <label className="flex items-center gap-1 text-xs text-[#495057] cursor-pointer">
                     <input type="checkbox" checked={overlayBB} onChange={e => setOverlayBB(e.target.checked)} className="accent-[#FF6B00]" />叠加黑体
@@ -332,7 +380,7 @@ export default function SpectrumPage() {
             </a>
 
           <p className="text-xs text-[#ADB5BD] pt-4">
-            导入格式简单：两列（波长/强度），380–780nm 最佳，步长任意。
+            导入格式简单：两列（波长 强度），380–780nm 最佳，步长任意。
             可叠加黑体辐射曲线作为对比参考。
           </p>
         </aside>
