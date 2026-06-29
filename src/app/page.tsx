@@ -8,6 +8,28 @@ import { useState } from "react";
 
 const tools = [
   {
+    name: "光谱数据可视化",
+    desc: "导入 SPD 曲线，叠加黑体辐射对比，自动导出 XYZ/xy 坐标",
+    href: "/tools/spectrum",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 20L9 8l6 12 6-16"/>
+      </svg>
+    ),
+    color: "teal",
+  },
+  {
+    name: "光源指标计算器",
+    desc: "SPD → XYZ → xy → CCT / Duv / 近似CRI 全链路自动计算",
+    href: "/tools/light-source",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    ),
+    color: "rose",
+  },
+  {
     name: "色度分析工具",
     desc: "交互式马蹄图，点击查色坐标 / 色温 / Duv，sRGB & DCI-P3 色域叠加",
     href: "/tools/chromaticity",
@@ -30,37 +52,16 @@ const tools = [
     color: "violet",
   },
   {
-    name: "光谱数据可视化",
-    desc: "导入 SPD 曲线，叠加黑体辐射对比，自动导出 XYZ/xy 坐标",
-    href: "/tools/spectrum",
+    name: "薄膜干涉模拟",
+    desc: "TMM 传输矩阵法，单层膜反射率 vs 波长 & 膜厚扫描，13 种预设场景",
+    href: "/tools/thin-film",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 20L9 8l6 12 6-16"/>
+        <path d="M3 3v18M21 3v18"/><path d="M3 12h18"/><path d="M12 3v18"/>
+        <path d="M6 9l3-3-3-3M18 15l-3 3 3 3"/>
       </svg>
     ),
-    color: "teal",
-  },
-  {
-    name: "透镜成像模拟",
-    desc: "凸透镜 & 凹透镜，薄透镜近轴光线追迹，拖动滑块实时交互",
-    href: "/tools/lens",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <ellipse cx="12" cy="12" rx="4" ry="10"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/>
-      </svg>
-    ),
-    color: "amber",
-  },
-  {
-    name: "光源指标计算器",
-    desc: "SPD → XYZ → xy → CCT / Duv / 近似CRI 全链路自动计算",
-    href: "/tools/light-source",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-      </svg>
-    ),
-    color: "rose",
+    color: "cyan",
   },
   {
     name: "激光波长速查",
@@ -72,18 +73,6 @@ const tools = [
       </svg>
     ),
     color: "blue",
-  },
-  {
-    name: "薄膜干涉模拟",
-    desc: "TMM 传输矩阵法，单层膜反射率 vs 波长 & 膜厚扫描，13 种预设场景",
-    href: "/tools/thin-film",
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 3v18M21 3v18"/><path d="M3 12h18"/><path d="M12 3v18"/>
-        <path d="M6 9l3-3-3-3M18 15l-3 3 3 3"/>
-      </svg>
-    ),
-    color: "cyan",
   },
   {
     name: "光学材料折射率数据库",
@@ -108,6 +97,17 @@ const tools = [
       </svg>
     ),
     color: "cyan",
+  },
+  {
+    name: "透镜成像模拟",
+    desc: "凸透镜 & 凹透镜，薄透镜近轴光线追迹，拖动滑块实时交互",
+    href: "/tools/lens",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <ellipse cx="12" cy="12" rx="4" ry="10"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/>
+      </svg>
+    ),
+    color: "amber",
   },
   {
     name: "相机镜头选型计算器",
