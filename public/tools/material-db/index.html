@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -82,6 +82,12 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
 .pr-legend.show{display:flex}
 .pr-legend span{display:flex;align-items:center;gap:5px}
 .pr-legend .dot{width:8px;height:8px;border-radius:2px}
+.wl-calc{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#0a0a0f;border-radius:8px;margin-top:4px;grid-column:1/-1;flex-wrap:wrap}
+.wl-calc-label{font-size:11px;color:#888;white-space:nowrap}
+.wl-calc-input{width:90px;padding:6px 8px;border:1px solid #1e1e2a;border-radius:6px;background:#13131a;color:#e0e0e0;font-size:13px;font-family:'Consolas','Monaco',monospace;outline:none}
+.wl-calc-input:focus{border-color:#4fc3f7}
+.wl-calc-result{font-size:14px;color:#4fc3f7;font-family:'Consolas','Monaco',monospace;font-weight:600}
+.wl-calc-result b{color:#fff}
 </style>
 </head>
 <body>
@@ -98,7 +104,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     </div>
     <div class="cat-tags" id="catTags"></div>
     <div class="mat-list" id="matList"></div>
-    <div class="pl-footer">数据: refractiveindex.info (CC0 1.0)<br>版本: 2026-05-24 · Mikhail Polyanskiy</div>
+    <div class="pl-footer">数据: refractiveindex.info (CC0 1.0)<br>版本: 2026-06-11 · Mikhail Polyanskiy</div>
   </div>
 
   <!-- Center: Material Detail -->
@@ -167,8 +173,11 @@ async function init() {
     document.getElementById('matCount').textContent = allMaterials.length;
     setupUI();
     // Auto-select SiO2 as default
-    const sio2 = allMaterials.find(m => m.id === 'SiO2');
-    if (sio2) { setTimeout(() => selectMaterial(sio2), 200); }
+    // Check URL hash for direct linking
+    const hashId = window.location.hash.slice(1);
+    const target = hashId ? allMaterials.find(m => m.id === decodeURIComponent(hashId)) : null;
+    if (target) { setTimeout(() => selectMaterial(target), 200); }
+    else { const sio2 = allMaterials.find(m => m.id === 'SiO2'); if (sio2) { setTimeout(() => selectMaterial(sio2), 200); } }
   } catch(e) {
     document.getElementById('matList').innerHTML = '<div class="no-r">⚠ 数据加载失败<br>请确认通过 http://localhost 访问</div>';
   }
@@ -238,12 +247,19 @@ function renderCatTags() {
 }
 
 // ============ Material Selection ============
+let _abortCtrl = null;
 async function selectMaterial(mat) {
+  if (mat) { window.location.hash = '#' + encodeURIComponent(mat.id); }
   currentMaterial = mat;
   currentDatasetIdx = 0;
+  if (_abortCtrl) { _abortCtrl.abort(); }
+  _abortCtrl = new AbortController();
+  const signal = _abortCtrl.signal;
   let dataFile = mat.id.replace(/[/\\]/g, '_') + '.json';
-  try { const resp = await fetch('data/' + dataFile); mat._datasets = await resp.json(); }
-  catch(e) { try { const resp = await fetch('data/org_' + dataFile); mat._datasets = await resp.json(); } catch(e2) { mat._datasets = []; } }
+  document.getElementById('detailPlaceholder').innerHTML = '<div class="no-r">⏳ 加载中...</div>';
+  document.getElementById('detailPlaceholder').style.display = 'flex';
+  try { const resp = await fetch('data/' + dataFile, { signal }); mat._datasets = await resp.json(); }
+  catch(e) { if (e.name === 'AbortError') return; try { const resp = await fetch('data/org_' + dataFile, { signal }); mat._datasets = await resp.json(); } catch(e2) { if (e2.name === 'AbortError') return; mat._datasets = []; } }
   
   // Auto-select best dataset: prefer visible-range + formula1
   if (mat._datasets && mat._datasets.length > 1) {
@@ -295,11 +311,24 @@ function renderDetail() {
   if (ds.type && ds.type.startsWith('formula') && ds.coeffs) {
     html += '<div class="coeff-box">';
     if (ds.type === 'formula1') {
-      html += 'Sellmeier: n² = 1 + B₁λ²/(λ²-C₁²) + B₂λ²/(λ²-C₂²) + B₃λ²/(λ²-C₃²)<br>';
+      html += 'Sellmeier: n² = 1 + B₁λ²/(λ²-C₁²) + B₂λ²/(λ²-C₂²) + B₃λ²/(λ²-C₃²) (λ: μm)<br>';
       const lbl = ['B₁','C₁','B₂','C₂','B₃','C₃'];
       for (let i=0;i<ds.coeffs.length;i++) html += `${lbl[i]} = ${ds.coeffs[i]}<br>`;
-    } else {
-      html += `类型: ${ds.type}<br>系数: ${ds.coeffs.join(', ')}`;
+    } else if (ds.type === 'formula2') {
+      const c = ds.coeffs;
+      if (c.length >= 7) {
+        html += `Sellmeier: n² = 1 + B₁λ²/(λ²-C₁) + B₂λ²/(λ²-C₂) + B₃λ²/(λ²-C₃) (λ: μm)<br>`;
+        html += `B₁=${c[1]}  C₁=${c[2]} μm² (λ₀=${Math.sqrt(c[2]).toFixed(4)} μm)<br>`;
+        html += `B₂=${c[3]}  C₂=${c[4]} μm² (λ₀=${Math.sqrt(c[4]).toFixed(4)} μm)<br>`;
+        html += `B₃=${c[5]}  C₃=${c[6]} μm² (λ₀=${Math.sqrt(c[6]).toFixed(4)} μm)`;
+      } else if (c.length >= 5) {
+        html += `Sellmeier-2: n² = A + B·λ²/(λ²-C) + D·λ²/(λ²-E) (λ: μm)<br>`;
+        html += `A = ${(1 + c[0]).toFixed(8)}  B = ${c[1]}<br>`;
+        html += `C = ${c[2]} μm² (λ₀ = ${Math.sqrt(Math.max(c[2],0)).toFixed(4)} μm)<br>`;
+        html += `D = ${c[3]}  E = ${c[4]} μm² (λ₀ = ${Math.sqrt(Math.max(c[4],0)).toFixed(4)} μm)`;
+      }
+    } else if (ds.type === 'formula4') {
+      html += `n² = A + B₁/(λ²-C₁) + B₂/(λ²-C₂) + D·λ<sup>E</sup> (λ: μm)<br>A=${ds.coeffs[0]}  B₁=${ds.coeffs[1]}  C₁=${ds.coeffs[3]}  B₂=${ds.coeffs[5]}  C₂=${ds.coeffs[7]}<br>D=${ds.coeffs[9]}  E=${ds.coeffs[10]}`;
     }
     html += '<button class="copy-btn" onclick="copyCoeffs()">📋 复制</button></div>';
   }
@@ -311,22 +340,8 @@ function renderDetail() {
     if (ds.wl_min && wl < ds.wl_min - 0.01) continue;
     if (ds.wl_max && wl > ds.wl_max + 0.01) continue;
     let n = null, k = null;
-    if (ds.type === 'formula1') {
-      n = sellmeier1(wl, ds.coeffs);
-    } else if (ds.type === 'formula2') {
-      const c = ds.coeffs; const l2 = wl*wl;
-      n = Math.sqrt(Math.max(c[0] + c[1]/(l2-c[2]) + c[3]*l2/(l2-c[4]), 0));
-    } else if (ds.type === 'formula4' && ds.coeffs && ds.coeffs.length >= 11) {
-      const c = ds.coeffs; const l2 = wl*wl;
-      n = Math.sqrt(Math.max(c[0] + c[1]/(l2-c[2]**2) + c[3]/(l2-c[4]**2) + c[5]/(l2-c[6]**2) + c[7]/(l2-c[8]**2) + c[9]*l2, 0));
-    } else if (ds.pts) {
-      // Find closest data point
-      let bestDist = Infinity;
-      for (const pt of ds.pts) {
-        const dist = Math.abs(pt[0] - wl);
-        if (dist < bestDist) { bestDist = dist; n = pt[1]; k = pt.length > 2 ? pt[2] : null; }
-      }
-    }
+    const ri = calcRI(ds, wl);
+    n = ri.n; k = ri.k;
     if (n !== null) {
       const wlStr = wl >= 1 ? wl.toFixed(1) + 'μm' : (wl*1000).toFixed(0) + 'nm';
       html += `<div class="nv-item"><span class="nv-wl">${wlStr}</span><span class="nv-n">${n.toFixed(4)}</span>`;
@@ -336,6 +351,12 @@ function renderDetail() {
     }
   }
   html += '</div>';
+  
+  // === Wavelength calculator ===
+  html += '<div class="wl-calc"><span class="wl-calc-label">自定义波长 (μm): </span>';
+  html += '<input type="number" id="wlInput" class="wl-calc-input" value="0.55" min="0.1" max="50" step="0.001" onchange="calcWavelength()" oninput="calcWavelength()">';
+  html += '<span class="wl-calc-result" id="wlResult">n = —</span></div>';
+  setTimeout(calcWavelength, 100);
   
   // === Tabulated data table (show first 30 rows, click to expand) ===
   if (ds.pts && ds.pts.length > 0) {
@@ -399,6 +420,23 @@ function toggleAllData(totalRows) {
   }, 100);
 }
 
+function calcWavelength() {
+  if (!currentMaterial) return;
+  const ds = currentMaterial._datasets[currentDatasetIdx];
+  if (!ds) return;
+  const wl = parseFloat(document.getElementById('wlInput').value);
+  if (isNaN(wl) || wl <= 0) { document.getElementById('wlResult').innerHTML = 'n = —'; return; }
+  if (ds.wl_min && wl < ds.wl_min - 0.01) { document.getElementById('wlResult').innerHTML = 'n = — <span style="font-size:10px;color:#ff5252">(超出范围)</span>'; return; }
+  if (ds.wl_max && wl > ds.wl_max + 0.01) { document.getElementById('wlResult').innerHTML = 'n = — <span style="font-size:10px;color:#ff5252">(超出范围)</span>'; return; }
+  const ri = calcRI(ds, wl);
+  if (ri.n !== null) {
+    document.getElementById('wlResult').innerHTML = 'n = <b>' + ri.n.toFixed(5) + '</b>';
+    if (ri.k !== null && ri.k > 1e-6) document.getElementById('wlResult').innerHTML += '  k = ' + ri.k.toExponential(2);
+  } else {
+    document.getElementById('wlResult').innerHTML = 'n = —';
+  }
+}
+
 function copyCoeffs() {
   if (!currentMaterial) return;
   const ds = currentMaterial._datasets[currentDatasetIdx];
@@ -414,11 +452,34 @@ const ctx = canvas.getContext('2d');
 let padL, padR, padT, padB;
 
 function sellmeier1(lambda_um, coeffs) {
+  if (!coeffs || coeffs.length < 6) return 1;
   const [B1, C1, B2, C2, B3, C3] = coeffs;
   const l2 = lambda_um * lambda_um;
   const n2 = 1 + B1*l2/(l2 - C1*C1) + B2*l2/(l2 - C2*C2) + B3*l2/(l2 - C3*C3);
   return Math.sqrt(Math.max(n2, 0));
 }
+function calcRI(ds, wl) {
+  if (!ds) return { n: null, k: null };
+  const l2 = wl * wl;
+  let n = null, k = null;
+  if (ds.type === 'formula1') {
+    n = sellmeier1(wl, ds.coeffs);
+  } else if (ds.type === 'formula2' && ds.coeffs && ds.coeffs.length >= 5) {
+    const c = ds.coeffs;
+    n = Math.sqrt(Math.max(1 + c[0] + c[1]*l2/(l2-c[2]) + c[3]*l2/(l2-c[4]), 0));
+  } else if (ds.type === 'formula4' && ds.coeffs && ds.coeffs.length >= 11) {
+    const c = ds.coeffs;
+    n = Math.sqrt(Math.max(c[0] + c[1]/(l2-c[3]) + c[5]/(l2-c[7]) + c[9]*Math.pow(l2, c[10]/2), 0));
+  } else if (ds.pts && ds.pts.length) {
+    let bestDist = Infinity;
+    for (const pt of ds.pts) {
+      const dist = Math.abs(pt[0] - wl);
+      if (dist < bestDist) { bestDist = dist; n = pt[1]; k = pt.length > 2 ? pt[2] : null; }
+    }
+  }
+  return { n, k };
+}
+
 
 function renderChart() {
   const prph = document.getElementById('prph');
@@ -451,9 +512,7 @@ function renderChart() {
     for (let i = 0; i <= 500; i++) {
       const wl = wlMin + (wlMax - wlMin) * i / 500;
       let n = 1;
-      if (ds.type === 'formula1') n = sellmeier1(wl, ds.coeffs);
-      else if (ds.type === 'formula2') { const c=ds.coeffs,l2=wl*wl; n=Math.sqrt(Math.max(c[0]+c[1]/(l2-c[2])+c[3]*l2/(l2-c[4]),0)); }
-      else if (ds.type === 'formula4' && ds.coeffs.length>=11) { const c=ds.coeffs,l2=wl*wl; n=Math.sqrt(Math.max(c[0]+c[1]/(l2-c[2]**2)+c[3]/(l2-c[4]**2)+c[5]/(l2-c[6]**2)+c[7]/(l2-c[8]**2)+c[9]*l2,0)); }
+      n = calcRI(ds, wl).n || 1;
       if (n > yMax) yMax = n;
     }
   } else if (ds.pts) {
@@ -518,9 +577,7 @@ function renderChart() {
     for (let i = 0; i <= 500; i++) {
       const wl = wlMin + (wlMax-wlMin)*i/500;
       let n = 1;
-      if (ds.type==='formula1') n=sellmeier1(wl,ds.coeffs);
-      else if (ds.type==='formula2') { const c=ds.coeffs,l2=wl*wl; n=Math.sqrt(Math.max(c[0]+c[1]/(l2-c[2])+c[3]*l2/(l2-c[4]),0)); }
-      else if (ds.type==='formula4'&&ds.coeffs.length>=11) { const c=ds.coeffs,l2=wl*wl; n=Math.sqrt(Math.max(c[0]+c[1]/(l2-c[2]**2)+c[3]/(l2-c[4]**2)+c[5]/(l2-c[6]**2)+c[7]/(l2-c[8]**2)+c[9]*l2,0)); }
+      n = calcRI(ds, wl).n || 1;
       const x=xForWl(wl),y=yForN(Math.min(n,yMax));
       if(first){ctx.moveTo(x,y);first=false}else ctx.lineTo(x,y);
     }
@@ -571,7 +628,8 @@ function resizeChart() {
 // ============ Setup ============
 function setupUI() {
   renderCatTags(); renderList();
-  document.getElementById('searchInput').addEventListener('input', e => { searchQuery = e.target.value; renderList(); });
+  let searchTimer = null;
+  document.getElementById('searchInput').addEventListener('input', e => { searchQuery = e.target.value; clearTimeout(searchTimer); searchTimer = setTimeout(renderList, 250); });
   window.addEventListener('resize', resizeChart);
   resizeChart();
 }
