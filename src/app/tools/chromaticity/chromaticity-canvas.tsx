@@ -7,9 +7,7 @@ import {
   MACADAM_ELLIPSES,
   GAMUTS,
   WHITE_POINTS,
-  type SpectralLocusPoint,
-  type MacAdamEllipse,
-  type GamutTriangle,
+  STANDARD_ILLUMINANTS,
 } from "@/lib/colorimetry/chromaticity-data";
 import {
   xyToUvPrime,
@@ -22,22 +20,13 @@ import {
   cctWithDuv,
   wavelengthToColor,
   nearestWavelength,
+  spectrumToXYZ,
+  xyzToChromaticity,
 } from "@/lib/colorimetry";
-
-// ─── Constants ────────────────────────────────────────────────────
 
 const MARGIN = 60;
 
 type DiagramMode = "xy" | "uv";
-type SelectedPoint = { x: number; y: number } | null;
-
-interface HoverInfo {
-  x: number;
-  y: number;
-  wl: number | null;
-  cct: number | null;
-  rgb: string;
-}
 
 interface ChromaticityCanvasProps {
   diagramMode: DiagramMode;
@@ -52,6 +41,8 @@ interface ChromaticityCanvasProps {
   locateX: number;
   locateY: number;
   onLocate: (x: number, y: number, info: PointInfo | null) => void;
+  point1: PointInfo | null;
+  point2: PointInfo | null;
 }
 
 export interface PointInfo {
@@ -67,6 +58,73 @@ export interface PointInfo {
   gamutIn: string[];
 }
 
+// Diagram configuration per mode
+function getDiagramConfig(mode: DiagramMode) {
+  if (mode === "xy") {
+    return { xRange: [0, 0.85] as [number, number], yRange: [0, 0.9] as [number, number], xLabel: "x", yLabel: "y", gridStep: 0.1 };
+  }
+  return { xRange: [0, 0.65] as [number, number], yRange: [0, 0.62] as [number, number], xLabel: "u\u2019", yLabel: "v\u2019", gridStep: 0.05 };
+}
+
+// Pre-compute UV data for both modes
+function getLocusUV(mode: DiagramMode): { x: number; y: number; wl: number }[] {
+  return SPECTRAL_LOCUS.map((p) => {
+    if (mode === "xy") return { x: p.x, y: p.y, wl: p.wl };
+    const uv = xyToUvPrime(p.x, p.y);
+    return { x: uv.uPrime, y: uv.vPrime, wl: p.wl };
+  });
+}
+
+function getBBUV(mode: DiagramMode): { x: number; y: number; T: number }[] {
+  return BLACKBODY_LOCUS.map((p) => {
+    if (mode === "xy") return { x: p.x, y: p.y, T: p.T };
+    const uv = xyToUvPrime(p.x, p.y);
+    return { x: uv.uPrime, y: uv.vPrime, T: p.T };
+  });
+}
+
+// Compute illuminant (x,y) from SPD
+function getIllumXYs(mode: DiagramMode): { name: string; x: number; y: number }[] {
+  const CIE_WAVELENGTHS = [360, 365, 370, 375, 380, 385, 390, 395, 400, 405, 410, 415, 420, 425, 430, 435, 440, 445, 450, 455, 460, 465, 470, 475, 480, 485, 490, 495, 500, 505, 510, 515, 520, 525, 530, 535, 540, 545, 550, 555, 560, 565, 570, 575, 580, 585, 590, 595, 600, 605, 610, 615, 620, 625, 630, 635, 640, 645, 650, 655, 660, 665, 670, 675, 680, 685, 690, 695, 700, 705, 710, 715, 720, 725, 730, 735, 740, 745, 750, 755, 760, 765, 770, 775, 780];
+  return Object.entries(STANDARD_ILLUMINANTS).filter(([n]) => n !== "D65").map(([name, ill]) => {
+    const XYZ = spectrumToXYZ(ill.spd, CIE_WAVELENGTHS);
+    const xy = xyzToChromaticity(XYZ);
+    if (mode === "xy") return { name, x: xy.x, y: xy.y };
+    const uv = xyToUvPrime(xy.x, xy.y);
+    return { name: xy.x > 0 ? name : "", x: uv.uPrime, y: uv.vPrime };
+  }).filter(i => i.name);
+}
+
+const ILLUM_LABELS: Record<string, string> = {
+  A: "A 钨丝灯 2856K",
+  C: "C 北向日光 6774K",
+  D50: "D50 日光5000K",
+  D55: "D55 日光5500K",
+  D75: "D75 日光7500K",
+  E: "E 等能白 5454K",
+};
+
+// Memoize diagram data
+function buildDiagramData(mode: DiagramMode) {
+  const cfg = getDiagramConfig(mode);
+  const locus = getLocusUV(mode);
+  const bb = getBBUV(mode);
+  const macadam = MACADAM_ELLIPSES.map((e) => {
+    if (mode === "xy") return e;
+    const uv = xyToUvPrime(e.x, e.y);
+    return { ...e, x: uv.uPrime, y: uv.vPrime };
+  });
+  const gamuts: Record<string, { R: [number, number]; G: [number, number]; B: [number, number] }> = {};
+  for (const [k, g] of Object.entries(GAMUTS)) {
+    const toUV = (px: number, py: number): [number, number] => mode === "xy" ? [px, py] : [xyToUvPrime(px, py).uPrime, xyToUvPrime(px, py).vPrime];
+    gamuts[k] = { R: toUV(g.R[0], g.R[1]) as [number, number], G: toUV(g.G[0], g.G[1]) as [number, number], B: toUV(g.B[0], g.B[1]) as [number, number] };
+  }
+  const wp = WHITE_POINTS["D65"];
+  const uv = mode === "xy" ? { uPrime: wp.x, vPrime: wp.y } : xyToUvPrime(wp.x, wp.y);
+  const wpUV = { x: uv.uPrime, y: uv.vPrime };
+  return { cfg, locus, bb, macadam, gamuts, wp: wpUV };
+}
+
 export default function ChromaticityCanvas({
   diagramMode,
   showMacAdam,
@@ -80,456 +138,384 @@ export default function ChromaticityCanvas({
   locateX,
   locateY,
   onLocate,
+  point1,
+  point2,
 }: ChromaticityCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const hoverRef = useRef<HoverInfo | null>(null);
-  const [hoverPos, setHoverPos] = useState<{ x: number; y: number; info: HoverInfo } | null>(null);
-  const rafRef = useRef<number>(0);
+  const [hoverPos, setHoverPos] = useState<{ x: number; y: number; info: any } | null>(null);
+  const [diagramData, setDiagramData] = useState(() => buildDiagramData(diagramMode));
 
-  // Map coordinates to canvas pixel space
-  // Viewport: xy [0, 0.85] x [0, 0.9], uv [0, 0.65] x [0, 0.6]
+  useEffect(() => {
+    setDiagramData(buildDiagramData(diagramMode));
+  }, [diagramMode]);
+
+  const { cfg, locus, bb, macadam, gamuts, wp } = diagramData;
+  const [xR0, xR1] = cfg.xRange;
+  const [yR0, yR1] = cfg.yRange;
+
+  // Coordinate conversion
   const toPixel = useCallback(
-    (x: number, y: number, cw: number, ch: number): [number, number] => {
-      const xRange = diagramMode === "xy" ? 0.85 : 0.65;
-      const yRange = diagramMode === "xy" ? 0.9 : 0.6;
-      const size = Math.min(cw, ch) - MARGIN * 2;
-      const px = MARGIN + (x / xRange) * size;
-      const py = ch - MARGIN - (y / yRange) * size;
-      return [Math.round(px), Math.round(py)];
+    (cx: number, cy: number, cw: number, ch: number): [number, number] => {
+      const pw = cw - MARGIN * 2;
+      const ph = ch - MARGIN * 2;
+      return [
+        MARGIN + ((cx - xR0) / (xR1 - xR0)) * pw,
+        ch - MARGIN - ((cy - yR0) / (yR1 - yR0)) * ph,
+      ];
     },
-    [diagramMode]
+    [xR0, xR1, yR0, yR1]
   );
 
   const toLogical = useCallback(
     (px: number, py: number, cw: number, ch: number): [number, number] => {
-      const xRange = diagramMode === "xy" ? 0.85 : 0.65;
-      const yRange = diagramMode === "xy" ? 0.9 : 0.6;
-      const size = Math.min(cw, ch) - MARGIN * 2;
-      const x = ((px - MARGIN) / size) * xRange;
-      const y = ((ch - MARGIN - py) / size) * yRange;
-      return [x, y];
+      const pw = cw - MARGIN * 2;
+      const ph = ch - MARGIN * 2;
+      return [
+        xR0 + ((px - MARGIN) / pw) * (xR1 - xR0),
+        yR0 + ((ch - MARGIN - py) / ph) * (yR1 - yR0),
+      ];
     },
-    []
+    [xR0, xR1, yR0, yR1]
   );
 
-  // Convert xy locus to uv for rendering
-  const getLocusPoints = useCallback(
-    (mode: DiagramMode): { x: number; y: number }[] => {
-      if (mode === "xy") return SPECTRAL_LOCUS.map((p) => ({ x: p.x, y: p.y }));
-      return SPECTRAL_LOCUS.map((p) => {
-        const uv = xyToUvPrime(p.x, p.y);
-        return { x: uv.uPrime, y: uv.vPrime };
-      });
-    },
-    []
-  );
-
-  // Draw spectral locus filled area
-  const drawLocusFill = useCallback(
-    (ctx: CanvasRenderingContext2D, cw: number, ch: number, mode: DiagramMode) => {
-      const points = getLocusPoints(mode);
-      if (points.length < 3) return;
-
-      ctx.beginPath();
-      const [px0, py0] = toPixel(points[0].x, points[0].y, cw, ch);
-      ctx.moveTo(px0, py0);
-
-      for (let i = 1; i < points.length; i++) {
-        const [px, py] = toPixel(points[i].x, points[i].y, cw, ch);
-        ctx.lineTo(px, py);
-      }
-      ctx.closePath();
-
-      // Gradient fill
-      const gradient = ctx.createLinearGradient(MARGIN, ch - MARGIN, cw - MARGIN, MARGIN);
-      gradient.addColorStop(0, "#0a0a1a");
-      gradient.addColorStop(0.5, "#1a1a2e");
-      gradient.addColorStop(1, "#0a0a1a");
-      ctx.fillStyle = gradient;
-      ctx.fill();
-
-      // Boundary line
-      ctx.strokeStyle = "#444";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    },
-    [getLocusPoints, toPixel]
-  );
-
-  // Draw grid
-  const drawGrid = useCallback(
-    (ctx: CanvasRenderingContext2D, cw: number, ch: number) => {
-      ctx.strokeStyle = "#1a1a1a";
-      ctx.lineWidth = 0.5;
-      const size = Math.min(cw, ch) - MARGIN * 2;
-      const step = 0.1;
-
-      for (let v = 0; v <= 1; v += step) {
-        const y = MARGIN + v * size;
-        ctx.beginPath();
-        ctx.moveTo(MARGIN, ch - MARGIN - y + MARGIN);
-        ctx.lineTo(cw - MARGIN, ch - MARGIN - y + MARGIN);
-        ctx.stroke();
-
-        const x = MARGIN + v * size;
-        ctx.beginPath();
-        ctx.moveTo(x, MARGIN);
-        ctx.lineTo(x, ch - MARGIN);
-        ctx.stroke();
-      }
-    },
-    []
-  );
-
-  // Draw blackbody locus
-  const drawBB = useCallback(
-    (ctx: CanvasRenderingContext2D, cw: number, ch: number, mode: DiagramMode) => {
-      const pts = BLACKBODY_LOCUS.map((p) => {
-        if (mode === "xy") return { x: p.x, y: p.y };
-        const uv = xyToUvPrime(p.x, p.y);
-        return { x: uv.uPrime, y: uv.vPrime };
-      });
-
-      ctx.beginPath();
-      for (let i = 0; i < pts.length; i++) {
-        const [px, py] = toPixel(pts[i].x, pts[i].y, cw, ch);
-        if (i === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.strokeStyle = "#ff6b00";
-      ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 3]);
-      ctx.stroke();
-      ctx.setLineDash([]);
-    },
-    [toPixel]
-  );
-
-  // Draw MacAdam ellipses
-  const drawMacAdam = useCallback(
-    (ctx: CanvasRenderingContext2D, cw: number, ch: number, mode: DiagramMode) => {
-      ctx.strokeStyle = "#e040fb55";
-      ctx.lineWidth = 1;
-
-      for (const ell of MACADAM_ELLIPSES) {
-        const uv = xyToUvPrime(ell.x, ell.y);
-        const cx = mode === "xy" ? ell.x : uv.uPrime;
-        const cy = mode === "xy" ? ell.y : uv.vPrime;
-        const scale = mode === "xy" ? 0.002 : 0.001;
-
-        const [cpx, cpy] = toPixel(cx, cy, cw, ch);
-        const g11 = ell.g11 * scale;
-        const g12 = ell.g12 * scale;
-        const g22 = ell.g22 * scale;
-
-        // Approximate: draw using parametric ellipse
-        ctx.beginPath();
-        for (let theta = 0; theta < Math.PI * 2; theta += 0.1) {
-          const ct = Math.cos(theta);
-          const st = Math.sin(theta);
-          const det = g11 * g22 - g12 * g12;
-          if (det <= 0) continue;
-          const a11 = g22 / det;
-          const a22 = g11 / det;
-          const a12 = -g12 / det;
-          const r = 1 / Math.sqrt(a11 * ct * ct + 2 * a12 * ct * st + a22 * st * st);
-          const ex = cx + r * ct;
-          const ey = cy + r * st;
-          const [exPx, eyPy] = toPixel(ex, ey, cw, ch);
-          if (theta === 0) ctx.moveTo(exPx, eyPy);
-          else ctx.lineTo(exPx, eyPy);
-        }
-        ctx.closePath();
-        ctx.fillStyle = "#e040fb11";
-        ctx.fill();
-        ctx.stroke();
-      }
-    },
-    [MACADAM_ELLIPSES, toPixel]
-  );
-
-  // Draw gamut triangle
-  const drawGamut = useCallback(
-    (ctx: CanvasRenderingContext2D, cw: number, ch: number, gamut: GamutTriangle, mode: DiagramMode) => {
-      const pts = [gamut.R, gamut.G, gamut.B].map(([rx, ry]) => {
-        if (mode === "xy") return { x: rx, y: ry };
-        const uv = xyToUvPrime(rx, ry);
-        return { x: uv.uPrime, y: uv.vPrime };
-      });
-
-      ctx.beginPath();
-      pts.forEach((p, i) => {
-        const [px, py] = toPixel(p.x, p.y, cw, ch);
-        if (i === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      });
-      ctx.closePath();
-      ctx.strokeStyle = gamut.color;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-      ctx.fillStyle = gamut.color + "11";
-      ctx.fill();
-    },
-    [toPixel]
-  );
-
-  // Draw wavelength labels
-  const drawLabels = useCallback(
-    (ctx: CanvasRenderingContext2D, cw: number, ch: number, mode: DiagramMode) => {
-      ctx.font = "9px monospace";
-      ctx.fillStyle = "#555";
-      const labelWls = [380, 460, 480, 500, 520, 540, 560, 580, 600, 620, 700];
-
-      for (const wl of labelWls) {
-        const pt = SPECTRAL_LOCUS.find((p) => p.wl === wl);
-        if (!pt) continue;
-        const uv = xyToUvPrime(pt.x, pt.y);
-        const x = mode === "xy" ? pt.x : uv.uPrime;
-        const y = mode === "xy" ? pt.y : uv.vPrime;
-        const [px, py] = toPixel(x, y, cw, ch);
-        ctx.fillText(`${wl}`, px + 5, py - 3);
-      }
-    },
-    [SPECTRAL_LOCUS, toPixel]
-  );
-
-  // Draw D65 white point
-  const drawWhitePoint = useCallback(
-    (ctx: CanvasRenderingContext2D, cw: number, ch: number, mode: DiagramMode) => {
-      const wp = WHITE_POINTS["D65"];
-      const uv = xyToUvPrime(wp.x, wp.y);
-      const x = mode === "xy" ? wp.x : uv.uPrime;
-      const y = mode === "xy" ? wp.y : uv.vPrime;
-      const [px, py] = toPixel(x, y, cw, ch);
-
-      ctx.beginPath();
-      ctx.arc(px, py, 4, 0, Math.PI * 2);
-      ctx.fillStyle = "#ffffff";
-      ctx.fill();
-      ctx.strokeStyle = "#888";
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    },
-    [toPixel]
-  );
-
-  // Draw locate marker
-  const drawLocateMarker = useCallback(
-    (ctx: CanvasRenderingContext2D, cw: number, ch: number) => {
-      if (locateX === 0 && locateY === 0) return;
-      const [px, py] = toPixel(locateX, locateY, cw, ch);
-      ctx.beginPath();
-      ctx.arc(px, py, 5, 0, Math.PI * 2);
-      ctx.fillStyle = "#00bfff";
-      ctx.fill();
-      ctx.strokeStyle = "#fff";
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    },
-    [locateX, locateY, toPixel]
-  );
-
-  // Compute point info
   const computeInfo = useCallback(
-    (x: number, y: number, mode: DiagramMode): PointInfo | null => {
+    (x: number, y: number): PointInfo | null => {
       let xyX: number, xyY: number;
-      if (mode === "xy") {
-        xyX = x;
-        xyY = y;
-      } else {
-        const xy = uvPrimeToXy(x, y);
-        xyX = xy.x;
-        xyY = xy.y;
-      }
-
-      if (xyX < 0 || xyY < 0 || xyX + xyY > 1) return null;
-
+      if (diagramMode === "xy") { xyX = x; xyY = y; }
+      else { const xy = uvPrimeToXy(x, y); xyX = xy.x; xyY = xy.y; }
+      if (xyX < 0 || xyY < 0 || xyX + xyY > 1 || xyY === 0) return null;
       const uv = xyToUvPrime(xyX, xyY);
       const cctResult = cctWithDuv(uv);
       const XYZ = xyToXYZ(xyX, xyY, 0.5);
       const sRGB = xyzToSRGB(XYZ);
       const Lab = xyzToLab(XYZ);
-
-      // Check gamut membership
       const gamutIn: string[] = [];
       for (const [name, g] of Object.entries(GAMUTS)) {
         if (pointInGamut(xyX, xyY, g.R, g.G, g.B)) gamutIn.push(name);
       }
-
       return {
-        x: xyX,
-        y: xyY,
-        up: uv.uPrime,
-        vp: uv.vPrime,
-        cct: cctResult.cct,
-        duv: cctResult.duv,
+        x: xyX, y: xyY, up: uv.uPrime, vp: uv.vPrime,
+        cct: cctResult.cct, duv: cctResult.duv,
         rgb: { r: Math.round(sRGB.r * 255), g: Math.round(sRGB.g * 255), b: Math.round(sRGB.b * 255) },
         XYZ: { X: XYZ.X, Y: XYZ.Y, Z: XYZ.Z },
         Lab: { L: Lab.L, a: Lab.a, b: Lab.b },
         gamutIn,
       };
     },
-    []
+    [diagramMode]
   );
 
-  // Main render loop
+  // Main render
   const render = useCallback(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
-
     const dpr = window.devicePixelRatio || 1;
     const rect = container.getBoundingClientRect();
-    const cw = rect.width;
-    const ch = rect.height;
-    canvas.width = cw * dpr;
-    canvas.height = ch * dpr;
-    canvas.style.width = cw + "px";
-    canvas.style.height = ch + "px";
-
+    const W = rect.width, H = rect.height;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    canvas.style.width = W + "px"; canvas.style.height = H + "px";
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    ctx.scale(dpr, dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Clear
+    // Background
     ctx.fillStyle = "#050505";
-    ctx.fillRect(0, 0, cw, ch);
+    ctx.fillRect(0, 0, W, H);
 
-    drawGrid(ctx, cw, ch);
-    drawLocusFill(ctx, cw, ch, diagramMode);
+    // Spectral locus fill
+    if (locus.length > 0) {
+      ctx.beginPath();
+      const p0 = toPixel(locus[0].x, locus[0].y, W, H);
+      ctx.moveTo(p0[0], p0[1]);
+      for (let i = 1; i < locus.length; i++) {
+        const pi = toPixel(locus[i].x, locus[i].y, W, H);
+        ctx.lineTo(pi[0], pi[1]);
+      }
+      ctx.closePath();
+      ctx.fillStyle = "rgba(0,180,255,0.04)";
+      ctx.fill();
+    }
 
-    if (showMacAdam) drawMacAdam(ctx, cw, ch, diagramMode);
-    if (showBB) drawBB(ctx, cw, ch, diagramMode);
+    // Grid
+    const sX = cfg.gridStep, sY = cfg.gridStep;
+    ctx.strokeStyle = "#1a1a1a";
+    ctx.lineWidth = 0.5;
+    for (let gx = Math.floor(xR0 / sX) * sX; gx <= xR1; gx += sX) {
+      const px = toPixel(gx, yR0, W, H)[0];
+      ctx.beginPath(); ctx.moveTo(px, MARGIN); ctx.lineTo(px, H - MARGIN); ctx.stroke();
+    }
+    for (let gy = Math.floor(yR0 / sY) * sY; gy <= yR1; gy += sY) {
+      const py = toPixel(xR0, gy, W, H)[1];
+      ctx.beginPath(); ctx.moveTo(MARGIN, py); ctx.lineTo(W - MARGIN, py); ctx.stroke();
+    }
 
-    if (showSRGB) drawGamut(ctx, cw, ch, GAMUTS["sRGB"], diagramMode);
-    if (showP3) drawGamut(ctx, cw, ch, GAMUTS["DCI-P3"], diagramMode);
-    if (showAdobeRGB) drawGamut(ctx, cw, ch, GAMUTS["Adobe RGB"], diagramMode);
-    if (showACES) drawGamut(ctx, cw, ch, GAMUTS["ACES AP0"], diagramMode);
-    if (showRec2020) drawGamut(ctx, cw, ch, GAMUTS["Rec.2020"], diagramMode);
+    // Spectral locus — colored per wavelength
+    for (let i = 1; i < locus.length; i++) {
+      const a = toPixel(locus[i - 1].x, locus[i - 1].y, W, H);
+      const b = toPixel(locus[i].x, locus[i].y, W, H);
+      ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]);
+      const wl = locus[i].wl;
+      if (wl) {
+        const wc = wavelengthToColor(wl);
+        ctx.strokeStyle = `rgb(${wc.r},${wc.g},${wc.b})`;
+      } else {
+        ctx.strokeStyle = "rgba(255,255,255,0.3)";
+      }
+      ctx.lineWidth = 2; ctx.stroke();
+    }
 
-    if (showLabels) drawLabels(ctx, cw, ch, diagramMode);
+    // Purple line connecting locus ends
+    const pl0 = toPixel(locus[0].x, locus[0].y, W, H);
+    const pl1 = toPixel(locus[locus.length - 1].x, locus[locus.length - 1].y, W, H);
+    ctx.beginPath(); ctx.moveTo(pl0[0], pl0[1]); ctx.lineTo(pl1[0], pl1[1]);
+    ctx.setLineDash([5, 5]); ctx.strokeStyle = "rgba(255,255,255,0.12)"; ctx.lineWidth = 1; ctx.stroke(); ctx.setLineDash([]);
 
-    drawWhitePoint(ctx, cw, ch, diagramMode);
-    drawLocateMarker(ctx, cw, ch);
+    // MacAdam ellipses
+    if (showMacAdam) {
+      const scl = diagramMode === "xy" ? 0.002 : 0.001;
+      for (const e of macadam) {
+        const [cx, cy] = toPixel(e.x, e.y, W, H);
+        const g11 = e.g11 * scl, g12 = e.g12 * scl, g22 = e.g22 * scl;
+        ctx.beginPath();
+        for (let theta = 0; theta < Math.PI * 2; theta += 0.08) {
+          const ct = Math.cos(theta), st = Math.sin(theta);
+          const det = g11 * g22 - g12 * g12;
+          if (det <= 0) continue;
+          const a11 = g22 / det, a22 = g11 / det, a12 = -g12 / det;
+          const r = 1 / Math.sqrt(a11 * ct * ct + 2 * a12 * ct * st + a22 * st * st);
+          const exPx = MARGIN + ((cx - MARGIN + r * ct - MARGIN) / 1) || cx + r * ct; // Simplified
+          // Actually we need to convert back: r is in logical coords
+          const pxr = (r / (xR1 - xR0)) * (W - MARGIN * 2);
+          const pyr = (r / (yR1 - yR0)) * (H - MARGIN * 2);
+          const ex = cx + pxr * ct;
+          const ey = cy + pyr * st;
+          if (theta === 0) ctx.moveTo(ex, ey);
+          else ctx.lineTo(ex, ey);
+        }
+        ctx.closePath();
+        ctx.fillStyle = "rgba(224,64,251,0.07)";
+        ctx.fill();
+        ctx.strokeStyle = "rgba(224,64,251,0.33)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    // Gamut triangles
+    const drawGamut = (gamutKey: string, color: string) => {
+      const g = gamuts[gamutKey];
+      if (!g) return;
+      const pts = [g.R, g.G, g.B].map((p) => toPixel(p[0], p[1], W, H));
+      ctx.beginPath();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      ctx.lineTo(pts[1][0], pts[1][1]);
+      ctx.lineTo(pts[2][0], pts[2][1]);
+      ctx.closePath();
+      ctx.fillStyle = color + "11";
+      ctx.fill();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    };
+    if (showSRGB) drawGamut("sRGB", "#00e676");
+    if (showP3) drawGamut("DCI-P3", "#00bfff");
+    if (showAdobeRGB) drawGamut("Adobe RGB", "#ff7043");
+    if (showACES) drawGamut("ACES AP0", "#ce93d8");
+    if (showRec2020) drawGamut("Rec.2020", "#ffd600");
+
+    // Blackbody locus
+    if (showBB && bb.length > 1) {
+      ctx.beginPath();
+      const bb0 = toPixel(bb[0].x, bb[0].y, W, H);
+      ctx.moveTo(bb0[0], bb0[1]);
+      for (let i = 1; i < bb.length; i++) {
+        const bi = toPixel(bb[i].x, bb[i].y, W, H);
+        ctx.lineTo(bi[0], bi[1]);
+      }
+      ctx.strokeStyle = "rgba(255,107,0,0.5)";
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      // Temperature labels
+      ctx.fillStyle = "rgba(255,107,0,0.65)";
+      ctx.font = "10px monospace";
+      [2000, 3000, 4000, 5000, 6500, 10000, 20000].forEach((T) => {
+        const p = bb.find((pp) => Math.abs((pp as any).T - T) < 100);
+        if (p) {
+          const tx = toPixel(p.x, p.y, W, H);
+          const label = T >= 10000 ? (T / 1000) + "KK" : T + "K";
+          ctx.fillText(label, tx[0] + 4, tx[1] - 4);
+        }
+      });
+    }
+
+    // D65 white point
+    if (wp) {
+      const wpx = toPixel(wp.x, wp.y, W, H);
+      ctx.beginPath(); ctx.arc(wpx[0], wpx[1], 5, 0, Math.PI * 2);
+      ctx.fillStyle = "#fff"; ctx.fill();
+      ctx.strokeStyle = "#444"; ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    // Other illuminants
+    const illumXYs = getIllumXYs(diagramMode);
+    for (const ill of illumXYs) {
+      const ip = toPixel(ill.x, ill.y, W, H);
+      ctx.beginPath(); ctx.arc(ip[0], ip[1], 3, 0, Math.PI * 2);
+      ctx.fillStyle = "#fff"; ctx.fill();
+    }
+
+    // Wavelength labels
+    if (showLabels) {
+      ctx.fillStyle = "rgba(255,255,255,0.5)";
+      ctx.font = "9px monospace";
+      [400, 450, 500, 550, 600, 650, 700].forEach((wl) => {
+        const p = locus.find((l) => Math.abs(l.wl - wl) < 5);
+        if (p) {
+          const tp = toPixel(p.x, p.y, W, H);
+          ctx.fillText("" + wl, tp[0] + 3, tp[1] - 4);
+        }
+      });
+    }
+
+    // Axis lines
+    ctx.strokeStyle = "#1a1a1a";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(MARGIN, H - MARGIN); ctx.lineTo(W - MARGIN, H - MARGIN);
+    ctx.moveTo(MARGIN, H - MARGIN); ctx.lineTo(MARGIN, MARGIN);
+    ctx.stroke();
+
+    // Axis tick labels
+    ctx.fillStyle = "#777";
+    ctx.font = "11px monospace";
+    const fmt = diagramMode === "xy" ? 1 : 3;
+    for (let v = xR0; v <= xR1; v += sX) {
+      const xp = toPixel(v, yR0, W, H)[0];
+      ctx.fillText(v.toFixed(fmt), xp - 12, H - MARGIN + 14);
+    }
+    for (let v = yR0; v <= yR1; v += sY) {
+      const yp = toPixel(xR0, v, W, H)[1];
+      ctx.fillText(v.toFixed(fmt), MARGIN - 28, yp + 4);
+    }
+    ctx.fillStyle = "#888";
+    ctx.fillText(cfg.xLabel, W - MARGIN + 4, H - MARGIN + 4);
+    ctx.fillText(cfg.yLabel, MARGIN - 16, MARGIN - 10);
+
+    // Selected point marker
+    if (locateX !== 0 || locateY !== 0) {
+      let sx: number, sy: number;
+      if (diagramMode === "xy") {
+        [sx, sy] = toPixel(locateX, locateY, W, H);
+      } else {
+        const uv = xyToUvPrime(locateX, locateY);
+        [sx, sy] = toPixel(uv.uPrime, uv.vPrime, W, H);
+      }
+      ctx.beginPath(); ctx.arc(sx, sy, 5, 0, Math.PI * 2);
+      ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = "rgba(255,255,255,0.3)"; ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.font = "bold 10px monospace";
+      ctx.fillText("P", sx + 7, sy - 7);
+    }
+
+    // Color difference markers
+    const drawDeltaPt = (pt: PointInfo | null, label: string, color: string) => {
+      if (!pt) return;
+      const uv = xyToUvPrime(pt.x, pt.y);
+      const x = diagramMode === "xy" ? pt.x : uv.uPrime;
+      const y = diagramMode === "xy" ? pt.y : uv.vPrime;
+      const [px, py] = toPixel(x, y, W, H);
+      ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI * 2);
+      ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.fillStyle = color; ctx.font = "bold 11px monospace";
+      ctx.fillText(label, px + 8, py + 4);
+    };
+
+    if (point1 && point2) {
+      drawDeltaPt(point1, "1", "#00e676");
+      drawDeltaPt(point2, "2", "#ff6b00");
+      // Connecting line
+      const uv1 = xyToUvPrime(point1.x, point1.y);
+      const uv2 = xyToUvPrime(point2.x, point2.y);
+      const x1 = diagramMode === "xy" ? point1.x : uv1.uPrime;
+      const y1 = diagramMode === "xy" ? point1.y : uv1.vPrime;
+      const x2 = diagramMode === "xy" ? point2.x : uv2.uPrime;
+      const y2 = diagramMode === "xy" ? point2.y : uv2.vPrime;
+      const [px1, py1] = toPixel(x1, y1, W, H);
+      const [px2, py2] = toPixel(x2, y2, W, H);
+      ctx.beginPath(); ctx.moveTo(px1, py1); ctx.lineTo(px2, py2);
+      ctx.setLineDash([4, 3]); ctx.strokeStyle = "rgba(255,255,255,0.4)"; ctx.lineWidth = 1.5;
+      ctx.stroke(); ctx.setLineDash([]);
+    } else {
+      if (point1) drawDeltaPt(point1, "1", "#00e676");
+      if (point2) drawDeltaPt(point2, "2", "#ff6b00");
+    }
   }, [
-    diagramMode,
-    showMacAdam,
-    showBB,
-    showSRGB,
-    showP3,
-    showAdobeRGB,
-    showACES,
-    showRec2020,
-    showLabels,
-    locateX,
-    locateY,
-    drawGrid,
-    drawLocusFill,
-    drawMacAdam,
-    drawBB,
-    drawGamut,
-    drawLabels,
-    drawWhitePoint,
-    drawLocateMarker,
+    diagramMode, diagramData, showMacAdam, showBB, showSRGB, showP3, showAdobeRGB, showACES, showRec2020, showLabels,
+    locateX, locateY, point1, point2, toPixel, cfg, locus, bb, macadam, gamuts, wp, xR0, xR1, yR0, yR1,
   ]);
 
-  // Render on any change
-  useEffect(() => {
-    render();
-  }, [render]);
-
-  // Resize handler
+  useEffect(() => { render(); }, [render]);
   useEffect(() => {
     const handler = () => render();
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
   }, [render]);
 
-  // Mouse move for hover info
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      const [lx, ly] = toLogical(mx, my, rect.width, rect.height);
-      const info = computeInfo(lx, ly, diagramMode);
-      
-      if (!info) {
-        setHoverPos(null);
-        return;
+  // Mouse handlers
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const [lx, ly] = toLogical(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height);
+    const info = computeInfo(lx, ly);
+    if (!info) { setHoverPos(null); return; }
+    const wl = nearestWavelength(info.x, info.y, SPECTRAL_LOCUS);
+    setHoverPos({
+      x: e.clientX, y: e.clientY,
+      info: {
+        xy: `(${info.x.toFixed(4)}, ${info.y.toFixed(4)})`,
+        cct: info.cct ? `${info.cct.toFixed(0)} K` : "-",
+        wl: (wl && wl.distance < 0.02) ? `${wl.wl} nm` : "-",
+        rgb: `rgb(${info.rgb.r},${info.rgb.g},${info.rgb.b})`,
       }
+    });
+  }, [toLogical, computeInfo]);
 
-      const wl = nearestWavelength(info.x, info.y, SPECTRAL_LOCUS);
-      const hoverRGB = `rgb(${info.rgb.r},${info.rgb.g},${info.rgb.b})`;
-      setHoverPos({
-        x: e.clientX,
-        y: e.clientY,
-        info: {
-          x: info.x,
-          y: info.y,
-          wl: wl?.distance && wl.distance < 0.02 ? wl.wl : null,
-          cct: info.cct,
-          rgb: hoverRGB,
-        },
-      });
-    },
-    [diagramMode, computeInfo, toLogical]
-  );
-
-  const handleMouseLeave = useCallback(() => {
-    setHoverPos(null);
-  }, []);
-
-  // Click to select point
-  const handleClick = useCallback(
-    (e: React.MouseEvent) => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      const rect = canvas.getBoundingClientRect();
-      const mx = e.clientX - rect.left;
-      const my = e.clientY - rect.top;
-      const [lx, ly] = toLogical(mx, my, rect.width, rect.height);
-      const info = computeInfo(lx, ly, diagramMode);
-      onLocate(lx, ly, info);
-    },
-    [diagramMode, computeInfo, toLogical, onLocate]
-  );
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    let lx: number, ly: number;
+    if (diagramMode === "xy") {
+      [lx, ly] = toLogical(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height);
+    } else {
+      const [ul, vl] = toLogical(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height);
+      const xy = uvPrimeToXy(ul, vl);
+      lx = xy.x; ly = xy.y;
+    }
+    const info = computeInfo(lx, ly);
+    onLocate(lx, ly, info);
+  }, [diagramMode, toLogical, computeInfo, onLocate]);
 
   return (
     <div ref={containerRef} style={{ flex: 1, position: "relative", minWidth: 0, background: "#050505", borderRadius: 12, overflow: "hidden" }}>
-      <canvas
-        ref={canvasRef}
-        style={{ display: "block", position: "absolute", top: 0, left: 0, cursor: "crosshair" }}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        onClick={handleClick}
-      />
+      <canvas ref={canvasRef} style={{ display: "block", position: "absolute", top: 0, left: 0, cursor: "crosshair" }}
+        onMouseMove={handleMouseMove} onMouseLeave={() => setHoverPos(null)} onClick={handleClick} />
       {hoverPos && (
-        <div
-          style={{
-            position: "fixed",
-            left: hoverPos.x + 15,
-            top: hoverPos.y - 10,
-            background: "rgba(20,20,20,0.94)",
-            backdropFilter: "blur(12px)",
-            border: "1px solid #1f1f1f",
-            borderRadius: 10,
-            padding: "12px 16px",
-            fontSize: 13,
-            color: "#e8e8e8",
-            zIndex: 100,
-            pointerEvents: "none",
-            fontFamily: "monospace",
-          }}
-        >
-          <div>坐标: ({hoverPos.info.x.toFixed(4)}, {hoverPos.info.y.toFixed(4)})</div>
-          <div>CCT: {hoverPos.info.cct ? hoverPos.info.cct.toFixed(0) + " K" : "-"}</div>
-          <div>波长: {hoverPos.info.wl !== null ? hoverPos.info.wl + " nm" : "-"}</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            颜色: <span style={{ width: 16, height: 16, borderRadius: 4, background: hoverPos.info.rgb, border: "1px solid #444", display: "inline-block" }} />
+        <div style={{
+          position: "fixed", left: hoverPos.x + 15, top: hoverPos.y - 10,
+          background: "rgba(20,20,20,0.94)", backdropFilter: "blur(12px)", border: "1px solid #1f1f1f",
+          borderRadius: 10, padding: "12px 16px", fontSize: 13, color: "#e8e8e8",
+          zIndex: 100, pointerEvents: "none", fontFamily: "monospace"
+        }}>
+          <div><span style={{color:"#999"}}>坐标 </span>{hoverPos.info.xy}</div>
+          <div><span style={{color:"#999"}}>CCT </span>{hoverPos.info.cct}</div>
+          <div><span style={{color:"#999"}}>波长 </span>{hoverPos.info.wl}</div>
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <span style={{color:"#999"}}>颜色 </span>
+            <span style={{width:16,height:16,borderRadius:4,background:hoverPos.info.rgb,border:"1px solid #444",display:"inline-block"}}/>
             {hoverPos.info.rgb}
           </div>
         </div>
