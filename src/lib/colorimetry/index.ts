@@ -420,3 +420,98 @@ export function wavelengthToColor(wavelength: number): sRGB {
     isValid: true,
   };
 }
+/**
+ * Convert CIE 1976 UCS (u', v') back to CIE 1931 (x, y).
+ */
+export function uvPrimeToXy(
+  uPrime: number,
+  vPrime: number
+): { x: number; y: number } {
+  const denom = 6 * uPrime - 16 * vPrime + 12;
+  if (denom === 0) return { x: 0, y: 0 };
+  return {
+    x: (9 * uPrime) / denom,
+    y: (4 * vPrime) / denom,
+  };
+}
+
+/**
+ * Convert CIE 1931 (x, y) chromaticity (at Y=1) to CIE XYZ.
+ */
+export function xyToXYZ(
+  x: number,
+  y: number,
+  Yval: number = 1
+): { X: number; Y: number; Z: number } {
+  if (y === 0) return { X: 0, Y: 0, Z: 0 };
+  return {
+    X: (x * Yval) / y,
+    Y: Yval,
+    Z: ((1 - x - y) * Yval) / y,
+  };
+}
+
+/**
+ * Convert CIE 1931 XYZ to CIE 1976 L*a*b* (D65 reference white).
+ */
+export function xyzToLab(XYZ: { X: number; Y: number; Z: number }): { L: number; a: number; b: number } {
+  const Xn = 0.95047, Yn = 1.0, Zn = 1.08883;
+  const f = (t: number) => t > 0.008856 ? Math.cbrt(t) : (7.787 * t) + (16 / 116);
+  const fx = f(XYZ.X / Xn), fy = f(XYZ.Y / Yn), fz = f(XYZ.Z / Zn);
+  return {
+    L: 116 * fy - 16,
+    a: 500 * (fx - fy),
+    b: 200 * (fy - fz),
+  };
+}
+
+/**
+ * CIE76 color difference (Delta E*ab).
+ */
+export function deltaE76(
+  lab1: { L: number; a: number; b: number },
+  lab2: { L: number; a: number; b: number }
+): number {
+  const dL = lab1.L - lab2.L;
+  const da = lab1.a - lab2.a;
+  const db = lab1.b - lab2.b;
+  return Math.sqrt(dL * dL + da * da + db * db);
+}
+
+/**
+ * Check whether (x, y) lies within a gamut triangle.
+ */
+export function pointInGamut(
+  x: number,
+  y: number,
+  R: [number, number],
+  G: [number, number],
+  B: [number, number]
+): boolean {
+  const sign = (p1x: number, p1y: number, p2x: number, p2y: number, p3x: number, p3y: number) =>
+    (p1x - p3x) * (p2y - p3y) - (p2x - p3x) * (p1y - p3y);
+  const d1 = sign(x, y, R[0], R[1], G[0], G[1]);
+  const d2 = sign(x, y, G[0], G[1], B[0], B[1]);
+  const d3 = sign(x, y, B[0], B[1], R[0], R[1]);
+  const hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+  const hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+  return !(hasNeg && hasPos);
+}
+
+/**
+ * Find nearest wavelength on the spectral locus.
+ */
+export function nearestWavelength(
+  x: number,
+  y: number,
+  locus: { x: number; y: number; wl: number }[]
+): { wl: number; distance: number } | null {
+  if (locus.length === 0) return null;
+  let best = { wl: locus[0].wl, distance: Infinity };
+  for (const pt of locus) {
+    const dx = x - pt.x, dy = y - pt.y;
+    const d = dx * dx + dy * dy;
+    if (d < best.distance) best = { wl: pt.wl, distance: Math.sqrt(d) };
+  }
+  return best;
+}
