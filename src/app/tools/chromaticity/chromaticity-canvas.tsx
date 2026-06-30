@@ -401,7 +401,15 @@ export default function ChromaticityCanvas({
       });
     }
 
-// Axis lines (x-axis at y=0, y-axis at x=0)    ctx.strokeStyle = "#1a1a1a";    ctx.lineWidth = 1;    ctx.beginPath();    const y0px = toPixel(0, 0, W, H)[1];    const x0px = toPixel(0, 0, W, H)[0];    ctx.moveTo(MARGIN, y0px); ctx.lineTo(W - MARGIN, y0px);    ctx.moveTo(x0px, MARGIN); ctx.lineTo(x0px, H - MARGIN);    ctx.stroke();  
+    // Axis lines (x-axis at y=0, y-axis at x=0)
+    ctx.strokeStyle = "#1a1a1a";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    const y0px = toPixel(0, 0, W, H)[1];
+    const x0px = toPixel(0, 0, W, H)[0];
+    ctx.moveTo(MARGIN, y0px); ctx.lineTo(W - MARGIN, y0px);
+    ctx.moveTo(x0px, MARGIN); ctx.lineTo(x0px, H - MARGIN);
+    ctx.stroke();
 
     // Axis tick labels
     ctx.fillStyle = "#777";
