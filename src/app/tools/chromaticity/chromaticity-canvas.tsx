@@ -88,21 +88,26 @@ export default function ChromaticityCanvas({
   const rafRef = useRef<number>(0);
 
   // Map coordinates to canvas pixel space
+  // Viewport: xy [0, 0.85] x [0, 0.9], uv [0, 0.65] x [0, 0.6]
   const toPixel = useCallback(
     (x: number, y: number, cw: number, ch: number): [number, number] => {
+      const xRange = diagramMode === "xy" ? 0.85 : 0.65;
+      const yRange = diagramMode === "xy" ? 0.9 : 0.6;
       const size = Math.min(cw, ch) - MARGIN * 2;
-      const px = MARGIN + x * size;
-      const py = ch - MARGIN - y * size;
+      const px = MARGIN + (x / xRange) * size;
+      const py = ch - MARGIN - (y / yRange) * size;
       return [Math.round(px), Math.round(py)];
     },
-    []
+    [diagramMode]
   );
 
   const toLogical = useCallback(
     (px: number, py: number, cw: number, ch: number): [number, number] => {
+      const xRange = diagramMode === "xy" ? 0.85 : 0.65;
+      const yRange = diagramMode === "xy" ? 0.9 : 0.6;
       const size = Math.min(cw, ch) - MARGIN * 2;
-      const x = (px - MARGIN) / size;
-      const y = (ch - MARGIN - py) / size;
+      const x = ((px - MARGIN) / size) * xRange;
+      const y = ((ch - MARGIN - py) / size) * yRange;
       return [x, y];
     },
     []
