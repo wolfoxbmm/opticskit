@@ -249,6 +249,7 @@ export default function ChromaticityCanvas({
       ctx.beginPath(); ctx.moveTo(px, MARGIN); ctx.lineTo(px, H - MARGIN); ctx.stroke();
     }
     for (let gy = Math.floor(yR0 / sY) * sY; gy <= yR1; gy += sY) {
+      if (Math.abs(gy) < 0.001) continue; // skip y=0, axis line handles it
       const py = toPixel(xR0, gy, W, H)[1];
       ctx.beginPath(); ctx.moveTo(MARGIN, py); ctx.lineTo(W - MARGIN, py); ctx.stroke();
     }
