@@ -4,6 +4,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { trackPageView, trackCalculate, trackExport, trackImport, trackInteract } from "@/lib/analytics";
 
 const sensors: Record<string, { w: number; h: number; pixel: number }> = {
   imx183: { w: 13.1, h: 8.8, pixel: 2.4 },
@@ -54,6 +55,7 @@ const formatOptions = [
 
 export default function CameraLensPage() {
   const [sensorW, setSensorW] = useState("8.8");
+  useEffect(() => { trackPageView("camera-lens"); }, []);
   const [sensorH, setSensorH] = useState("6.6");
   const [pixelSize, setPixelSize] = useState("3.45");
   const [mode, setMode] = useState<"A" | "B" | "C">("A");
@@ -104,14 +106,14 @@ export default function CameraLensPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                 <div>
                   <label className="text-xs text-[#868E96]">已知传感器型号（可选）</label>
-                  <select className="w-full mt-1 p-2 bg-[#F2F3F5] border border-[#DEE2E6] rounded-lg text-sm" onChange={(e) => { const s = sensors[e.target.value]; if (s) { setSensorW(String(s.w)); setSensorH(String(s.h)); setPixelSize(String(s.pixel)); } }}>
+                  <select className="w-full mt-1 p-2 bg-[#F2F3F5] border border-[#DEE2E6] rounded-lg text-sm" onChange={(e) => { const s = sensors[e.target.value]; if (s) { trackInteract("camera-lens", "sensor-change", e.target.value); setSensorW(String(s.w)); setSensorH(String(s.h)); setPixelSize(String(s.pixel)); } }}>
                     <option value="">— 我知道型号 —</option>
                     {sensorModels.map(m => <option key={m.key} value={m.key}>{m.label}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="text-xs text-[#868E96]">或只知靶面尺寸（速选）</label>
-                  <select className="w-full mt-1 p-2 bg-[#F2F3F5] border border-[#DEE2E6] rounded-lg text-sm" onChange={(e) => { const s = sensors[e.target.value]; if (s) { setSensorW(String(s.w)); setSensorH(String(s.h)); setPixelSize(String(s.pixel)); } }}>
+                  <select className="w-full mt-1 p-2 bg-[#F2F3F5] border border-[#DEE2E6] rounded-lg text-sm" onChange={(e) => { const s = sensors[e.target.value]; if (s) { trackInteract("camera-lens", "sensor-change", e.target.value); setSensorW(String(s.w)); setSensorH(String(s.h)); setPixelSize(String(s.pixel)); } }}>
                     <option value="">— 我只知道靶面 —</option>
                     {formatOptions.map(f => <option key={f.key} value={f.key}>{f.label}</option>)}
                   </select>

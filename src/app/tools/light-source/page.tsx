@@ -8,6 +8,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { spectrumToXYZ, xyzToChromaticity, xyToUvPrime, cctWithDuv } from "@/lib/colorimetry";
 import { formatValue } from "@/lib/utils/number";
+import { trackPageView, trackCalculate, trackExport, trackImport } from "@/lib/analytics";
 
 // CIE 13.3-1995 TCS (Test Colour Samples) reflectance spectra
 // First 8 samples for CRI Ra calculation
@@ -77,6 +78,7 @@ function planckForWavelengths(T: number, wavelengths: number[]): number[] {
 
 function LightSourceContent() {
   const [wlInput, setWlInput] = useState("");
+  useEffect(() => { trackPageView("light-source"); }, []);
   const [spdInput, setSpdInput] = useState("");
   const [result, setResult] = useState<{
     X: number; Y: number; Z: number;
@@ -162,6 +164,7 @@ function LightSourceContent() {
       const cctResult = cctWithDuv(uv);
       const cct = cctResult.cct;
       const duv = cctResult.duv;
+      trackCalculate("light-source");
       const cri = computeCRI(spd, wl);
 
       setResult({

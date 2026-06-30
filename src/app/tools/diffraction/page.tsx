@@ -6,9 +6,11 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { colormap, type ColormapName } from "./lib/colormap";
 import { compute2DIntensity, compute1DIntensity, type DiffractionParams } from "./lib/physics";
+import { trackPageView, trackCalculate, trackExport, trackImport } from "@/lib/analytics";
 
 export default function DiffractionPage() {
   const patternCanvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => { trackPageView("diffraction"); }, []);
   const intensityCanvasRef = useRef<HTMLCanvasElement>(null);
   const [mode, setMode] = useState<"single" | "double" | "grating">("double");
   const [wavelength, setWavelength] = useState(550);

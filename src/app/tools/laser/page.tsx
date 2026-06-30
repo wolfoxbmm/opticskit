@@ -2,8 +2,9 @@
 
 
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { trackPageView, trackCalculate, trackExport, trackImport, trackInteract } from "@/lib/analytics";
 
 interface LaserEntry {
   name: string;
@@ -210,6 +211,7 @@ function WavelengthBand({ filtered }: { filtered: LaserEntry[] }) {
 
 export default function LaserPage() {
   const [search, setSearch] = useState("");
+  useEffect(() => { trackPageView("laser"); }, []);
   const [typeFilter, setTypeFilter] = useState<string>("全部");
   const [wlMin, setWlMin] = useState("");
   const [wlMax, setWlMax] = useState("");
@@ -245,7 +247,7 @@ export default function LaserPage() {
             type="text"
             placeholder="搜索名称 / 波长 / 应用..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={e => setSearch(e.target.value)} onBlur={e => { if (e.target.value) trackInteract("laser", "search", e.target.value); }}
             className="bg-[#F1F3F5] border border-[#DEE2E6] rounded-lg px-3 py-2 text-sm text-[#1A1A2E] placeholder-zinc-600 outline-none focus:border-[#00BFFF] w-64"
           />
           <select

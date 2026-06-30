@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { CIE_WAVELENGTHS, CIE_X_BAR, CIE_Y_BAR, CIE_Z_BAR } from "@/lib/colorimetry/cmf-generated";
 import { planckSpectrum, wavelengthToColor, spectrumToXYZ, xyzToChromaticity } from "@/lib/colorimetry";
 import { formatValue, isValidNumber } from "@/lib/utils/number";
+import { trackPageView, trackCalculate, trackExport, trackImport, trackInteract } from "@/lib/analytics";
 
 export default function SpectrumPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -34,11 +35,13 @@ export default function SpectrumPage() {
     a.download = filename;
     a.click();
     URL.revokeObjectURL(url);
+    trackExport("spectrum", "csv");
   }, [uploadedData]);
 
   const openInLightSource = useCallback(() => {
     if (!uploadedData) return;
     const spd = JSON.stringify({ wl: uploadedData.wl, val: uploadedData.val });
+    trackInteract("spectrum", "open-in-light-source");
     router.push(`/tools/light-source?spd=${encodeURIComponent(spd)}`);
   }, [uploadedData, router]);
 
@@ -75,6 +78,7 @@ export default function SpectrumPage() {
       if (wl[0] < 300 || wl[wl.length - 1] > 830) {
         setError("部分波长超出可见光范围 (380-780nm)，结果可能不准确");
       }
+      trackImport("spectrum", "file");
       setUploadedData({ wl, val });
       setShowData(true);
     };
@@ -84,6 +88,9 @@ export default function SpectrumPage() {
     };
     reader.readAsText(file);
   }, []);
+
+  // Analytics: track page load
+  useEffect(() => { trackPageView("spectrum"); }, []);
 
   useEffect(() => {
     if (uploadedData && showData) {
@@ -111,7 +118,8 @@ export default function SpectrumPage() {
       const yellow = 0.6 * Math.exp(-((i - 570) ** 2) / (2 * 60 ** 2));
       val.push(blue + yellow);
     }
-    setUploadedData({ wl, val });
+    trackImport("spectrum", "file");
+      setUploadedData({ wl, val });
     setShowData(true);
   }, []);
 
