@@ -61,7 +61,7 @@ export interface PointInfo {
 // Diagram configuration per mode
 function getDiagramConfig(mode: DiagramMode) {
   if (mode === "xy") {
-    return { xRange: [0, 0.85] as [number, number], yRange: [-0.1, 0.9] as [number, number], xLabel: "x", yLabel: "y", gridStep: 0.1 };
+    return { xRange: [0, 0.85] as [number, number], yRange: [-0.1, 1.0] as [number, number], xLabel: "x", yLabel: "y", gridStep: 0.1 };
   }
   return { xRange: [0, 0.65] as [number, number], yRange: [0, 0.62] as [number, number], xLabel: "u\u2019", yLabel: "v\u2019", gridStep: 0.05 };
 }
