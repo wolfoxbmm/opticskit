@@ -513,7 +513,7 @@ export default function ChromaticityCanvas({
     if (illPixels) {
       const mx = e.clientX - rect.left, my = e.clientY - rect.top;
       let best: { x: number; y: number; name: string } | null = null;
-      let bestDist = 64;
+      let bestDist = 15;
       for (const ip of illPixels) {
         const dx = mx - ip.x, dy = my - ip.y;
         const d = Math.sqrt(dx * dx + dy * dy);
