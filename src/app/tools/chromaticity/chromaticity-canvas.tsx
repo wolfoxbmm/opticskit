@@ -415,14 +415,14 @@ export default function ChromaticityCanvas({
     const fmt = diagramMode === "xy" ? 1 : 3;
     for (let v = xR0; v <= xR1; v += sX) {
       const xp = toPixel(v, yR0, W, H)[0];
-      ctx.fillText(v.toFixed(fmt), xp - 12, H - MARGIN + 14);
+      ctx.fillText(v.toFixed(fmt), xp - 12, y0px + 14);
     }
     for (let v = yR0; v <= yR1; v += sY) {
       const yp = toPixel(xR0, v, W, H)[1];
       ctx.fillText(v.toFixed(fmt), MARGIN - 28, yp + 4);
     }
     ctx.fillStyle = "#888";
-    ctx.fillText(cfg.xLabel, W - MARGIN + 4, H - MARGIN + 4);
+    ctx.fillText(cfg.xLabel, W - MARGIN + 4, y0px + 4);
     ctx.fillText(cfg.yLabel, MARGIN - 16, MARGIN - 10);
 
     // Illuminant tooltip on canvas
