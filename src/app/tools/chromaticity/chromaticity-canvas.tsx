@@ -146,6 +146,13 @@ export default function ChromaticityCanvas({
   const [hoverVisible, setHoverVisible] = useState(false);
   const [hoverInfo, setHoverInfo] = useState<{ xy: string; cct: string; wl: string; rgb: string }>({ xy: "-", cct: "-", wl: "-", rgb: "-" });
   const [illTooltip, setIllTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
+  // P0: Refs for stable render access to frequently-changing values
+  const hoverVisibleRef = useRef(hoverVisible);
+  const hoverInfoRef = useRef(hoverInfo);
+  const illTooltipRef = useRef(illTooltip);
+  useEffect(() => { hoverVisibleRef.current = hoverVisible; }, [hoverVisible]);
+  useEffect(() => { hoverInfoRef.current = hoverInfo; }, [hoverInfo]);
+  useEffect(() => { illTooltipRef.current = illTooltip; }, [illTooltip]);
   const [diagramData, setDiagramData] = useState(() => buildDiagramData(diagramMode));
 
   useEffect(() => {
@@ -440,7 +447,7 @@ export default function ChromaticityCanvas({
       ctx.fillText(illTooltip.text, illTooltip.x - tw / 2, illTooltip.y - 12);
     }
 
-    // Selected point marker
+    // Selected point marker with pulse ring
     if (locateX !== 0 || locateY !== 0) {
       let sx: number, sy: number;
       if (diagramMode === "xy") {
@@ -449,6 +456,11 @@ export default function ChromaticityCanvas({
         const uv = xyToUvPrime(locateX, locateY);
         [sx, sy] = toPixel(uv.uPrime, uv.vPrime, W, H);
       }
+      // Pulse ring (outer, fading)
+      const pulseRadius = 12 + Math.sin(Date.now() / 300) * 3;
+      ctx.beginPath(); ctx.arc(sx, sy, pulseRadius, 0, Math.PI * 2);
+      ctx.strokeStyle = "rgba(0,191,255,0.3)"; ctx.lineWidth = 1.5; ctx.stroke();
+      // Point marker
       ctx.beginPath(); ctx.arc(sx, sy, 5, 0, Math.PI * 2);
       ctx.strokeStyle = "#fff"; ctx.lineWidth = 2; ctx.stroke();
       ctx.fillStyle = "rgba(255,255,255,0.3)"; ctx.fill();
@@ -493,12 +505,33 @@ export default function ChromaticityCanvas({
     locateX, locateY, point1, point2, illTooltip, toPixel, cfg, locus, bb, macadam, gamuts, wp, xR0, xR1, yR0, yR1,
   ]);
 
+  // Main render trigger
   useEffect(() => { render(); }, [render]);
+  
+  // P1 Fix: Stable resize listener (not re-created on every render)
   useEffect(() => {
-    const handler = () => render();
+    let rafId: number;
+    const handler = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => render());
+    };
     window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
-  }, [render]);
+    return () => {
+      window.removeEventListener("resize", handler);
+      cancelAnimationFrame(rafId);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+  // P0 Fix: Continuous redraw for pulse animation when point is selected
+  useEffect(() => {
+    if (locateX === 0 && locateY === 0 && !point1 && !point2) return;
+    let animId: number;
+    const loop = () => { render(); animId = requestAnimationFrame(loop); };
+    animId = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(animId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locateX, locateY, point1, point2]);
 
   // Mouse handlers
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
