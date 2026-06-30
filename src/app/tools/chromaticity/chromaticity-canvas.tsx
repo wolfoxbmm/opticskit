@@ -285,31 +285,30 @@ export default function ChromaticityCanvas({
     // MacAdam ellipses
     if (showMacAdam) {
       const scl = diagramMode === "xy" ? 0.002 : 0.001;
+      const pw = W - MARGIN * 2;
+      const ph = H - MARGIN * 2;
       for (const e of macadam) {
-        const [cx, cy] = toPixel(e.x, e.y, W, H);
-        const g11 = e.g11 * scl, g12 = e.g12 * scl, g22 = e.g22 * scl;
         ctx.beginPath();
-        for (let theta = 0; theta < Math.PI * 2; theta += 0.08) {
-          const ct = Math.cos(theta), st = Math.sin(theta);
-          const det = g11 * g22 - g12 * g12;
-          if (det <= 0) continue;
-          const a11 = g22 / det, a22 = g11 / det, a12 = -g12 / det;
-          const r = 1 / Math.sqrt(a11 * ct * ct + 2 * a12 * ct * st + a22 * st * st);
-          const exPx = MARGIN + ((cx - MARGIN + r * ct - MARGIN) / 1) || cx + r * ct; // Simplified
-          // Actually we need to convert back: r is in logical coords
-          const pxr = (r / (xR1 - xR0)) * (W - MARGIN * 2);
-          const pyr = (r / (yR1 - yR0)) * (H - MARGIN * 2);
-          const ex = cx + pxr * ct;
-          const ey = cy + pyr * st;
-          if (theta === 0) ctx.moveTo(ex, ey);
-          else ctx.lineTo(ex, ey);
+        for (let i = 0; i < 64; i++) {
+          const a = (i / 64) * Math.PI * 2;
+          const dx = Math.cos(a), dy = Math.sin(a);
+          const rad = 1 / Math.sqrt(e.g11 * dx * dx + 2 * e.g12 * dx * dy + e.g22 * dy * dy);
+          const [px, py] = toPixel(e.x + dx * rad * scl, e.y + dy * rad * scl, W, H);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
         }
         ctx.closePath();
-        ctx.fillStyle = "rgba(224,64,251,0.07)";
+        ctx.fillStyle = "rgba(224,64,251,0.12)";
         ctx.fill();
-        ctx.strokeStyle = "rgba(224,64,251,0.33)";
-        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(224,64,251,0.4)";
+        ctx.lineWidth = 0.8;
         ctx.stroke();
+        // Center dot
+        const [mcx, mcy] = toPixel(e.x, e.y, W, H);
+        ctx.beginPath();
+        ctx.arc(mcx, mcy, 2, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(224,64,251,0.6)";
+        ctx.fill();
       }
     }
 
