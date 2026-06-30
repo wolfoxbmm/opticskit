@@ -305,11 +305,15 @@ export default function ChromaticityCanvas({
       }
     }
 
-    // Gamut triangles
+    // Gamut triangles (clipped to axis area)
     const drawGamut = (gamutKey: string, color: string) => {
       const g = gamuts[gamutKey];
       if (!g) return;
       const pts = [g.R, g.G, g.B].map((p) => toPixel(p[0], p[1], W, H));
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(MARGIN, MARGIN, W - MARGIN * 2, H - MARGIN * 2);
+      ctx.clip();
       ctx.beginPath();
       ctx.moveTo(pts[0][0], pts[0][1]);
       ctx.lineTo(pts[1][0], pts[1][1]);
@@ -320,6 +324,7 @@ export default function ChromaticityCanvas({
       ctx.strokeStyle = color;
       ctx.lineWidth = 1.5;
       ctx.stroke();
+      ctx.restore();
     };
     if (showSRGB) drawGamut("sRGB", "#00e676");
     if (showP3) drawGamut("DCI-P3", "#00bfff");
