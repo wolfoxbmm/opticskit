@@ -143,7 +143,9 @@ export default function ChromaticityCanvas({
 }: ChromaticityCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [hoverPos, setHoverPos] = useState<{ x: number; y: number; info: any } | null>(null);
+  const [hoverVisible, setHoverVisible] = useState(false);
+  const [hoverInfo, setHoverInfo] = useState<{ xy: string; cct: string; wl: string; rgb: string }>({ xy: "-", cct: "-", wl: "-", rgb: "-" });
+  const [illTooltip, setIllTooltip] = useState<{ x: number; y: number; text: string } | null>(null);
   const [diagramData, setDiagramData] = useState(() => buildDiagramData(diagramMode));
 
   useEffect(() => {
@@ -350,21 +352,35 @@ export default function ChromaticityCanvas({
       });
     }
 
-    // D65 white point
-    if (wp) {
+    // D65 white point - only when relevant gamuts are shown
+    if (wp && (showSRGB || showP3 || showRec2020)) {
       const wpx = toPixel(wp.x, wp.y, W, H);
+      if (!(canvas as any)._illPixels) (canvas as any)._illPixels = [];
+      (canvas as any)._illPixels.push({ x: wpx[0], y: wpx[1], name: "D65 标准光源 6500K" });
       ctx.beginPath(); ctx.arc(wpx[0], wpx[1], 5, 0, Math.PI * 2);
       ctx.fillStyle = "#fff"; ctx.fill();
       ctx.strokeStyle = "#444"; ctx.lineWidth = 1; ctx.stroke();
     }
 
-    // Other illuminants
+    // Other illuminants - visibility depends on active layers
+    const illPixels: { x: number; y: number; name: string }[] = [];
+    const illVisibility: Record<string, () => boolean> = {
+      A: () => showBB, C: () => showBB, D50: () => showAdobeRGB,
+      D55: () => showBB, D75: () => showBB, E: () => showBB,
+    };
     const illumXYs = getIllumXYs(diagramMode);
+    const illLabels: Record<string, string> = {
+      A: "A 钨丝灯 2856K", C: "C 北向日光 6774K", D50: "D50 日光5000K (Adobe白点)",
+      D55: "D55 日光5500K", D75: "D75 日光7500K", E: "E 等能白 5454K",
+    };
     for (const ill of illumXYs) {
+      if (!illVisibility[ill.name] || !illVisibility[ill.name]()) continue;
       const ip = toPixel(ill.x, ill.y, W, H);
+      illPixels.push({ x: ip[0], y: ip[1], name: illLabels[ill.name] || ill.name });
       ctx.beginPath(); ctx.arc(ip[0], ip[1], 3, 0, Math.PI * 2);
       ctx.fillStyle = "#fff"; ctx.fill();
     }
+    (canvas as any)._illPixels = illPixels;
 
     // Wavelength labels
     if (showLabels) {
@@ -402,6 +418,19 @@ export default function ChromaticityCanvas({
     ctx.fillStyle = "#888";
     ctx.fillText(cfg.xLabel, W - MARGIN + 4, H - MARGIN + 4);
     ctx.fillText(cfg.yLabel, MARGIN - 16, MARGIN - 10);
+
+    // Illuminant tooltip on canvas
+    if (illTooltip) {
+      ctx.font = "11px sans-serif";
+      const tw = ctx.measureText(illTooltip.text).width;
+      ctx.fillStyle = "rgba(0,0,0,0.88)";
+      ctx.fillRect(illTooltip.x - tw / 2 - 6, illTooltip.y - 28, tw + 12, 20);
+      ctx.strokeStyle = "#666";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(illTooltip.x - tw / 2 - 6, illTooltip.y - 28, tw + 12, 20);
+      ctx.fillStyle = "#fff";
+      ctx.fillText(illTooltip.text, illTooltip.x - tw / 2, illTooltip.y - 12);
+    }
 
     // Selected point marker
     if (locateX !== 0 || locateY !== 0) {
@@ -453,7 +482,7 @@ export default function ChromaticityCanvas({
     }
   }, [
     diagramMode, diagramData, showMacAdam, showBB, showSRGB, showP3, showAdobeRGB, showACES, showRec2020, showLabels,
-    locateX, locateY, point1, point2, toPixel, cfg, locus, bb, macadam, gamuts, wp, xR0, xR1, yR0, yR1,
+    locateX, locateY, point1, point2, illTooltip, toPixel, cfg, locus, bb, macadam, gamuts, wp, xR0, xR1, yR0, yR1,
   ]);
 
   useEffect(() => { render(); }, [render]);
@@ -470,18 +499,36 @@ export default function ChromaticityCanvas({
     const rect = canvas.getBoundingClientRect();
     const [lx, ly] = toLogical(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height);
     const info = computeInfo(lx, ly);
-    if (!info) { setHoverPos(null); return; }
-    const wl = nearestWavelength(info.x, info.y, SPECTRAL_LOCUS);
-    setHoverPos({
-      x: e.clientX, y: e.clientY,
-      info: {
-        xy: `(${info.x.toFixed(4)}, ${info.y.toFixed(4)})`,
-        cct: info.cct ? `${info.cct.toFixed(0)} K` : "-",
-        wl: (wl && wl.distance < 0.02) ? `${wl.wl} nm` : "-",
-        rgb: `rgb(${info.rgb.r},${info.rgb.g},${info.rgb.b})`,
+    
+    // Check illuminant hover first (64px radius)
+    const illPixels = (canvas as any)._illPixels as { x: number; y: number; name: string }[] | undefined;
+    if (illPixels) {
+      const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      let best: { x: number; y: number; name: string } | null = null;
+      let bestDist = 64;
+      for (const ip of illPixels) {
+        const dx = mx - ip.x, dy = my - ip.y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < bestDist) { bestDist = d; best = ip; }
       }
+      setIllTooltip(best ? { x: best.x, y: best.y, text: best.name } : null);
+    }
+    
+    if (!info) { setHoverVisible(false); return; }
+    const wl = nearestWavelength(info.x, info.y, SPECTRAL_LOCUS);
+    setHoverInfo({
+      xy: `(${info.x.toFixed(4)}, ${info.y.toFixed(4)})`,
+      cct: info.cct ? `${info.cct.toFixed(0)} K` : "-",
+      wl: (wl && wl.distance < 0.02) ? `${wl.wl} nm` : "-",
+      rgb: `rgb(${info.rgb.r},${info.rgb.g},${info.rgb.b})`,
     });
+    setHoverVisible(true);
   }, [toLogical, computeInfo]);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoverVisible(false);
+    setIllTooltip(null);
+  }, []);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     const canvas = canvasRef.current;
@@ -502,24 +549,32 @@ export default function ChromaticityCanvas({
   return (
     <div ref={containerRef} style={{ flex: 1, position: "relative", minWidth: 0, background: "#050505", borderRadius: 12, overflow: "hidden" }}>
       <canvas ref={canvasRef} style={{ display: "block", position: "absolute", top: 0, left: 0, cursor: "crosshair" }}
-        onMouseMove={handleMouseMove} onMouseLeave={() => setHoverPos(null)} onClick={handleClick} />
-      {hoverPos && (
-        <div style={{
-          position: "fixed", left: hoverPos.x + 15, top: hoverPos.y - 10,
-          background: "rgba(20,20,20,0.94)", backdropFilter: "blur(12px)", border: "1px solid #1f1f1f",
-          borderRadius: 10, padding: "12px 16px", fontSize: 13, color: "#e8e8e8",
-          zIndex: 100, pointerEvents: "none", fontFamily: "monospace"
-        }}>
-          <div><span style={{color:"#999"}}>坐标 </span>{hoverPos.info.xy}</div>
-          <div><span style={{color:"#999"}}>CCT </span>{hoverPos.info.cct}</div>
-          <div><span style={{color:"#999"}}>波长 </span>{hoverPos.info.wl}</div>
-          <div style={{display:"flex",alignItems:"center",gap:6}}>
-            <span style={{color:"#999"}}>颜色 </span>
-            <span style={{width:16,height:16,borderRadius:4,background:hoverPos.info.rgb,border:"1px solid #444",display:"inline-block"}}/>
-            {hoverPos.info.rgb}
-          </div>
+        onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={handleClick} />
+      <div style={{
+        position: "absolute", top: 16, right: 16,
+        background: "rgba(20,20,20,0.94)", backdropFilter: "blur(12px)", border: "1px solid #1f1f1f",
+        borderRadius: 10, padding: "12px 16px", fontSize: 13,
+        pointerEvents: "none", opacity: hoverVisible ? 1 : 0,
+        transition: "opacity 0.12s", zIndex: 10,
+      }}>
+        <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:2}}>
+          <span style={{color:"#999",minWidth:42}}>坐标</span>
+          <span style={{color:"#e8e8e8",fontFamily:"monospace"}}>{hoverInfo.xy}</span>
         </div>
-      )}
+        <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:2}}>
+          <span style={{color:"#999",minWidth:42}}>CCT</span>
+          <span style={{color:"#e8e8e8",fontFamily:"monospace"}}>{hoverInfo.cct}</span>
+        </div>
+        <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:2}}>
+          <span style={{color:"#999",minWidth:42}}>波长</span>
+          <span style={{color:"#e8e8e8",fontFamily:"monospace"}}>{hoverInfo.wl}</span>
+        </div>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          <span style={{color:"#999",minWidth:42}}>颜色</span>
+          <span style={{width:20,height:20,borderRadius:4,background:hoverInfo.rgb,border:"1px solid #444",display:"inline-block"}}/>
+          <span style={{color:"#e8e8e8",fontFamily:"monospace"}}>{hoverInfo.rgb}</span>
+        </div>
+      </div>
     </div>
   );
 }
