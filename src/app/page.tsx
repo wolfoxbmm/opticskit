@@ -113,12 +113,10 @@ const tools = [
 ];
 
 
+import articlesData from "../../articles/index.json";
+
 function ArticleSection() {
-  const articles = [
-    { slug: "spectrum-resolution", title: "光谱仪分辨率标称0.1nm，为什么0.05nm的峰测出0.3nm？", summary: "入射狭缝宽度才是决定实测分辨率的第一道关卡", date: "2026-06-28" },
-    { slug: "dfb-linewidth", title: "DFB线宽从1MHz展宽到10MHz：光反馈+驱动纹波两个必查项", summary: "光反馈和电流噪声如何悄悄拉宽线宽", date: "2026-06-25" },
-    { slug: "apd-gain-noise", title: "APD增益调到100，噪声放大30倍信号只放大10倍", summary: "过剩噪声因子与最佳增益的工程真相", date: "2026-06-22" },
-  ];
+  const articles = articlesData.slice(0, 3);
 
   return (
     <>
