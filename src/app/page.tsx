@@ -115,41 +115,49 @@ const tools = [
 
 import articlesData from "../../articles/index.json";
 
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return `${d.getMonth() + 1}月${d.getDate()}日`;
+}
+
 function ArticleSection() {
   const articles = articlesData.slice(0, 3);
 
   return (
     <>
-      <div className="mb-8">
-        <h2 className="text-[16px] font-bold text-[#1A1A2E] tracking-[-0.02em]">精选文章</h2>
-        <p className="text-[13px] text-[#868E96]">光学技术干货，每周更新</p>
+      <div className="mb-6">
+        <h2 className="text-[16px] font-bold text-[#1A1A2E] tracking-[-0.02em]">
+          精选文章
+          <span className="ml-2 text-[12px] font-normal text-[#ADB5BD]">光学技术干货 · 每周更新</span>
+        </h2>
       </div>
 
-      <div className="flex flex-col gap-3 mb-6">
-        {articles.map((a, i) => (
+      <div className="flex flex-col gap-2.5 mb-6">
+        {articles.map((a) => (
           <Link
             key={a.slug}
             href={`/articles/${a.slug}`}
-            className="block bg-white border border-[#E9ECEF] rounded-lg p-4 hover:border-[#228BE6]/30 hover:shadow-sm transition-all group"
+            className="group block bg-white border border-[#E9ECEF] rounded-lg px-4 py-3.5 hover:border-[#228BE6]/40 hover:shadow-md hover:translate-x-1 transition-all duration-200"
           >
-            <h3 className="text-[14px] font-semibold text-[#1A1A2E] group-hover:text-[#228BE6] transition-colors leading-relaxed">
-              {a.title}
-            </h3>
-            <p className="text-[12px] text-[#868E96] mt-1 line-clamp-1">{a.summary}</p>
-            <p className="text-[11px] text-[#ADB5BD] mt-1.5">{a.date}</p>
+            <div className="flex items-baseline justify-between gap-4">
+              <h3 className="text-[14px] font-semibold text-[#1A1A2E] group-hover:text-[#228BE6] transition-colors leading-snug flex-1 min-w-0">
+                {a.title}
+              </h3>
+              <span className="text-[11px] text-[#ADB5BD] whitespace-nowrap flex-shrink-0">{formatDate(a.date)}</span>
+            </div>
+            <p className="text-[12px] text-[#868E96] mt-1 line-clamp-2">{a.summary}</p>
           </Link>
         ))}
       </div>
 
-      <div className="flex items-center justify-center">
+      <div className="flex justify-center">
         <Link
           href="/articles"
-          className="inline-flex items-center gap-1 text-[13px] text-[#228BE6] hover:text-[#1c7ed6] font-medium transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 border border-[#DEE2E6] rounded-full text-[13px] text-[#495057] hover:text-[#228BE6] hover:border-[#228BE6] font-medium transition-all"
         >
           查看全部文章
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </Link>
-
       </div>
     </>
   );
