@@ -222,13 +222,13 @@ function ArticleSection() {
   return (
     <>
       <div className="mb-6 flex items-baseline justify-between">
-        <h2 className="text-[16px] font-bold text-[#111827] tracking-[-0.02em]">
+        <h2 className="text-[16px] font-bold text-[#1A1A2E] tracking-[-0.02em]">
           精选文章
-          <span className="ml-2 text-[12px] font-normal text-[#9CA3AF]">光学技术干货 · 每周更新</span>
+          <span className="ml-2 text-[12px] font-normal text-[#ADB5BD]">光学技术干货 · 每周更新</span>
         </h2>
         <Link
           href="/articles"
-          className="text-[13px] text-[#2563EB] hover:text-[#1D4ED8] font-medium transition-colors inline-flex items-center gap-1"
+          className="text-[13px] text-[#228BE6] hover:text-[#1c7ed6] font-medium transition-colors inline-flex items-center gap-1"
         >
           查看全部
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -241,23 +241,23 @@ function ArticleSection() {
         onMouseEnter={() => { pauseRef.current = true; }}
         onMouseLeave={() => { pauseRef.current = false; userRef.current = false; }}
       >
-        <div className="absolute top-0 left-0 right-0 h-12 z-10 pointer-events-none bg-gradient-to-b from-[#F3F4F6] to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-12 z-10 pointer-events-none bg-gradient-to-t from-[#F3F4F6] to-transparent" />
+        <div className="absolute top-0 left-0 right-0 h-12 z-10 pointer-events-none bg-gradient-to-b from-[#F2F3F5] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-12 z-10 pointer-events-none bg-gradient-to-t from-[#F2F3F5] to-transparent" />
 
         {articles.map((a) => (
           <Link
             key={a.slug}
             href={`/articles/${a.slug}`}
-            className="scroll-card absolute left-0 right-0 bg-white border border-[#E5E7EB] rounded-lg px-4 py-3.5 hover:border-[#2563EB]/40 hover:shadow-md transition-all duration-250"
+            className="scroll-card absolute left-0 right-0 bg-white border border-[#E9ECEF] rounded-lg px-4 py-3.5 hover:border-[#228BE6]/40 hover:shadow-md transition-all duration-250"
             style={{ opacity: 1 }}
           >
             <div className="flex items-baseline justify-between gap-4">
-              <h3 className="text-[14px] font-semibold text-[#111827] flex-1 min-w-0 leading-snug hover:text-[#2563EB] transition-colors">
+              <h3 className="text-[14px] font-semibold text-[#1A1A2E] flex-1 min-w-0 leading-snug hover:text-[#228BE6] transition-colors">
                 {a.title}
               </h3>
-              <span className="text-[11px] text-[#9CA3AF] whitespace-nowrap flex-shrink-0">{formatDate(a.date)}</span>
+              <span className="text-[11px] text-[#ADB5BD] whitespace-nowrap flex-shrink-0">{formatDate(a.date)}</span>
             </div>
-            <p className="text-[12px] text-[#6B7280] mt-1 truncate">{a.summary}</p>
+            <p className="text-[12px] text-[#868E96] mt-1 truncate">{a.summary}</p>
           </Link>
         ))}
       </div>
@@ -266,18 +266,18 @@ function ArticleSection() {
 }
 
 const colorMap: Record<string, { accent: string; light: string; text: string }> = {
-  blue:   { accent: "#2563EB", light: "#EFF6FF", text: "#1D4ED8" },
-  violet:{ accent: "#7C3AED", light: "#F5F3FF", text: "#6D28D9" },
-  teal:   { accent: "#059669", light: "#ECFDF5", text: "#047857" },
-  amber:  { accent: "#F59E0B", light: "#FFFBEB", text: "#D97706" },
-  rose:   { accent: "#EC4899", light: "#FDF2F8", text: "#DB2777" },
-  cyan:   { accent: "#0891B2", light: "#ECFEFF", text: "#0E7490" },
-  slate:  { accent: "#6B7280", light: "#F3F4F6", text: "#4B5563" },
+  blue:   { accent: "#228BE6", light: "#E7F5FF", text: "#1c7ed6" },
+  violet:{ accent: "#7950F2", light: "#F3F0FF", text: "#6741d9" },
+  teal:   { accent: "#0CA678", light: "#E6FCF5", text: "#099268" },
+  amber:  { accent: "#F08C00", light: "#FFF4E6", text: "#e67700" },
+  rose:   { accent: "#E64980", light: "#FFF0F6", text: "#d6336c" },
+  cyan:   { accent: "#1098AD", light: "#E3FAFC", text: "#0b7285" },
+  slate:  { accent: "#868E96", light: "#F1F3F5", text: "#495057" },
 };
 
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F3F4F6]">
+    <div className="min-h-screen flex flex-col bg-[#F2F3F5]">
       {/* Navigation — 毛玻璃 */}
       {/* SEO semantic description */}
       <section aria-label="光学工具箱简介" className="sr-only">
@@ -293,16 +293,16 @@ export default function Home() {
       {/* Hero */}
       <section className="pt-16 pb-8 px-6 text-center select-none">
         <div className="max-w-2xl mx-auto space-y-5">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#E5E7EB] bg-white text-[13px] text-[#4B5563] font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#2563EB]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#DEE2E6] bg-white text-[13px] text-[#495057] font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#228BE6]" />
             免费 · 9 个光学在线工具
           </div>
-          <h1 className="text-[42px] leading-[1.12] font-semibold tracking-[-0.03em] text-[#111827]">
+          <h1 className="text-[42px] leading-[1.12] font-semibold tracking-[-0.03em] text-[#1A1A2E]">
             光学工具箱
             <br />
-            <span className="text-[#6B7280]">让计算回归理性</span>
+            <span className="text-[#868E96]">让计算回归理性</span>
           </h1>
-          <p className="text-[15px] text-[#4B5563] leading-relaxed max-w-lg mx-auto">
+          <p className="text-[15px] text-[#495057] leading-relaxed max-w-lg mx-auto">
             覆盖色度学、光谱分析、薄膜光学、成像光学、激光技术、材料数据库方向
             <br />
             基于 CIE/ISO 国际标准，所有计算在浏览器本地完成
@@ -314,9 +314,9 @@ export default function Home() {
       {/* Features — 特性标签 */}
       <section className="pb-4 px-6">
         <div className="max-w-[960px] mx-auto flex flex-wrap items-center justify-center gap-3">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E5E7EB] text-[13px] text-[#4B5563] font-medium shadow-sm">基于 CIE/ISO 国际标准</span>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E5E7EB] text-[13px] text-[#4B5563] font-medium shadow-sm">完全免费 · 无需注册</span>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E5E7EB] text-[13px] text-[#4B5563] font-medium shadow-sm">中文优先 · 公众号同步科普</span>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E9ECEF] text-[13px] text-[#495057] font-medium shadow-sm">基于 CIE/ISO 国际标准</span>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E9ECEF] text-[13px] text-[#495057] font-medium shadow-sm">完全免费 · 无需注册</span>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E9ECEF] text-[13px] text-[#495057] font-medium shadow-sm">中文优先 · 公众号同步科普</span>
         </div>
       </section>
 
@@ -324,14 +324,14 @@ export default function Home() {
       <section className="flex-1 px-4 pt-4 pb-12">
         <div className="max-w-[960px] mx-auto">
           <div className="mb-8">
-            <h2 className="text-[16px] font-bold text-[#111827] tracking-[-0.02em]">
+            <h2 className="text-[16px] font-bold text-[#1A1A2E] tracking-[-0.02em]">
             光学在线工具
-            <span className="ml-2 text-[12px] font-normal text-[#9CA3AF]">9 个免费工具 · 即开即用</span>
+            <span className="ml-2 text-[12px] font-normal text-[#ADB5BD]">9 个免费工具 · 即开即用</span>
           </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {tools.map((tool, i) => {
-              const c = colorMap[tool.color] || { accent: "#6B7280", light: "#F3F4F6", text: "#4B5563" };
+              const c = colorMap[tool.color] || { accent: "#868E96", light: "#F1F3F5", text: "#495057" };
               const isFeedback = tool.href === "#";
               const CardContent = (
                 <>
@@ -345,16 +345,16 @@ export default function Home() {
                     <div className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: c.light, color: c.accent }}>
                       {tool.icon}
                     </div>
-                    <h3 className="text-[15px] font-semibold text-[#111827] tracking-[-0.01em]">
+                    <h3 className="text-[15px] font-semibold text-[#1A1A2E] tracking-[-0.01em]">
                       {tool.name}
                     </h3>
                   </div>
                   {isFeedback ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-center gap-1">
-                      <p className="text-[12px] text-[#9CA3AF]">右下角反馈给我们</p>
+                      <p className="text-[12px] text-[#ADB5BD]">右下角反馈给我们</p>
                     </div>
                   ) : (
-                    <p className="text-[14px] text-[#4B5563] leading-relaxed flex-1">
+                    <p className="text-[14px] text-[#495057] leading-relaxed flex-1">
                       {tool.desc}
                     </p>
                   )}
@@ -365,7 +365,7 @@ export default function Home() {
                 return (
                   <div
                     key={tool.name}
-                    className="flex flex-col gap-4 p-6 rounded-xl bg-[#F9FAFB] border border-dashed border-[#E5E7EB] hover:border-[#9CA3AF] transition-all duration-250 animate-fade-in group relative overflow-hidden"
+                    className="flex flex-col gap-4 p-6 rounded-xl bg-[#F8F9FA] border border-dashed border-[#DEE2E6] hover:border-[#ADB5BD] transition-all duration-250 animate-fade-in group relative overflow-hidden"
                     style={{ animationDelay: `${i * 0.06}s` } as React.CSSProperties}
                   >
                     {CardContent}
@@ -377,7 +377,7 @@ export default function Home() {
                 <Link
                   key={tool.href}
                   href={tool.href}
-                  className="flex flex-col gap-4 p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-sm hover:shadow-md hover:border-[#E5E7EB] hover:-translate-y-0.5 transition-all duration-250 animate-fade-in group no-underline hover:no-underline relative overflow-hidden"
+                  className="flex flex-col gap-4 p-6 rounded-xl bg-white border border-[#E9ECEF] shadow-sm hover:shadow-md hover:border-[#DEE2E6] hover:-translate-y-0.5 transition-all duration-250 animate-fade-in group no-underline hover:no-underline relative overflow-hidden"
                   style={{ animationDelay: `${i * 0.06}s` } as React.CSSProperties}
                 >
                   {CardContent}
@@ -395,29 +395,29 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-[#E5E7EB] py-10 px-6">
+      <footer className="border-t border-[#E9ECEF] py-10 px-6">
         <div className="max-w-[960px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-center sm:text-left">
-            <p className="text-sm font-semibold text-[#4B5563] mb-1">OpticsKit</p>
-            <p className="text-[12px] text-[#9CA3AF] leading-relaxed">
+            <p className="text-sm font-semibold text-[#495057] mb-1">OpticsKit</p>
+            <p className="text-[12px] text-[#ADB5BD] leading-relaxed">
               免费在线光学工具箱 · 让计算回归理性
             </p>
           </div>
-          <div className="flex items-center gap-5 text-[13px] text-[#6B7280]">
-            <Link href="/" className="hover:text-[#4B5563] transition-colors">首页</Link>
-            <a href="https://opticskit.cn/community" className="hover:text-[#4B5563] transition-colors">社区</a>
-            <Link href="/about" className="hover:text-[#4B5563] transition-colors">关于</Link>
-            <Link href="/contact" className="hover:text-[#4B5563] transition-colors">联系</Link>
+          <div className="flex items-center gap-5 text-[13px] text-[#868E96]">
+            <Link href="/" className="hover:text-[#495057] transition-colors">首页</Link>
+            <a href="https://opticskit.cn/community" className="hover:text-[#495057] transition-colors">社区</a>
+            <Link href="/about" className="hover:text-[#495057] transition-colors">关于</Link>
+            <Link href="/contact" className="hover:text-[#495057] transition-colors">联系</Link>
           </div>
           <div className="text-center sm:text-right">
-            <p className="text-[12px] text-[#9CA3AF]">
-              关注公众号 <span className="text-[#4B5563] font-medium">光学科技资讯</span>
+            <p className="text-[12px] text-[#ADB5BD]">
+              关注公众号 <span className="text-[#495057] font-medium">光学科技资讯</span>
             </p>
           </div>
         </div>
-        <div className="max-w-[960px] mx-auto mt-6 pt-4 border-t border-[#F3F4F6] text-center">
-          <p className="text-[11px] text-[#D1D5DB]">
-            &copy; 2026 OpticsKit &nbsp;·&nbsp; <span className="text-[#D1D5DB]">ICP备案中</span>
+        <div className="max-w-[960px] mx-auto mt-6 pt-4 border-t border-[#F1F3F5] text-center">
+          <p className="text-[11px] text-[#CED4DA]">
+            &copy; 2026 OpticsKit &nbsp;·&nbsp; <span className="text-[#CED4DA]">ICP备案中</span>
           </p>
         </div>
       </footer>
