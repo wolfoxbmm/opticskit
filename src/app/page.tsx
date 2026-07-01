@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 
 
@@ -121,7 +122,83 @@ function formatDate(dateStr: string) {
 }
 
 function ArticleSection() {
-  const articles = articlesData.slice(0, 3);
+  const articles = articlesData;
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = React.useState(false);
+  const [userScroll, setUserScroll] = React.useState(false);
+  const timerRef = React.useRef<ReturnType<typeof setTimeout>>(undefined);
+  const posRef = React.useRef<number[]>(articles.map((_, i) => i * 72));
+  const GAP = 12;
+  const STEP = 72;
+
+  // Auto-scroll loop
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    
+    const cards = el.querySelectorAll<HTMLElement>('.scroll-card');
+    const TOTAL = cards.length;
+    
+    function layout() {
+      const stageH = el!.clientHeight;
+      const topPad = 36;
+      const visibleH = stageH - 72;
+      const CARD_H = 60;
+
+      cards.forEach((card, i) => {
+        let y = posRef.current[i];
+        while (y < -STEP) y += STEP * TOTAL;
+        while (y > visibleH + STEP) y -= STEP * TOTAL;
+
+        const screenY = topPad + y;
+        card.style.transform = `translateY(${Math.round(screenY)}px)`;
+
+        const cy = screenY + CARD_H / 2;
+        const fadeTop = topPad + 28;
+        const fadeBottom = topPad + visibleH - 28;
+
+        if (cy < fadeTop) {
+          card.style.opacity = String(Math.max(0, 1 - (fadeTop - cy) / (fadeTop - topPad)));
+        } else if (cy > fadeBottom) {
+          card.style.opacity = String(Math.max(0, 1 - (cy - fadeBottom) / ((stageH - topPad) - fadeBottom)));
+        } else {
+          card.style.opacity = '1';
+        }
+      });
+    }
+
+    function scrollBy(delta: number) {
+      for (let i = 0; i < TOTAL; i++) {
+        posRef.current[i] -= delta;
+        if (posRef.current[i] < -STEP) posRef.current[i] += STEP * TOTAL;
+        if (posRef.current[i] > STEP * (TOTAL - 1)) posRef.current[i] -= STEP * TOTAL;
+      }
+      layout();
+    }
+
+    let raf: number;
+    function tick() {
+      if (!paused && !userScroll) scrollBy(0.35);
+      raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      setUserScroll(true);
+      clearTimeout(timerRef.current);
+      scrollBy(e.deltaY * 0.6);
+      timerRef.current = setTimeout(() => setUserScroll(false), 2000);
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    layout();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      el.removeEventListener('wheel', onWheel);
+    };
+  }, [paused, userScroll]);
 
   return (
     <>
@@ -139,25 +216,33 @@ function ArticleSection() {
         </Link>
       </div>
 
-      <div className="flex flex-col gap-2.5 mb-6">
-        {articles.map((a) => (
+      <div
+        ref={scrollRef}
+        className="relative h-[300px] overflow-hidden"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => { setPaused(false); setUserScroll(false); }}
+      >
+        {/* Top/bottom gradient fades */}
+        <div className="absolute top-0 left-0 right-0 h-12 z-10 pointer-events-none bg-gradient-to-b from-[#F2F3F5] to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-12 z-10 pointer-events-none bg-gradient-to-t from-[#F2F3F5] to-transparent" />
+
+        {articles.map((a, i) => (
           <Link
             key={a.slug}
             href={`/articles/${a.slug}`}
-            className="group block bg-white border border-[#E9ECEF] rounded-lg px-4 py-3.5 hover:border-[#228BE6]/40 hover:shadow-md hover:translate-x-1 transition-all duration-250"
+            className="scroll-card absolute left-0 right-0 bg-white border border-[#E9ECEF] rounded-lg px-4 py-3.5 hover:border-[#228BE6]/40 hover:shadow-md transition-all duration-250"
+            style={{ opacity: 1 }}
           >
             <div className="flex items-baseline justify-between gap-4">
-              <h3 className="text-[14px] font-semibold text-[#1A1A2E] group-hover:text-[#228BE6] transition-colors leading-snug flex-1 min-w-0">
+              <h3 className="text-[14px] font-semibold text-[#1A1A2E] flex-1 min-w-0 leading-snug hover:text-[#228BE6] transition-colors">
                 {a.title}
               </h3>
               <span className="text-[11px] text-[#ADB5BD] whitespace-nowrap flex-shrink-0">{formatDate(a.date)}</span>
             </div>
-            <p className="text-[12px] text-[#868E96] mt-1 line-clamp-1 sm:line-clamp-2">{a.summary}</p>
+            <p className="text-[12px] text-[#868E96] mt-1 truncate">{a.summary}</p>
           </Link>
         ))}
       </div>
-
-
     </>
   );
 }
