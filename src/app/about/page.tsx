@@ -4,9 +4,9 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col"><main className="flex-1 max-w-3xl mx-auto p-6 space-y-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E] mb-3">关于 OpticsKit · 光谱实验室</h1>
+          <h1 className="text-2xl font-bold text-[#1A1A2E] mb-3">关于 OpticsKit </h1>
           <p className="text-sm text-[#495057] leading-relaxed">
-            OpticsKit · 光谱实验室是一套为中国光学研究者打造的免费在线计算与可视化工具集。
+            OpticsKit 是一套为中国光学研究者打造的免费在线计算与可视化工具集。
             覆盖色度学、光谱分析、薄膜光学、成像光学、激光技术和材料数据库方向。目前共 9 个工具模块。
           </p>
         </div>
@@ -64,7 +64,7 @@ export default function AboutPage() {
 
         <div className="border-t border-[#E9ECEF] pt-6">
           <p className="text-sm text-[#868E96]">
-            OpticsKit · 光谱实验室 · 让计算回归理性
+            OpticsKit  · 让计算回归理性
           </p>
           <p className="text-sm text-[#868E96] mt-1">
             关注公众号「<span className="text-[#495057]">光学科技资讯</span>」获取更多光学内容

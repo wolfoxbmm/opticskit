@@ -488,7 +488,7 @@ export default function CommunityPage() {
       </main>
 
       <footer className="text-center py-6 text-[11px] text-[#CED4DA] border-t border-[#E9ECEF] cursor-default select-none" onClick={handleFooterClick}>
-        OpticsKit · 光谱实验室 · opticskit.cn
+        OpticsKit  · opticskit.cn
       </footer>
     </div>
   );
