@@ -501,11 +501,31 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-[#E9ECEF] py-8 px-6 text-center space-y-2">
-        <p className="text-[13px] text-[#868E96]">OpticsKit - 中文光学工具箱在线</p>
-        <p className="text-[12px] text-[#ADB5BD]">
-          关注公众号 <span className="text-[#495057] font-medium">光学科技资讯</span> · 让计算回归理性
-        </p>
+      <footer className="border-t border-[#E9ECEF] py-10 px-6">
+        <div className="max-w-[960px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="text-center sm:text-left">
+            <p className="text-sm font-semibold text-[#495057] mb-1">OpticsKit</p>
+            <p className="text-[12px] text-[#ADB5BD] leading-relaxed">
+              免费在线光学工具箱 · 让计算回归理性
+            </p>
+          </div>
+          <div className="flex items-center gap-5 text-[13px] text-[#868E96]">
+            <Link href="/" className="hover:text-[#495057] transition-colors">首页</Link>
+            <a href="https://opticskit.cn/community" className="hover:text-[#495057] transition-colors">社区</a>
+            <Link href="/about" className="hover:text-[#495057] transition-colors">关于</Link>
+            <Link href="/contact" className="hover:text-[#495057] transition-colors">联系</Link>
+          </div>
+          <div className="text-center sm:text-right">
+            <p className="text-[12px] text-[#ADB5BD]">
+              关注公众号 <span className="text-[#495057] font-medium">光学科技资讯</span>
+            </p>
+          </div>
+        </div>
+        <div className="max-w-[960px] mx-auto mt-6 pt-4 border-t border-[#F1F3F5] text-center">
+          <p className="text-[11px] text-[#CED4DA]">
+            &copy; 2026 OpticsKit.
+          </p>
+        </div>
       </footer>
     </div>
   );
