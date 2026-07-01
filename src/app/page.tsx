@@ -276,18 +276,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Divider */}
-      <div className="max-w-[960px] mx-auto px-4 pb-2">
-        <div className="flex items-center gap-4">
-          <div className="flex-1 h-px bg-[#E9ECEF]" />
-          <span className="text-[12px] text-[#ADB5BD] whitespace-nowrap">不只是工具，还有知识</span>
-          <div className="flex-1 h-px bg-[#E9ECEF]" />
-        </div>
-      </div>
-
       {/* Articles Section */}
-      <section className="pb-10 px-4">
-        <div className="max-w-[960px] mx-auto bg-[#F0F5FF] rounded-2xl p-6 sm:p-8 border border-[#DBE4F0]">
+      <section className="pb-8 px-4">
+        <div className="max-w-[960px] mx-auto">
           <ArticleSection />
         </div>
       </section>
