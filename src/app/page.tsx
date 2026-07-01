@@ -124,91 +124,100 @@ function formatDate(dateStr: string) {
 function ArticleSection() {
   const articles = articlesData;
   const scrollRef = React.useRef<HTMLDivElement>(null);
-  const [paused, setPaused] = React.useState(false);
-  const [userScroll, setUserScroll] = React.useState(false);
+  const rafRef = React.useRef<number>(0);
+  const posRef = React.useRef<number[]>([]);
+  const pauseRef = React.useRef<boolean>(false);
+  const userRef = React.useRef<boolean>(false);
   const timerRef = React.useRef<ReturnType<typeof setTimeout>>(undefined);
-  const posRef = React.useRef<number[]>(articles.map((_, i) => i * 72));
+  const startedRef = React.useRef<boolean>(false);
 
-  // Auto-scroll loop
   React.useEffect(() => {
     const el = scrollRef.current;
-    if (!el) return;
-    
-    const cards = el.querySelectorAll<HTMLElement>('.scroll-card');
-    const TOTAL = cards.length;
-    if (TOTAL === 0) return;
+    if (!el || startedRef.current) return;
+    startedRef.current = true;
 
-    // Measure real card height
-    const firstCard = cards[0];
-    const cardH = firstCard.offsetHeight;
-    const GAP = 12;
-    const step = cardH + GAP;
+    // Wait for next frame so cards are rendered
+    requestAnimationFrame(() => {
+      const cards = el.querySelectorAll<HTMLElement>('.scroll-card');
+      if (cards.length === 0) return;
+      const TOTAL = cards.length;
 
-    // Reset positions based on measured height
-    posRef.current = articles.map((_, i) => i * step);
-    
-    function layout() {
-      const stageH = el!.clientHeight;
-      const topPad = 36;
-      const visibleH = stageH - 72;
+      const cardH = cards[0].offsetHeight;
+      const GAP = 12;
+      const step = cardH + GAP;
 
-      cards.forEach((card, i) => {
-        let y = posRef.current[i];
-        while (y < -step) y += step * TOTAL;
-        while (y > visibleH + step) y -= step * TOTAL;
+      posRef.current = articles.map((_, i) => i * step);
 
-        const screenY = topPad + y;
-        card.style.transform = `translateY(${Math.round(screenY)}px)`;
+      function layout() {
+        const stageH = el!.clientHeight;
+        const topPad = 36;
+        const visibleH = stageH - 72;
 
-        const cy = screenY + cardH / 2;
-        const fadeTop = topPad + 28;
-        const fadeBottom = topPad + visibleH - 28;
+        cards.forEach((card, i) => {
+          let y = posRef.current[i];
+          while (y < -step) y += step * TOTAL;
+          while (y > visibleH + step) y -= step * TOTAL;
 
-        if (cy < fadeTop) {
-          card.style.opacity = String(Math.max(0, 1 - (fadeTop - cy) / (fadeTop - topPad)));
-        } else if (cy > fadeBottom) {
-          card.style.opacity = String(Math.max(0, 1 - (cy - fadeBottom) / ((stageH - topPad) - fadeBottom)));
-        } else {
-          card.style.opacity = '1';
-        }
-      });
-    }
+          const screenY = topPad + y;
+          card.style.transform = `translateY(${Math.round(screenY)}px)`;
 
-    function scrollBy(delta: number) {
-      for (let i = 0; i < TOTAL; i++) {
-        posRef.current[i] -= delta;
-        if (posRef.current[i] < -step) posRef.current[i] += step * TOTAL;
-        if (posRef.current[i] > step * (TOTAL - 1)) posRef.current[i] -= step * TOTAL;
+          const cy = screenY + cardH / 2;
+          const fadeTop = topPad + 28;
+          const fadeBottom = topPad + visibleH - 28;
+
+          if (cy < fadeTop) {
+            card.style.opacity = String(Math.max(0, 1 - (fadeTop - cy) / (fadeTop - topPad)));
+          } else if (cy > fadeBottom) {
+            card.style.opacity = String(Math.max(0, 1 - (cy - fadeBottom) / ((stageH - topPad) - fadeBottom)));
+          } else {
+            card.style.opacity = '1';
+          }
+        });
       }
+
+      function scrollBy(delta: number) {
+        for (let i = 0; i < TOTAL; i++) {
+          posRef.current[i] -= delta;
+          if (posRef.current[i] < -step) posRef.current[i] += step * TOTAL;
+          if (posRef.current[i] > step * (TOTAL - 1)) posRef.current[i] -= step * TOTAL;
+        }
+        layout();
+      }
+
+      function tick() {
+        if (!pauseRef.current && !userRef.current) scrollBy(0.35);
+        rafRef.current = requestAnimationFrame(tick);
+      }
+
       layout();
-    }
+      rafRef.current = requestAnimationFrame(tick);
 
-    let raf: number;
-    function tick() {
-      if (!paused && !userScroll) scrollBy(0.35);
-      raf = requestAnimationFrame(tick);
-    }
-    // Delay first tick to let layout settle
-    setTimeout(() => {
-      layout();
-      raf = requestAnimationFrame(tick);
-    }, 100);
+      const onWheel = (e: WheelEvent) => {
+        e.preventDefault();
+        userRef.current = true;
+        clearTimeout(timerRef.current);
+        scrollBy(e.deltaY * 0.6);
+        timerRef.current = setTimeout(() => { userRef.current = false; }, 2000);
+      };
 
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      setUserScroll(true);
-      clearTimeout(timerRef.current);
-      scrollBy(e.deltaY * 0.6);
-      timerRef.current = setTimeout(() => setUserScroll(false), 2000);
-    };
+      el.addEventListener('wheel', onWheel, { passive: false });
 
-    el.addEventListener('wheel', onWheel, { passive: false });
+      // Store cleanup
+      const cleanup = () => {
+        cancelAnimationFrame(rafRef.current);
+        el.removeEventListener('wheel', onWheel);
+      };
+      // Attach to element for cleanup
+      (el as any).__scrollCleanup = cleanup;
+    });
 
     return () => {
-      cancelAnimationFrame(raf);
-      el.removeEventListener('wheel', onWheel);
+      const el = scrollRef.current;
+      if (el && (el as any).__scrollCleanup) {
+        (el as any).__scrollCleanup();
+      }
     };
-  }, [paused, userScroll]);
+  }, []);
 
   return (
     <>
@@ -229,14 +238,13 @@ function ArticleSection() {
       <div
         ref={scrollRef}
         className="relative h-[300px] overflow-hidden"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => { setPaused(false); setUserScroll(false); }}
+        onMouseEnter={() => { pauseRef.current = true; }}
+        onMouseLeave={() => { pauseRef.current = false; userRef.current = false; }}
       >
-        {/* Top/bottom gradient fades */}
         <div className="absolute top-0 left-0 right-0 h-12 z-10 pointer-events-none bg-gradient-to-b from-[#F2F3F5] to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 h-12 z-10 pointer-events-none bg-gradient-to-t from-[#F2F3F5] to-transparent" />
 
-        {articles.map((a, i) => (
+        {articles.map((a) => (
           <Link
             key={a.slug}
             href={`/articles/${a.slug}`}
@@ -256,6 +264,7 @@ function ArticleSection() {
     </>
   );
 }
+
 const colorMap: Record<string, { accent: string; light: string; text: string }> = {
   blue:   { accent: "#228BE6", light: "#E7F5FF", text: "#1c7ed6" },
   violet:{ accent: "#7950F2", light: "#F3F0FF", text: "#6741d9" },
