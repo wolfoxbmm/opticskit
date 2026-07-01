@@ -125,11 +125,18 @@ function ArticleSection() {
 
   return (
     <>
-      <div className="mb-6">
+      <div className="mb-6 flex items-baseline justify-between">
         <h2 className="text-[16px] font-bold text-[#1A1A2E] tracking-[-0.02em]">
           精选文章
           <span className="ml-2 text-[12px] font-normal text-[#ADB5BD]">光学技术干货 · 每周更新</span>
         </h2>
+        <Link
+          href="/articles"
+          className="text-[13px] text-[#228BE6] hover:text-[#1c7ed6] font-medium transition-colors inline-flex items-center gap-1"
+        >
+          查看全部
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </Link>
       </div>
 
       <div className="flex flex-col gap-2.5 mb-6">
@@ -150,15 +157,7 @@ function ArticleSection() {
         ))}
       </div>
 
-      <div className="flex justify-center">
-        <Link
-          href="/articles"
-          className="inline-flex items-center gap-2 px-4 py-2 border border-[#DEE2E6] rounded-full text-[13px] text-[#495057] hover:text-[#228BE6] hover:border-[#228BE6] font-medium transition-all"
-        >
-          查看全部文章
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </Link>
-      </div>
+
     </>
   );
 }
