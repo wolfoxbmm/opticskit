@@ -128,8 +128,6 @@ function ArticleSection() {
   const [userScroll, setUserScroll] = React.useState(false);
   const timerRef = React.useRef<ReturnType<typeof setTimeout>>(undefined);
   const posRef = React.useRef<number[]>(articles.map((_, i) => i * 72));
-  const GAP = 12;
-  const STEP = 72;
 
   // Auto-scroll loop
   React.useEffect(() => {
@@ -138,22 +136,31 @@ function ArticleSection() {
     
     const cards = el.querySelectorAll<HTMLElement>('.scroll-card');
     const TOTAL = cards.length;
+    if (TOTAL === 0) return;
+
+    // Measure real card height
+    const firstCard = cards[0];
+    const cardH = firstCard.offsetHeight;
+    const GAP = 12;
+    const step = cardH + GAP;
+
+    // Reset positions based on measured height
+    posRef.current = articles.map((_, i) => i * step);
     
     function layout() {
       const stageH = el!.clientHeight;
       const topPad = 36;
       const visibleH = stageH - 72;
-      const CARD_H = 60;
 
       cards.forEach((card, i) => {
         let y = posRef.current[i];
-        while (y < -STEP) y += STEP * TOTAL;
-        while (y > visibleH + STEP) y -= STEP * TOTAL;
+        while (y < -step) y += step * TOTAL;
+        while (y > visibleH + step) y -= step * TOTAL;
 
         const screenY = topPad + y;
         card.style.transform = `translateY(${Math.round(screenY)}px)`;
 
-        const cy = screenY + CARD_H / 2;
+        const cy = screenY + cardH / 2;
         const fadeTop = topPad + 28;
         const fadeBottom = topPad + visibleH - 28;
 
@@ -170,8 +177,8 @@ function ArticleSection() {
     function scrollBy(delta: number) {
       for (let i = 0; i < TOTAL; i++) {
         posRef.current[i] -= delta;
-        if (posRef.current[i] < -STEP) posRef.current[i] += STEP * TOTAL;
-        if (posRef.current[i] > STEP * (TOTAL - 1)) posRef.current[i] -= STEP * TOTAL;
+        if (posRef.current[i] < -step) posRef.current[i] += step * TOTAL;
+        if (posRef.current[i] > step * (TOTAL - 1)) posRef.current[i] -= step * TOTAL;
       }
       layout();
     }
@@ -181,7 +188,11 @@ function ArticleSection() {
       if (!paused && !userScroll) scrollBy(0.35);
       raf = requestAnimationFrame(tick);
     }
-    raf = requestAnimationFrame(tick);
+    // Delay first tick to let layout settle
+    setTimeout(() => {
+      layout();
+      raf = requestAnimationFrame(tick);
+    }, 100);
 
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
@@ -192,7 +203,6 @@ function ArticleSection() {
     };
 
     el.addEventListener('wheel', onWheel, { passive: false });
-    layout();
 
     return () => {
       cancelAnimationFrame(raf);

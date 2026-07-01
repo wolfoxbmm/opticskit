@@ -1,0 +1,25 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">TEC显示屏上稳稳亮着±0.01℃——这是热敏电阻位置的温度。你信了。但光谱仪上DFB激光器波长安静地漂了50pm，大约相当于0.4℃的芯片温度漂移。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">±0.01℃是控制器的温度检测精度，不是芯片结温的稳定性。中间隔着热沉、封装底座、焊料层——每一层都有热阻，每一层都在消耗你的控温精度。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">热敏电阻测的不是芯片温度</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">TEC系统的温度传感器（通常是NTC热敏电阻）贴在TEC冷面的陶瓷基板上，或埋在激光器封装底座附近。它与激光器芯片之间隔着：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">1. TEC冷面陶瓷板 → 封装底座（铜/可伐合金）：热阻约0.5-2 K/W</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">2. 封装底座 → 热沉（submount）：焊料层热阻约0.1-0.5 K/W</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. 热沉 → 激光器芯片：芯片键合热阻约2-8 K/W</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">典型蝶形封装（butterfly package）中从TEC冷面到激光器芯片的总热阻约5-15 K/W（Coherent, Thermoelectric Cooling Systems Design Guide, 2023）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">芯片自发热：隐藏的ΔT</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">DFB激光器典型工作电流80-120mA，正向电压1.2-1.8V，芯片功耗约100-200mW。假设总热阻10K/W，200mW功耗在芯片上产生ΔT=10×0.2=2℃。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">TEC冷面的热敏电阻只测到25.00℃，但芯片实际温度可能已达27℃。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这2℃温差意味着什么？DFB激光器波长-温度系数典型值为0.1nm/℃（Y. Kotaki &amp; H. Ishikawa, IEE Proceedings J, Vol.138, p.171, 1991），即~12.5GHz/℃。2℃温差=0.2nm波长偏移，远超DWDM 50GHz间隔的容限。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么50pm漂移对应仅0.4℃？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">回到问题：TEC显示±0.01℃，波长偏了50pm。50pm ÷ 0.1nm/℃ = 0.5℃。这0.5℃不是TEC控温精度不够——是激光器工作电流变化导致的芯片自发热变化。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">DFB激光器偏置电流从80mA调到100mA时（自动功率控制APC回路常见操作），功耗从~120mW增加到~160mW。40mW×10K/W=0.4℃温差增加——对应的波长漂移=0.4×0.1nm/℃=0.04nm=40pm，接近你看到的50pm。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">环境温度变化放大了问题</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">TEC的制冷能力有限。当环境温度从20℃升到40℃，TEC热面温度随之上升。TEC冷-热面温差由热泵效率（COP）决定——小尺寸TEC在ΔT=20℃时COP可低至0.5（Coherent TEC Design Guide）。环境温度每上升10℃，冷面温度上升约3-5℃——这是TEC控制系统的稳态误差，而非传感器精度问题。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">同时，激光器外壳也在直接向封装内部辐射热量。蝶形封装的外壳-芯片热耦合路径可贡献额外2-3K/W的热阻。环境温升通过这条"旁路"绕过TEC冷面直接影响芯片——TEC的控制环路根本检测不到。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">诊断四步</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">1. 测量激光器I-V特性，计算芯片功耗=If×Vf。改变偏置电流，记录波长偏移——折算出实际热阻。若热阻＞15K/W，检查芯片键合质量</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">2. 用外部功率计监控激光器输出功率。APC回路调整偏置电流时，记下电流变化量→估算自发热变化→乘以热阻→算出预期波长漂移</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">3. 做环境温度阶跃实验（+10℃），记录TEC控制稳定后的波长残余偏移。若残余＞20pm，说明外壳-芯片热耦合路径有问题</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">4. 考虑用波长锁定器（etalon-based wavelength locker）替代纯TEC控温方案——直接以波长为反馈目标，绕过热阻问题</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">TEC控温标称±0.01℃是反馈传感器处的温度精度。热敏电阻到芯片的热阻路径、芯片自发热、环境-芯片热耦合——三者共同作用，使芯片温度涨落远超传感器读数。50pm波长漂移，不是TEC坏了，是它守的是"错误位置"的温度。</p>

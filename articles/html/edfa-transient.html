@@ -1,0 +1,27 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你刚把第8个WDM信道切掉，以为功率重新分配的误差也就±0.5dB——结果光谱仪上剩余信道功率猛然跳了3dB。3dB在光通信中是什么概念？接近一倍功率差。接收端误码率从10⁻¹²陡升到10⁻⁶，业务秒级中断。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">标称±0.5dB是稳态增益平坦度——泵浦功率慢慢调、输入光功率恒定、所有信道老老实实呆着。但真实WDM网络里，信道随时上下路、功率来回跳。这时EDFA的增益动力学由铒离子能级寿命决定——约10ms。信道突然减少→铒离子来不及消耗→增益瞬间飚升→剩余信道过冲。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">瞬态过冲的物理机制</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">EDFA的增益取决于铒离子上能级粒子数——上能级越"满"，增益越高。泵浦光持续填充上能级，信号光消耗上能级。二者平衡时增益稳定。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">当一部分信道突然被"拔掉"（drop），信号光对增益介质的消耗突然减少，但泵浦还在继续填充。上能级粒子数在~10ms内迅速堆积——这10ms就是铒离子⁴I₁₃/₂能级自发辐射寿命（E. Desurvire, Erbium-Doped Fiber Amplifiers, Wiley 1994）。堆积期间，剩余信道经历一个增益脉冲。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">反过来，当信道突然加入（add），新信道消耗增益介质，剩余信道的增益被瞬间"抢走"——产生欠冲。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">过冲幅度：1个信道掉线，能差多少？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">单信道上下路导致的增益波动比直觉大得多。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Kaler等（Optik, Vol.122, pp.444-450, 2011）通过仿真研究指出：信道数量越少，单信道上下路的冲击越显著。在8信道WDM系统中，掉1个信道→剩余信道功率过冲达2-5dB。在40信道系统中由39信道掉到1信道时，过冲可超过10dB。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">增益钳制（all-optical gain clamping，AOGC）能让激光腔消耗掉多余粒子数反转，但响应速度受限于腔寿命和弛豫振荡频率。Ellis等报道AOGC结构下剩余信道过冲仍可达1-2dB（Electronics Letters, Vol.33, p.1334, 1997）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">EDFA级联会加速瞬态响应——跨饱和效应使每级EDFA的过冲幅度递减，但链路的瞬态速度加快。Sun等（Electronics Letters, Vol.33, p.313, 1997）指出：5级EDFA级联时，过冲总持续时间约为单级的1/5。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么AGC追不上？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">自动增益控制（AGC）通过调节泵浦功率来补偿输入功率变化。但AGC的瓶颈不在泵浦激光器响应速度（μs级），而在反馈环路延迟：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">1. 输入光功率检测→光电二极管响应时间~1μs</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">2. ADC采样+数字处理→10-100μs</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. 泵浦电流调节→μs级</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">综合环路延迟：100-500μs。而铒离子堆积产生增益过冲只需~10μs——AGC还没反应过来，过冲已经发生了。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这就是为什么瞬态抑制需要前馈控制或光学增益钳制。前馈方案在EDFA输入端预先检测功率变化，不等反馈环路就调节泵浦（K. Motoshima et al., OFC 2000, Paper TuA5）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">过冲的下一步：非线性代价</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">过冲不只是功率高了信号"更亮"——功率尖峰触发光纤非线性。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">在G.652标准单模光纤中，3dB功率过冲（即功率翻倍）意味着SPM（自相位调制）效应加倍。过冲持续时间与铒离子寿命相当（~10ms），对应比特周期（10Gbps→100ps）的10⁸倍——等于1亿个比特连续受非线性相位噪声影响。即使BER平均下来只从10⁻¹²跌到10⁻⁹，突发的"过冲窗口"也会产生不可恢复的突发误码。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">诊断三步</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">1. 用光开关模拟信道上下路（突发间隔≥50ms），在EDFA输出端用快速光电探测器（BW≥1MHz）+示波器监测剩余信道功率</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">2. 过冲/欠冲＞2dB时需要瞬态抑制措施——AOGC是最低成本的方案（增加1个光纤环+1个可调滤波器即可，代价为噪声系数增加0.5-1dB）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. 过冲在级联链路上不可忽略——每级EDFA级联都会累积非线性损伤，建议在前两级EDFA做AOGC</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">EDFA标称±0.5dB指的是泵浦电流稳定、输入恒定、温度不变条件下的增益均匀性——不是信道突变时的动态行为。±0.5dB是稳态承诺，不是瞬态保障。</p>

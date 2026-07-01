@@ -1,0 +1,26 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">NA标称0.8的高倍物镜，在实验中实际收集到探测器的光通量常常不到入射功率的一半。标称值不是假数据——是NA的定义方式和实际使用条件之间存在三笔没写在规格书上的"账"。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">NA=0.8的真实含义</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">数值孔径NA = n·sinθ，θ是物镜从焦平面能收集光线的最大半角。NA=0.8的干镜，sinθ=0.8→θ≈53°。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但"物镜能接收的最大角度是53°"≠"物镜收集了80%的光"。对各向同性点光源（如荧光分子），光向4π球面均匀发射。NA=0.8对应的接收立体角只覆盖了整个球面的约20%（Evident/Olympus, Microscopy Resource Center）。也就是说：一个荧光点在NA=0.8物镜下，理论上最多也只有约20%的总发射光进入物镜。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这不是规格书错误——是聚光效率和NA之间是立体角关系，不是线性关系。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">盖玻片：高NA的第一杀手</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">干镜（无浸油）NA&gt;0.7时，盖玻片厚度偏差导致的球差迅速恶化。典型商用#1.5盖玻片标称0.17mm，批次公差普遍达±0.02mm。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Olympus（Evident）显微镜技术文档给出具体数据：NA=0.85干镜，盖玻片偏差0.02mm时，探测器收到的强度损失高达57%。即使偏差仅0.01mm（在公差范围内），强度损失也有19%。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">物理机制：球差源自边缘光线和旁轴光线在光学厚度不同的介质中折射后焦平面不重合。盖玻片作为物镜设计中介入的平行平板，其厚度直接纳入像差平衡公式——但设计公式假设盖玻片厚度精确等于0.17mm（或物镜上标注的值）。实际偏差→边缘光线失焦→落在探测器之外的有效光子大幅增加。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">多层镜片的菲涅尔反射</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">高NA物镜内部通常有8-12片透镜。每个空气-玻璃界面的菲涅尔反射约4%（正入射，n=1.5玻璃），两面就是约8%损失。多层累计：8片镜片（16个界面）理论透过率约(0.96)^16≈52%。加上玻璃内部吸收（虽小但非零），实际透过率常年在50%-70%区间。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">高NA物镜中边缘光线的入射角远大于正入射（NA=0.8→边缘光线界面的入射角可达40°以上），S偏振的反射率随角度增加急剧上升（Brewster角仅影响P偏振）。这意味着：没有抗反射膜优化的边缘光线，实际反射损失比4%高得多。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">三笔账加起来</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以一个荧光成像实验为例：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 各向同性发射→NA=0.8物镜总收集比例：≈20%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 盖玻片0.02mm偏差→强度损失57%→剩余：8.6%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 12片镜片内部反射（含边缘光线的高角度反射）→再损失约40%→剩余：5.2%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">最终到达探测器的比例：5%左右。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">不是NA标错了，是"NA=0.8"只描述了一个几何极限——不考虑盖玻片公差、内部反射、光瞳切趾。所谓"聚光效率不到50%"的惊讶，源自把NA当作"收集百分比"的直觉误解。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">可操作建议</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">1. <strong>盖玻片选型</strong>：高NA物镜（&gt;0.7）用独立校准过的盖玻片，厚度偏差控制在±0.005mm以内。显微镜物镜上标注的"0.17"代表该物镜是按此厚度设计的，偏离即球差恶化</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">2. <strong>浸油必须匹配</strong>：油浸物镜如果浸油折射率与物镜设计值不匹配（典型设计值n=1.515），高角度光线的折射率失配会等效于一个新的像差源</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">3. <strong>聚光镜NA设置</strong>：透射照明中聚光镜NA通常设为物镜NA的70%-90%，主动牺牲10-30%以换取对比度——这是有意为之，不是故障（Olympus显微镜手册）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">4. <strong>不要拿NA当效率</strong>：NA=0.8→20%理论收集上限，不是80%。越早接受这个数字，越不会在实验中找"假故障"</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">物镜NA标的是一个几何角度的正弦值——它和实际聚光效率之间的差距，藏在立体角几何里、藏在盖玻片公差里、藏在每一个空气-玻璃界面的反射里。</p>
