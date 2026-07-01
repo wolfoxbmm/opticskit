@@ -1,0 +1,132 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">很多光谱工程师认为：分辨率是光栅的固有参数。厂家标称0.1nm，就能分开0.1nm的峰。但实际测量时，FWHM 0.05nm的激光谱线测出来是0.3nm，分开0.15nm的双峰直接糊成单峰。问题不在光栅刻线不够——入射狭缝宽度才是决定你实测分辨率的第一道关卡。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">分辨率标称值≠你能测到的分辨率</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光谱仪厂商标称的分辨率，通常指<strong>极限分辨率</strong>或<strong>最优分辨率</strong>。这个数值是在理想条件下测得的：窄狭缝（5-10μm）、单线激光源、长时间积分、无光学像差。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但在日常实验环境中，你面对的条件完全不同：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 光源亮度不足，必须用宽狭缝（50μm或100μm）来换通光量</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 样品发射光谱弱，积分时间受限于实验窗口</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 你以为换了高刻线密度光栅就提升了分辨率，实际测出来还是糊</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">问题的本质是：<strong>分辨率由整个光学链路决定，不是光栅一个元件说了算。</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对于Czerny-Turner型光谱仪，入射狭缝的宽度直接决定了进入光栅的光束角度范围。狭缝越宽，角度范围越大，同一个谱线被"摊平"得越宽。这个现象在光学上称为<strong>狭缝函数展宽</strong>（Slit Function Broadening）。狭缝展宽与光栅线色散的乘积，构成了实测分辨率的主要部分。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么100μm狭缝会让0.05nm变成0.3nm？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">狭缝宽度与谱线展宽的关系，可以用线色散直接换算。以一台实验室常见的Czerny-Turner光谱仪为例：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">参数</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型值</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光栅刻线密度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1200 lines/mm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">可见光区常用配置</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">焦距</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">250-300 mm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">入射/出射臂</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">衍射级次</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">最常用</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">中心波长</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">500 nm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">可见光区</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">倒数线色散</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">约 2.5 nm/mm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">由光栅方程计算（典型范围2-8 nm/mm）</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">入射狭缝宽度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">100 μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">弱光环境下的常用设置</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">探测器像元尺寸</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">15 μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">典型CCD/CMOS线阵</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">计算过程很简单：100μm = 0.1mm，乘以倒数线色散 2.5 nm/mm，得到<strong>0.25 nm</strong>。这已经接近你测到的0.3nm。再加上探测器像元对谱线的采样卷积（15μm像元对应约0.04nm）、光学像差和准直误差，0.3nm完全合理。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">换句话说：<strong>100μm狭缝本身就把谱线摊宽了0.25nm，光栅的理论分辨能力根本没机会发挥作用。</strong> 这就像买了一台4K显示器，但显卡只输出720p——瓶颈不在屏幕。</p>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> 实测分辨率≈√(狭缝展宽² + 像元展宽² + 像差展宽²)。以100μm狭缝+2.5nm/mm倒数线色散为例，仅狭缝一项就贡献0.25nm展宽。光栅理论分辨率再高，也救不了宽狭缝的拖累。
+</blockquote>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">极限分辨率和实际分辨率是两回事</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">很多工程师容易混淆三个概念：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">概念</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">定义</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">谁决定你的实测值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光栅理论分辨率</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">R = λ/Δλ = m×N（级次×总刻线数）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光栅本身的物理上限，通常 10⁴~10⁶ 量级</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">厂家标称分辨率</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">用窄狭缝（5-10μm）+单线源测得的FWHM</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.1nm（你的期望值）</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">实际分辨率</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">你当前狭缝+探测器+光学条件下测得的FWHM</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.3nm（你的实测值）</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光栅理论分辨率只说明光栅元件的能力上限。对于50mm宽的光栅，理论R可能达到60,000。但在你的光谱仪里，光栅只用了中心部分，加上狭缝和探测器的卷积，实测R可能只有2,000。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>真正决定你实测分辨率的是：狭缝宽度 × 倒数线色散 + 像元尺寸 × 倒数线色散。</strong> 这两者哪个大，哪个就是瓶颈。而100μm狭缝在大多数配置下都是头号瓶颈。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">工程上怎么让实测接近标称？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果必须分开间距小于0.2nm的峰，按以下顺序排查：</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">1. 先算你的实际分辨率</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">不要看厂家标称，直接算自己的配置。一台光谱仪买回来后，用窄线宽激光器（如HeNe，线宽&lt;0.001nm）实测FWHM，这就是你的"系统函数"。系统分辨率 = 实测FWHM。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">2. 用物理狭缝换分辨率</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">通光量与狭缝宽度成正比，分辨率与狭缝宽度成正比。这是<strong>不可兼得的权衡</strong>。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 需要 0.1nm 分辨率：狭缝 ≤ 20μm（通光量降5倍）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 需要 0.05nm 分辨率：狭缝 ≤ 10μm（通光量降10倍）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 日常用100μm狭缝，只能给出约0.3nm的实际分辨率，不要指望分开更细的峰</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">3. 检查探测器像元是否匹配</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">像元尺寸 × 倒数线色散应该 ≤ 目标分辨率的1/3。如果像元展宽已经占目标值的一半，即使狭缝缩到零，分辨率也上不去。此时需要：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 换更高刻线密度光栅（提高线色散，即倒数线散值更小）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 或换更长焦距的光谱仪</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 或换更小像元探测器</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">4. 用光栅角度微调线色散</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">线色散与光栅角度有关：dλ/dx = (d × cosβ) / (m × f)。在固定焦距下，改变中心波长对应的光栅角度可以微调线色散。但通常这是出厂设置，用户动不了。如果必须改善，优先动狭缝。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">总结</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">很多工程师认为：分辨率是光栅的固有参数。实际上：<strong>分辨率是狭缝、光栅、探测器、光学像差四个因素的综合结果。</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 100μm狭缝 × 2.5nm/mm倒数线色散 = 0.25nm展宽，这是主因</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 15μm探测器像元再贡献约0.04nm，这是次因</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 光栅理论分辨率60,000，在实际链路中可能只用到2,000</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">因此：标称0.1nm不代表你能测到0.1nm。真正决定实测分辨率的是入射狭缝宽度与倒数线色散的乘积。你花大价钱买了高刻线密度光栅，却被100μm狭缝挡在门外——这是光谱仪使用中最常见的隐性瓶颈。</p>
+<hr style="border:0;border-top:1px solid #ddd;margin:0;padding:32px 0 0 0;">
+<p style="text-align:center;margin:0;padding:16px 0;">
+  <img src="http://mmbiz.qpic.cn/sz_mmbiz_png/Z6icWRCmcJAdTf6acjfQXIEZuopYqrWYqsXPLsK4nQzH3caek1HBEczpK5fHwkzdPUZmuSoZhOIoMZsibEwcDEFOtu2gTLchvRNUmibcxg6Tx8/0?wx_fmt=png" style="width:60px;max-width:100%;display:block;margin:0 auto;padding:0;" alt="光学科技资讯">
+</p>
+<p style="text-align:center;font-size:14px;color:#000;margin:0;padding:0;line-height:1.6;">
+  <span style="display:block;margin:0;padding:0 0 2px 0;font-weight:bold;font-size:14px;line-height:1.6;">关注光学科技资讯公众号</span>
+  <span style="display:block;margin:0;padding:0 0 2px 0;font-size:14px;line-height:1.6;">讨论中学习，实战中避坑，欢迎留言</span>
+  <span style="display:block;margin:0;padding:0 0 4px 0;font-size:12px;line-height:1.6;">以上内容为原创，由光学科技资讯整理，仅供交流学习之用。转载、投稿、合作请联系：techoptical@163.com</span>
+  <span style="display:block;margin:0;padding:0 0 2px 0;font-weight:bold;font-size:15px;line-height:1.6;">OpticsKit 光谱实验室 — 光学工程师的在线工具箱</span>
+  <span style="display:block;margin:0;padding:0 0 2px 0;font-size:12px;color:#666;line-height:1.6;">色度分析 · 折射率数据库 · 相机镜头选型计算 · 光栅衍射仿真 · 激光腔设计 · 薄膜光学计算 · 透镜成像计算 · Cauchy 色散拟合 · 光谱可视化 · 光源数据库</span>
+  <span style="display:block;margin:0;padding:0;font-size:13px;font-weight:bold;color:#000;line-height:1.6;">opticskit.cn</span>
+</p>
+</div>

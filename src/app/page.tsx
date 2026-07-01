@@ -4,7 +4,7 @@
 
 
 import Link from "next/link";
-import { useState } from "react";
+
 
 const tools = [
   {
@@ -112,266 +112,52 @@ const tools = [
   },
 ];
 
-type Suggestion = {
-  id: number;
-  title: string;
-  desc: string;
-  votes: number;
-  voted: boolean;
-  comments: string[];
-  expanded: boolean;
-};
 
-const initialSuggestions: Suggestion[] = [
-  {
-    id: 100001,
-    title: "偏振光学模拟（琼斯矩阵 & 穆勒矩阵）",
-    desc: "线偏振、圆偏振、椭圆偏振，波片和偏振片组合的偏振态可视化",
-    votes: 12,
-    voted: false,
-    comments: ["做偏振检测设备校准的时候特别需要这类工具", "希望能加庞加莱球可视化"],
-    expanded: false,
-  },
-  {
-    id: 100002,
-    title: "像差分析（球差/色差/彗差/像散）",
-    desc: "Zernike 多项式像差分解，PSF & MTF 曲线，支持导入 Zemax 数据",
-    votes: 9,
-    voted: false,
-    comments: [],
-    expanded: false,
-  },
-  {
-    id: 100003,
-    title: "光纤模式计算器（LP 模式）",
-    desc: "阶跃折射率光纤的模式分布、截止频率、模场直径、V 参数计算",
-    votes: 7,
-    voted: false,
-    comments: ["单模光纤和多模光纤都需要", "最好能画出模式场分布图"],
-    expanded: false,
-  },
-];
-
-const BANNED_WORDS = ["广告", "推广", "赚钱", "加群", "加微信", "微信号", "QQ群", "http", "www."];
-
-function containsBannedWord(text: string): boolean {
-  const lower = text.toLowerCase();
-  return BANNED_WORDS.some(w => lower.includes(w.toLowerCase()));
-}
-
-function VoteSection() {
-  const [suggestions, setSuggestions] = useState<Suggestion[]>(
-    initialSuggestions.toSorted((a, b) => b.votes - a.votes)
-  );
-  const [showModal, setShowModal] = useState(false);
-  const [newTitle, setNewTitle] = useState("");
-  const [newDesc, setNewDesc] = useState("");
-  const [commentInput, setCommentInput] = useState<Record<number, string>>({});
-
-  const handleVote = (id: number) => {
-    setSuggestions(prev => {
-      const next = prev.map(s => {
-        if (s.id !== id || s.voted) return s;
-        return { ...s, votes: s.votes + 1, voted: true };
-      });
-      return next.toSorted((a, b) => b.votes - a.votes);
-    });
-  };
-
-  const handleAddComment = (id: number) => {
-    const text = (commentInput[id] || "").trim();
-    if (!text || containsBannedWord(text)) return;
-    setSuggestions(prev =>
-      prev.map(s => s.id === id ? { ...s, comments: [...s.comments, text], expanded: true } : s)
-    );
-    setCommentInput(prev => ({ ...prev, [id]: "" }));
-  };
-
-  const toggleComments = (id: number) => {
-    setSuggestions(prev =>
-      prev.map(s => s.id === id ? { ...s, expanded: !s.expanded } : s)
-    );
-  };
-
-  const handleSubmitSuggestion = () => {
-    const t = newTitle.trim();
-    const d = newDesc.trim();
-    if (!t || !d) return;
-    if (containsBannedWord(t) || containsBannedWord(d)) {
-      alert("请勿包含广告或无关内容");
-      return;
-    }
-    const newItem: Suggestion = {
-      id: Date.now(),
-      title: t,
-      desc: d,
-      votes: 1,
-      voted: true,
-      comments: [],
-      expanded: false,
-    };
-    setSuggestions(prev => [newItem, ...prev].sort((a, b) => b.votes - a.votes));
-    setShowModal(false);
-    setNewTitle("");
-    setNewDesc("");
-  };
+function ArticleSection() {
+  const articles = [
+    { slug: "spectrum-resolution", title: "光谱仪分辨率标称0.1nm，为什么0.05nm的峰测出0.3nm？", summary: "入射狭缝宽度才是决定实测分辨率的第一道关卡", date: "2026-06-28" },
+    { slug: "dfb-linewidth", title: "DFB线宽从1MHz展宽到10MHz：光反馈+驱动纹波两个必查项", summary: "光反馈和电流噪声如何悄悄拉宽线宽", date: "2026-06-25" },
+    { slug: "apd-gain-noise", title: "APD增益调到100，噪声放大30倍信号只放大10倍", summary: "过剩噪声因子与最佳增益的工程真相", date: "2026-06-22" },
+  ];
 
   return (
     <>
       <div className="mb-8">
-        <h2 className="text-[13px] font-medium tracking-[0.06em] uppercase text-[#868E96] mb-0.5">下一个工具由你决定</h2>
-        <p className="text-[13px] text-[#868E96]">需要什么光学工具？提需求让更多人投票，票数高的优先开发</p>
+        <h2 className="text-[13px] font-medium tracking-[0.06em] uppercase text-[#868E96] mb-0.5">精选文章</h2>
+        <p className="text-[13px] text-[#868E96]">光学技术干货，每周更新</p>
       </div>
 
-      <div className="flex items-center gap-3 mb-4">
-        <button
-          onClick={() => setShowModal(true)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#228BE6] text-white rounded-lg text-[13px] font-semibold hover:bg-[#1c7ed6] transition-colors"
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          我要提需求
-        </button>
-        <span className="text-[11px] text-[#ADB5BD] flex items-center gap-1">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          每个需求每人只能投一票
-        </span>
-      </div>
-
-      {suggestions.length === 0 ? (
-        <div className="text-center py-10 border border-dashed border-[#DEE2E6] rounded-xl text-[13px] text-[#ADB5BD]">
-          还没有需求，快来提第一个吧！
-        </div>
-      ) : (
-        <div className="flex flex-col gap-2">
-          {suggestions.map((item, i) => (
-            <div key={item.id} className="bg-white border border-[#E9ECEF] rounded-lg p-3.5 hover:border-[#228BE6]/30 transition-colors">
-              <div className="flex items-center gap-3">
-                <div className={`text-xs w-6 text-center flex-shrink-0 ${i < 3 ? "text-[#F59F00] font-bold text-sm" : "text-[#ADB5BD]"}`}>
-                  #{i + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-[13px] font-semibold text-[#1A1A2E] truncate">{item.title}</h3>
-                    {item.id > 100000 && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#0CA678]/10 text-[#0CA678] font-medium flex-shrink-0">NEW</span>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-[#868E96] truncate mt-0.5">{item.desc}</p>
-                </div>
-                <button
-                  onClick={() => handleVote(item.id)}
-                  disabled={item.voted}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex-shrink-0 ${
-                    item.voted
-                      ? "bg-[#0CA678]/10 text-[#0CA678] cursor-default"
-                      : "border border-[#DEE2E6] text-[#868E96] hover:border-[#228BE6] hover:text-[#228BE6]"
-                  }`}
-                >
-                  <span className="font-bold text-sm">{item.votes}</span>
-                  <span>{item.voted ? "已投" : "投票"}</span>
-                </button>
-              </div>
-
-              {/* Comments toggle */}
-              <div className="flex items-center gap-2 mt-2 ml-9">
-                <button
-                  onClick={() => toggleComments(item.id)}
-                  className="text-[11px] text-[#ADB5BD] hover:text-[#228BE6] transition-colors"
-                >
-                  💬 {item.comments.length > 0 ? `${item.comments.length} 条补充` : "补充细节"}
-                </button>
-              </div>
-
-              {/* Expanded comments */}
-              {item.expanded && (
-                <div className="mt-2 ml-9 pt-2 border-t border-[#F1F3F5]">
-                  {item.comments.map((c, ci) => (
-                    <div key={ci} className="text-[11px] text-[#868E96] py-1 border-b border-[#F8F9FA] last:border-none">
-                      <span className="text-[#0CA678] font-semibold">匿名用户</span>：{c}
-                    </div>
-                  ))}
-                  <div className="flex gap-2 mt-2">
-                    <input
-                      type="text"
-                      placeholder="补充细节或说明你的使用场景…"
-                      maxLength={150}
-                      value={commentInput[item.id] || ""}
-                      onChange={e => setCommentInput(prev => ({ ...prev, [item.id]: e.target.value }))}
-                      onKeyDown={e => e.key === "Enter" && handleAddComment(item.id)}
-                      className="flex-1 px-3 py-1.5 text-[12px] border border-[#DEE2E6] rounded-md outline-none focus:border-[#228BE6] transition-colors text-[#1A1A2E] placeholder:text-[#ADB5BD]"
-                    />
-                    <button
-                      onClick={() => handleAddComment(item.id)}
-                      className="px-3 py-1.5 bg-[#228BE6] text-white rounded-md text-[11px] hover:bg-[#1c7ed6] transition-colors flex-shrink-0"
-                    >
-                      补充
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowModal(false)}>
-          <div
-            className="bg-white rounded-2xl p-6 w-[460px] max-w-[92vw] shadow-xl border border-[#E9ECEF]"
-            onClick={e => e.stopPropagation()}
+      <div className="flex flex-col gap-3 mb-6">
+        {articles.map((a, i) => (
+          <Link
+            key={a.slug}
+            href={`/articles/${a.slug}`}
+            className="block bg-white border border-[#E9ECEF] rounded-lg p-4 hover:border-[#228BE6]/30 hover:shadow-sm transition-all group"
           >
-            <h3 className="text-[16px] font-semibold text-[#1A1A2E]">📝 新建需求</h3>
-            <p className="text-[11px] text-[#868E96] mt-1 mb-4">描述你需要的工具，别人可以投票和补充细节</p>
+            <h3 className="text-[14px] font-semibold text-[#1A1A2E] group-hover:text-[#228BE6] transition-colors leading-relaxed">
+              {a.title}
+            </h3>
+            <p className="text-[12px] text-[#868E96] mt-1 line-clamp-1">{a.summary}</p>
+            <p className="text-[11px] text-[#ADB5BD] mt-1.5">{a.date}</p>
+          </Link>
+        ))}
+      </div>
 
-            <label className="block text-[11px] text-[#868E96] mb-1">
-              工具名称 <span className="text-[#F59F00]">*</span>
-            </label>
-            <input
-              type="text"
-              placeholder="例如：偏振光学计算器"
-              maxLength={50}
-              value={newTitle}
-              onChange={e => setNewTitle(e.target.value)}
-              className="w-full px-3 py-2 border border-[#DEE2E6] rounded-lg text-[13px] text-[#1A1A2E] outline-none focus:border-[#228BE6] transition-colors placeholder:text-[#ADB5BD]"
-            />
-            <div className="text-right text-[10px] text-[#ADB5BD] mt-0.5">{newTitle.length}/50</div>
-
-            <label className="block text-[11px] text-[#868E96] mt-2 mb-1">
-              功能简介 <span className="text-[#F59F00]">*</span>
-            </label>
-            <textarea
-              placeholder="简单描述这个工具是做什么的、能算什么。&#10;例如：穆勒矩阵、琼斯矩阵计算，偏振态庞加莱球可视化"
-              maxLength={200}
-              rows={3}
-              value={newDesc}
-              onChange={e => setNewDesc(e.target.value)}
-              className="w-full px-3 py-2 border border-[#DEE2E6] rounded-lg text-[13px] text-[#1A1A2E] outline-none focus:border-[#228BE6] transition-colors resize-none placeholder:text-[#ADB5BD]"
-            />
-            <div className="text-right text-[10px] text-[#ADB5BD] mt-0.5">{newDesc.length}/200</div>
-
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-5 py-2 border border-[#DEE2E6] rounded-lg text-[13px] text-[#868E96] hover:bg-[#F8F9FA] transition-colors"
-              >
-                取消
-              </button>
-              <button
-                onClick={handleSubmitSuggestion}
-                disabled={!newTitle.trim() || !newDesc.trim()}
-                className="px-5 py-2 bg-[#228BE6] text-white rounded-lg text-[13px] font-semibold hover:bg-[#1c7ed6] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                提交需求
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="flex items-center justify-between">
+        <Link
+          href="/articles"
+          className="inline-flex items-center gap-1 text-[13px] text-[#228BE6] hover:text-[#1c7ed6] font-medium transition-colors"
+        >
+          查看全部文章
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </Link>
+        <p className="text-[12px] text-[#ADB5BD]">
+          关注公众号 <span className="text-[#495057] font-medium">光学科技资讯</span>
+        </p>
+      </div>
     </>
   );
 }
-
 const colorMap: Record<string, { accent: string; light: string; text: string }> = {
   blue:   { accent: "#228BE6", light: "#E7F5FF", text: "#1c7ed6" },
   violet:{ accent: "#7950F2", light: "#F3F0FF", text: "#6741d9" },
@@ -494,10 +280,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Vote Section */}
+      {/* Articles Section */}
       <section className="pb-8 px-4">
         <div className="max-w-[960px] mx-auto">
-          <VoteSection />
+          <ArticleSection />
         </div>
       </section>
 
