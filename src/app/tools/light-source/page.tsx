@@ -183,8 +183,8 @@ function LightSourceContent() {
   return (
     <div className="min-h-[calc(100vh-56px)] flex flex-col"><main className="flex-1 p-6 max-w-5xl mx-auto w-full space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E] mb-2">💡 光源指标计算器</h1>
-          <p className="text-sm text-[#868E96]">
+          <h1 className="text-2xl font-bold text-[#111827] mb-2">💡 光源指标计算器</h1>
+          <p className="text-sm text-[#6B7280]">
             输入光谱功率分布 (SPD)，计算 CIE XYZ、色度坐标、相关色温 CCT、相关色温差 Duv、近似的显色指数。
           </p>
         </div>
@@ -193,23 +193,23 @@ function LightSourceContent() {
           {/* Input */}
           <div className="space-y-3">
             <div>
-              <label className="text-xs text-[#495057] block mb-1">波长 (nm) — 每行一个</label>
+              <label className="text-xs text-[#4B5563] block mb-1">波长 (nm) — 每行一个</label>
               <textarea
                 value={wlInput}
                 onChange={e => setWlInput(e.target.value)}
                 placeholder="380&#10;385&#10;390&#10;..."
                 rows={8}
-                className="w-full bg-[#F1F3F5] border border-[#DEE2E6] rounded-lg p-3 text-sm text-[#1A1A2E] font-mono placeholder-zinc-600 outline-none focus:border-[#00BFFF] resize-y"
+                className="w-full bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg p-3 text-sm text-[#111827] font-mono placeholder-zinc-600 outline-none focus:border-[#00BFFF] resize-y"
               />
             </div>
             <div>
-              <label className="text-xs text-[#495057] block mb-1">光谱强度 — 对应每行波长</label>
+              <label className="text-xs text-[#4B5563] block mb-1">光谱强度 — 对应每行波长</label>
               <textarea
                 value={spdInput}
                 onChange={e => setSpdInput(e.target.value)}
                 placeholder="0.23&#10;0.28&#10;0.35&#10;..."
                 rows={8}
-                className="w-full bg-[#F1F3F5] border border-[#DEE2E6] rounded-lg p-3 text-sm text-[#1A1A2E] font-mono placeholder-zinc-600 outline-none focus:border-[#00BFFF] resize-y"
+                className="w-full bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg p-3 text-sm text-[#111827] font-mono placeholder-zinc-600 outline-none focus:border-[#00BFFF] resize-y"
               />
             </div>
             <div className="flex gap-3">
@@ -221,7 +221,7 @@ function LightSourceContent() {
               </button>
               <button
                 onClick={loadSampleData}
-                className="px-4 py-2 rounded-lg border border-[#DEE2E6] text-sm text-[#495057] hover:border-zinc-500 transition-colors"
+                className="px-4 py-2 rounded-lg border border-[#E5E7EB] text-sm text-[#4B5563] hover:border-zinc-500 transition-colors"
               >
                 📥 加载示例 (暖白LED)
               </button>
@@ -233,30 +233,30 @@ function LightSourceContent() {
           <div className="space-y-4">
             {result ? (
               <>
-                <h3 className="text-sm font-semibold text-[#495057]">计算结果</h3>
-                <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-4 space-y-3">
+                <h3 className="text-sm font-semibold text-[#4B5563]">计算结果</h3>
+                <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-4 space-y-3">
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <span className="text-[#868E96]">X, Y, Z</span>
-                    <span className="font-mono text-[#1A1A2E]">
+                    <span className="text-[#6B7280]">X, Y, Z</span>
+                    <span className="font-mono text-[#111827]">
                       {formatValue(result.X, { precision: 2 })}, {formatValue(result.Y, { precision: 2 })}, {formatValue(result.Z, { precision: 2 })}
                     </span>
-                    <span className="text-[#868E96]">x, y (1931)</span>
-                    <span className="font-mono text-[#1A1A2E]">
+                    <span className="text-[#6B7280]">x, y (1931)</span>
+                    <span className="font-mono text-[#111827]">
                       ({formatValue(result.x, { precision: 4 })}, {formatValue(result.y, { precision: 4 })})
                     </span>
-                    <span className="text-[#868E96]">u', v' (1976)</span>
-                    <span className="font-mono text-[#1A1A2E]">
+                    <span className="text-[#6B7280]">u', v' (1976)</span>
+                    <span className="font-mono text-[#111827]">
                       ({formatValue(result.uPrime, { precision: 4 })}, {formatValue(result.vPrime, { precision: 4 })})
                     </span>
-                    <span className="text-[#868E96]">CCT</span>
+                    <span className="text-[#6B7280]">CCT</span>
                     <span className="font-mono text-[#FF6B00] text-lg font-bold">
                       {Number.isFinite(result.cct) && result.cct > 0 ? formatValue(result.cct, { precision: 0, unit: " K" }) : "—"}
                     </span>
-                    <span className="text-[#868E96]">Duv</span>
-                    <span className="font-mono text-[#1A1A2E]">
+                    <span className="text-[#6B7280]">Duv</span>
+                    <span className="font-mono text-[#111827]">
                       {formatValue(result.duv, { precision: 5 })}
                     </span>
-                    <span className="text-[#868E96]">估计 Ra (Δu'v')</span>
+                    <span className="text-[#6B7280]">估计 Ra (Δu'v')</span>
                     <span className={`font-mono text-lg font-bold ${(result.cri >= 90 || !result.cri) ? "text-[#00E676]" : result.cri >= 80 ? "text-[#FFD740]" : "text-[#FF5252]"}`}>
                       {Number.isFinite(result.cri) ? result.cri : "—"}
                     </span>
@@ -273,21 +273,21 @@ function LightSourceContent() {
                 </div>
               </>
             ) : (
-              <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-6 text-center">
-                <p className="text-[#ADB5BD] text-sm">
+              <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-6 text-center">
+                <p className="text-[#9CA3AF] text-sm">
                   输入 SPD 数据后点击计算，结果将在这里显示。
                 </p>
               </div>
             )}
 
-            <div className="text-xs text-[#ADB5BD] space-y-2 pt-4">
+            <div className="text-xs text-[#9CA3AF] space-y-2 pt-4">
               <p>📐 <strong>计算标准:</strong></p>
               <ul className="list-disc list-inside space-y-1">
                 <li>CIE XYZ: CIE 15:2018, CIE 1931 2° 标准观察者</li>
                 <li>CCT: Robertson (1968) 算法，不确定性约 ±2 K</li>
                 <li>CRI: Δu'v' 近似估计（非标准 CIE 13.3-1995 Ra），仅供快速参考</li>
               </ul>
-              <p className="text-[#868E96] mt-2">
+              <p className="text-[#6B7280] mt-2">
                 ⚠ 完整 CRI 需 14 个 TCS 色样 + CIE 1964 10° CMF。此处为简化估计。TM-30 Rf/Rg 将在下一版本加入。
               </p>
             </div>
@@ -301,7 +301,7 @@ function LightSourceContent() {
 
 export default function LightSourcePage() {
   return (
-    <Suspense fallback={<div className="min-h-[calc(100vh-56px)] flex items-center justify-center"><p className="text-[#868E96]">加载中...</p></div>}>
+    <Suspense fallback={<div className="min-h-[calc(100vh-56px)] flex items-center justify-center"><p className="text-[#6B7280]">加载中...</p></div>}>
       <LightSourceContent />
     </Suspense>
   );

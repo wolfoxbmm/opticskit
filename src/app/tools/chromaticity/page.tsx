@@ -224,7 +224,7 @@ function ChromaticityContent() {
 
 export default function ChromaticityPage() {
   return (
-    <Suspense fallback={<div style={{ height: "calc(100vh - 56px)", display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0a", color: "#868E96" }}>加载中...</div>}>
+    <Suspense fallback={<div style={{ height: "calc(100vh - 56px)", display: "flex", alignItems: "center", justifyContent: "center", background: "#0a0a0a", color: "#6B7280" }}>加载中...</div>}>
       <ChromaticityContent />
     </Suspense>
   );

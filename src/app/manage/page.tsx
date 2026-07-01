@@ -126,7 +126,7 @@ export default function AdminPage() {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                 <span style={{ fontSize: 14 }}>{post.avatar}</span>
-                <strong style={{ fontSize: 13, color: '#495057' }}>{post.author_name}</strong>
+                <strong style={{ fontSize: 13, color: '#4B5563' }}>{post.author_name}</strong>
                 {post.is_official && <span style={{ fontSize: 10, padding: '1px 6px', borderRadius: 3, background: '#228be6', color: '#fff' }}>官方</span>}
                 {post.is_pinned && <span style={{ fontSize: 10, color: '#228be6' }}>📌 置顶</span>}
                 <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, background: '#f1f3f5', color: '#868e96' }}>{tagLabels[post.tag] || post.tag}</span>

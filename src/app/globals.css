@@ -8,25 +8,25 @@
 
 :root {
   /* 主色调 */
-  --bg-root: #F2F3F5;
+  --bg-root: #F3F4F6;
   --bg-surface: #FFFFFF;
   --bg-elevated: #F1F3F5;
-  --bg-hover: #E9ECEF;
+  --bg-hover: #E5E7EB;
   --bg-active: #DEE2E6;
 
   /* 边框 */
-  --border-subtle: #E9ECEF;
+  --border-subtle: #E5E7EB;
   --border-default: #DEE2E6;
   --border-strong: #CED4DA;
 
   /* 文字 — 不使用纯黑，护眼的近黑色 */
-  --text-primary: #1A1A2E;
-  --text-secondary: #495057;
-  --text-tertiary: #868E96;
-  --text-disabled: #ADB5BD;
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-tertiary: #6B7280;
+  --text-disabled: #9CA3AF;
 
   /* 强调色 — 光学主题：电光蓝 + 青色点缀 */
-  --accent: #228BE6;
+  --accent: #2563EB;
   --accent-light: #E7F5FF;
   --accent-glow: rgba(34, 139, 230, 0.08);
 

@@ -289,7 +289,7 @@ export default function SpectrumPage() {
 
   return (
     <div className="min-h-[calc(100vh-56px)] flex flex-col"><main className="flex-1 flex flex-col lg:flex-row gap-4 p-3 md:p-4 min-h-0 overflow-hidden">
-        <div className="flex-1 relative min-h-0 rounded-xl overflow-hidden border border-[#E9ECEF]">
+        <div className="flex-1 relative min-h-0 rounded-xl overflow-hidden border border-[#E5E7EB]">
           <canvas
             ref={canvasRef}
             className="w-full h-full absolute inset-0"
@@ -299,15 +299,15 @@ export default function SpectrumPage() {
           />
         </div>
 
-        <aside className="w-full lg:w-[300px] lg:border-l lg:border border-[#E9ECEF] rounded-xl bg-white px-4 py-3 space-y-3 overflow-y-auto flex-shrink-0">
+        <aside className="w-full lg:w-[300px] lg:border-l lg:border border-[#E5E7EB] rounded-xl bg-white px-4 py-3 space-y-3 overflow-y-auto flex-shrink-0">
           <div>
-            <h1 className="text-base font-semibold text-[#1A1A2E]">📈 光谱数据可视化</h1>
-            <p className="text-xs text-[#868E96]">导入光谱功率分布 (SPD) 数据，查看曲线。</p>
+            <h1 className="text-base font-semibold text-[#111827]">📈 光谱数据可视化</h1>
+            <p className="text-xs text-[#6B7280]">导入光谱功率分布 (SPD) 数据，查看曲线。</p>
           </div>
 
           <div className="space-y-3">
             <div>
-              <label className="text-xs text-[#495057] block mb-1">黑体辐射色温对比</label>
+              <label className="text-xs text-[#4B5563] block mb-1">黑体辐射色温对比</label>
               <input
                 type="range"
                 min={1000}
@@ -326,13 +326,13 @@ export default function SpectrumPage() {
                   type="file"
                   accept=".csv,.txt,.dat"
                   onChange={handleFileUpload}
-                  className="block w-full text-xs text-[#495057] file:mr-3 file:py-1.5 file:px-3 file:rounded file:border file:border-[#DEE2E6] file:text-xs file:bg-white file:text-[#495057] hover:file:bg-[#F2F3F5] file:cursor-pointer file:transition-colors"
+                  className="block w-full text-xs text-[#4B5563] file:mr-3 file:py-1.5 file:px-3 file:rounded file:border file:border-[#E5E7EB] file:text-xs file:bg-white file:text-[#4B5563] hover:file:bg-[#F3F4F6] file:cursor-pointer file:transition-colors"
                 />
               </label>
-              <p className="text-xs text-[#ADB5BD]">CSV或TXT，每行：波长[tab/空格/逗号]强度</p>
+              <p className="text-xs text-[#9CA3AF]">CSV或TXT，每行：波长[tab/空格/逗号]强度</p>
               <button
                 onClick={loadSampleData}
-                className="text-xs text-[#228BE6] hover:underline"
+                className="text-xs text-[#2563EB] hover:underline"
               >
                 → 加载示例LED数据
               </button>
@@ -340,8 +340,8 @@ export default function SpectrumPage() {
 
             {/* Loading indicator */}
             {loading && (
-              <div className="bg-[#F8F9FA] border border-[#E9ECEF] rounded-lg p-3">
-                <p className="text-xs text-[#868E96] animate-pulse">正在解析文件...</p>
+              <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-3">
+                <p className="text-xs text-[#6B7280] animate-pulse">正在解析文件...</p>
               </div>
             )}
 
@@ -351,7 +351,7 @@ export default function SpectrumPage() {
                 <p className="text-xs text-[#E03131]">⚠ {error}</p>
                 <button
                   onClick={() => setError(null)}
-                  className="text-xs text-[#868E96] mt-1 hover:underline"
+                  className="text-xs text-[#6B7280] mt-1 hover:underline"
                 >
                   关闭
                 </button>
@@ -359,29 +359,29 @@ export default function SpectrumPage() {
             )}
 
             {uploadedData && (
-              <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg p-3 space-y-2">
-                <p className="text-xs text-[#495057]">
+              <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg p-3 space-y-2">
+                <p className="text-xs text-[#4B5563]">
                   {uploadedData.wl.length} 个数据点 · {uploadedData.wl[0]}–{uploadedData.wl[uploadedData.wl.length - 1]} nm
                 </p>
                 <div className="flex gap-3 flex-wrap">
-                  <button onClick={() => setShowData(!showData)} className="text-xs text-[#228BE6] hover:underline">
+                  <button onClick={() => setShowData(!showData)} className="text-xs text-[#2563EB] hover:underline">
                     {showData ? "✓ 隐藏" : "✓ 显示"}
                   </button>
-                  <label className="flex items-center gap-1 text-xs text-[#495057] cursor-pointer">
+                  <label className="flex items-center gap-1 text-xs text-[#4B5563] cursor-pointer">
                     <input type="checkbox" checked={overlayBB} onChange={e => setOverlayBB(e.target.checked)} className="accent-[#FF6B00]" />叠加黑体
                   </label>
                   <button
                     onClick={exportCSV}
-                    className="text-xs bg-[#228BE6] text-white rounded px-3 py-1 hover:bg-[#1c7ed6] transition-colors"
+                    className="text-xs bg-[#2563EB] text-white rounded px-3 py-1 hover:bg-[#1D4ED8] transition-colors"
                   >
                     ⬇ 导出 CSV
                   </button>
                 </div>
                 {/* Light Source CTA */}
-                <div className="border-t border-[#E9ECEF] pt-3">
+                <div className="border-t border-[#E5E7EB] pt-3">
                   <button
                     onClick={openInLightSource}
-                    className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg bg-gradient-to-r from-[#0CA678] to-[#099268] hover:from-[#0b8e67] hover:to-[#087f5b] text-white transition-all shadow-sm hover:shadow-md group"
+                    className="w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg bg-gradient-to-r from-[#059669] to-[#047857] hover:from-[#0b8e67] hover:to-[#087f5b] text-white transition-all shadow-sm hover:shadow-md group"
                   >
                     <span className="text-lg flex-shrink-0">💡</span>
                     <div className="flex-1 min-w-0">
@@ -392,7 +392,7 @@ export default function SpectrumPage() {
                   </button>
                 </div>
                 {xyzResult && (
-                  <div className="text-xs text-[#868E96] border-t border-[#E9ECEF] pt-2 mt-1">
+                  <div className="text-xs text-[#6B7280] border-t border-[#E5E7EB] pt-2 mt-1">
                     <p>XYZ: ({formatValue(xyzResult.X, { precision: 1 })}, {formatValue(xyzResult.Y, { precision: 1 })}, {formatValue(xyzResult.Z, { precision: 1 })})</p>
                     <p>xy: ({formatValue(xyzResult.x, { precision: 4 })}, {formatValue(xyzResult.y, { precision: 4 })})</p>
                   </div>
@@ -401,14 +401,14 @@ export default function SpectrumPage() {
             )}
           </div>
 
-          <a href="/community" className="flex items-center justify-between px-3 py-2 mt-3 rounded-lg bg-[#F8F9FA] border border-[#E9ECEF] hover:border-[#228BE6] hover:bg-[#E7F5FF] transition-all no-underline group">
-              <span className="text-xs text-[#495057] group-hover:text-[#228BE6] flex items-center gap-1.5">
+          <a href="/community" className="flex items-center justify-between px-3 py-2 mt-3 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#2563EB] hover:bg-[#EFF6FF] transition-all no-underline group">
+              <span className="text-xs text-[#4B5563] group-hover:text-[#2563EB] flex items-center gap-1.5">
                 <span className="text-sm">💬</span> 有问题或建议？去留言区聊聊
               </span>
-              <span className="text-[10px] text-[#ADB5BD] group-hover:text-[#228BE6]">→</span>
+              <span className="text-[10px] text-[#9CA3AF] group-hover:text-[#2563EB]">→</span>
             </a>
 
-          <p className="text-xs text-[#ADB5BD] pt-4">
+          <p className="text-xs text-[#9CA3AF] pt-4">
             导入格式简单：两列（波长 强度），380–780nm 最佳，步长任意。
             可叠加黑体辐射曲线作为对比参考。
           </p>

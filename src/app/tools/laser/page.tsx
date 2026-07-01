@@ -93,14 +93,14 @@ function WavelengthBand({ filtered }: { filtered: LaserEntry[] }) {
   return (
     <div className="mb-6">
       <div className="flex items-center gap-2 mb-1.5">
-        <span className="text-xs text-[#868E96]">波长分布概览（对数刻度）</span>
-        <span className="text-xs text-[#ADB5BD]">({allWls.length} 条谱线)</span>
+        <span className="text-xs text-[#6B7280]">波长分布概览（对数刻度）</span>
+        <span className="text-xs text-[#9CA3AF]">({allWls.length} 条谱线)</span>
         {hoveredLaser && (
           <span className="text-xs text-[#00BFFF] font-mono ml-2">→ {hoveredLaser}</span>
         )}
       </div>
       <div
-        className="relative rounded-lg overflow-hidden border border-[#E9ECEF]"
+        className="relative rounded-lg overflow-hidden border border-[#E5E7EB]"
         style={{ height: BAR_HEIGHT }}
         onMouseLeave={() => setHoveredLaser(null)}
       >
@@ -197,7 +197,7 @@ function WavelengthBand({ filtered }: { filtered: LaserEntry[] }) {
           return (
             <span
               key={`tl-${tw}`}
-              className="absolute text-[9px] text-[#495057] font-mono"
+              className="absolute text-[9px] text-[#4B5563] font-mono"
               style={{ left: `${pct}%`, transform: "translateX(-50%)" }}
             >
               {label}
@@ -237,8 +237,8 @@ export default function LaserPage() {
   return (
     <div className="h-[calc(100vh-56px)] flex flex-col overflow-hidden"><main className="flex-1 p-6 max-w-7xl mx-auto w-full flex flex-col min-h-0 overflow-hidden">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#1A1A2E] mb-2">⚡ 激光波长速查</h1>
-          <p className="text-sm text-[#868E96]">40+ 种常见激光器参数，按类型/波长/应用搜索。数据来源：Thorlabs、Edmund Optics及公开激光参数手册。</p>
+          <h1 className="text-2xl font-bold text-[#111827] mb-2">⚡ 激光波长速查</h1>
+          <p className="text-sm text-[#6B7280]">40+ 种常见激光器参数，按类型/波长/应用搜索。数据来源：Thorlabs、Edmund Optics及公开激光参数手册。</p>
         </div>
 
         {/* Filters */}
@@ -248,12 +248,12 @@ export default function LaserPage() {
             placeholder="搜索名称 / 波长 / 应用..."
             value={search}
             onChange={e => setSearch(e.target.value)} onBlur={e => { if (e.target.value) trackInteract("laser", "search", e.target.value); }}
-            className="bg-[#F1F3F5] border border-[#DEE2E6] rounded-lg px-3 py-2 text-sm text-[#1A1A2E] placeholder-zinc-600 outline-none focus:border-[#00BFFF] w-64"
+            className="bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm text-[#111827] placeholder-zinc-600 outline-none focus:border-[#00BFFF] w-64"
           />
           <select
             value={typeFilter}
             onChange={e => setTypeFilter(e.target.value)}
-            className="bg-[#F1F3F5] border border-[#DEE2E6] rounded-lg px-3 py-2 text-sm text-[#1A1A2E] outline-none focus:border-[#00BFFF]"
+            className="bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm text-[#111827] outline-none focus:border-[#00BFFF]"
           >
             {types.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
@@ -262,16 +262,16 @@ export default function LaserPage() {
             placeholder="最小波长 (nm)"
             value={wlMin}
             onChange={e => setWlMin(e.target.value)}
-            className="bg-[#F1F3F5] border border-[#DEE2E6] rounded-lg px-3 py-2 text-sm text-[#1A1A2E] placeholder-zinc-600 outline-none focus:border-[#00BFFF] w-36"
+            className="bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm text-[#111827] placeholder-zinc-600 outline-none focus:border-[#00BFFF] w-36"
           />
           <input
             type="number"
             placeholder="最大波长 (nm)"
             value={wlMax}
             onChange={e => setWlMax(e.target.value)}
-            className="bg-[#F1F3F5] border border-[#DEE2E6] rounded-lg px-3 py-2 text-sm text-[#1A1A2E] placeholder-zinc-600 outline-none focus:border-[#00BFFF] w-36"
+            className="bg-[#F3F4F6] border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm text-[#111827] placeholder-zinc-600 outline-none focus:border-[#00BFFF] w-36"
           />
-          <span className="text-sm text-[#ADB5BD] self-center ml-auto">
+          <span className="text-sm text-[#9CA3AF] self-center ml-auto">
             {filtered.length} / {laserData.length} 结果
           </span>
         </div>
@@ -280,10 +280,10 @@ export default function LaserPage() {
         <WavelengthBand filtered={filtered} />
 
         {/* Table */}
-        <div className="overflow-auto flex-1 rounded-xl border border-[#E9ECEF]">
+        <div className="overflow-auto flex-1 rounded-xl border border-[#E5E7EB]">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-[#F8F9FA] text-[#495057] text-left sticky top-0 z-10 shadow-sm">
+              <tr className="bg-[#F9FAFB] text-[#4B5563] text-left sticky top-0 z-10 shadow-sm">
                 <th className="px-4 py-3 font-normal">激光器</th>
                 <th className="px-4 py-3 font-normal hidden sm:table-cell">类型</th>
                 <th className="px-4 py-3 font-normal">波长 (nm)</th>
@@ -294,25 +294,25 @@ export default function LaserPage() {
             </thead>
             <tbody>
               {filtered.map((l, idx) => (
-                <tr key={idx} className="border-t border-[#E9ECEF] hover:bg-[#F8F9FA] transition-colors">
-                  <td className="px-4 py-3 font-medium text-[#1A1A2E]">{l.name}</td>
+                <tr key={idx} className="border-t border-[#E5E7EB] hover:bg-[#F9FAFB] transition-colors">
+                  <td className="px-4 py-3 font-medium text-[#111827]">{l.name}</td>
                   <td className={`px-4 py-3 text-xs hidden sm:table-cell`}>
-                    <span className={`inline-block border rounded px-2 py-0.5 ${typeColors[l.type] || "border-zinc-600 text-[#495057]"}`}>
+                    <span className={`inline-block border rounded px-2 py-0.5 ${typeColors[l.type] || "border-zinc-600 text-[#4B5563]"}`}>
                       {l.type}
                     </span>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1.5">
                       {l.wavelengths.map((w, i) => (
-                        <span key={i} className="font-mono text-xs bg-[#1a1a1a] text-[#228BE6] px-2 py-0.5 rounded">
+                        <span key={i} className="font-mono text-xs bg-[#1a1a1a] text-[#2563EB] px-2 py-0.5 rounded">
                           {w}
                         </span>
                       ))}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-[#495057] text-xs hidden md:table-cell">{l.linewidth}</td>
-                  <td className="px-4 py-3 text-[#495057] text-xs hidden lg:table-cell">{l.powerRange}</td>
-                  <td className="px-4 py-3 text-[#868E96] text-xs hidden xl:table-cell">{l.applications.join(" · ")}</td>
+                  <td className="px-4 py-3 text-[#4B5563] text-xs hidden md:table-cell">{l.linewidth}</td>
+                  <td className="px-4 py-3 text-[#4B5563] text-xs hidden lg:table-cell">{l.powerRange}</td>
+                  <td className="px-4 py-3 text-[#6B7280] text-xs hidden xl:table-cell">{l.applications.join(" · ")}</td>
                 </tr>
               ))}
             </tbody>
@@ -320,7 +320,7 @@ export default function LaserPage() {
         </div>
 
         {filtered.length === 0 && (
-          <p className="text-center text-[#ADB5BD] py-8">没有匹配的激光器，试试调整筛选条件。</p>
+          <p className="text-center text-[#9CA3AF] py-8">没有匹配的激光器，试试调整筛选条件。</p>
         )}
       </main>
     </div>

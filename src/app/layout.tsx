@@ -65,26 +65,26 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet" />
         <script defer src="/umami.js" data-website-id="a1b2c3d4-e5f6-7890-abcd-ef1234567890"></script>
       </head>
-      <body className="min-h-full flex flex-col bg-[#F2F3F5] text-[#1A1A2E]">
-        <header className="sticky top-0 z-50 border-b border-[#E9ECEF] bg-white/80 backdrop-blur-lg h-14 flex items-center">
+      <body className="min-h-full flex flex-col bg-[#F3F4F6] text-[#111827]">
+        <header className="sticky top-0 z-50 border-b border-[#E5E7EB] bg-white/80 backdrop-blur-lg h-14 flex items-center">
           <div className="max-w-6xl w-full mx-auto px-3 sm:px-6 flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-1.5 sm:gap-2.5 no-underline hover:no-underline shrink-0">
               <img src="/logo-header.png" alt="OpticsKit" width="24" height="24" className="sm:w-[24px] sm:h-[24px]" />
-              <span className="text-[13px] sm:text-[16px] font-semibold tracking-[-0.02em] text-[#1A1A2E] whitespace-nowrap">OpticsKit</span>
-              <span className="hidden sm:inline text-[14px] sm:text-[16px] font-semibold tracking-[-0.02em] text-[#1A1A2E] whitespace-nowrap"></span>
+              <span className="text-[13px] sm:text-[16px] font-semibold tracking-[-0.02em] text-[#111827] whitespace-nowrap">OpticsKit</span>
+              <span className="hidden sm:inline text-[14px] sm:text-[16px] font-semibold tracking-[-0.02em] text-[#111827] whitespace-nowrap"></span>
             </Link>
 
             {/* Nav */}
             <nav className="flex items-center gap-0 sm:gap-2">
-              <Link href="/community" className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-[10px] text-[12px] sm:text-[14px] font-medium text-[#495057] hover:bg-[#E7F5FF] hover:text-[#228BE6] transition-all no-underline hover:no-underline whitespace-nowrap">
+              <Link href="/community" className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-[10px] text-[12px] sm:text-[14px] font-medium text-[#4B5563] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition-all no-underline hover:no-underline whitespace-nowrap">
                 💬 社区
               </Link>
-              <Link href="/contact" className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-[10px] text-[12px] sm:text-[14px] font-medium text-[#495057] hover:bg-[#E7F5FF] hover:text-[#228BE6] transition-all no-underline hover:no-underline whitespace-nowrap">
+              <Link href="/contact" className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-[10px] text-[12px] sm:text-[14px] font-medium text-[#4B5563] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition-all no-underline hover:no-underline whitespace-nowrap">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:w-[16px] sm:h-[16px]"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                 联系我们
               </Link>
-              <Link href="/about" className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-[10px] text-[12px] sm:text-[14px] font-medium text-[#495057] hover:bg-[#E7F5FF] hover:text-[#228BE6] transition-all no-underline hover:no-underline whitespace-nowrap">
+              <Link href="/about" className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-[10px] text-[12px] sm:text-[14px] font-medium text-[#4B5563] hover:bg-[#EFF6FF] hover:text-[#2563EB] transition-all no-underline hover:no-underline whitespace-nowrap">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="sm:w-[16px] sm:h-[16px]"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
                 关于
               </Link>

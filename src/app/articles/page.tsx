@@ -24,11 +24,11 @@ export default function ArticlesPage() {
   const articles = getArticles();
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
+    <div className="min-h-screen bg-[#F9FAFB]">
       <div className="max-w-[720px] mx-auto px-4 py-10">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">📖 精选文章</h1>
-          <p className="text-[13px] text-[#868E96] mt-1">
+          <h1 className="text-2xl font-bold text-[#111827]">📖 精选文章</h1>
+          <p className="text-[13px] text-[#6B7280] mt-1">
             光学技术干货，每周更新 · 共 {articles.length} 篇
           </p>
         </div>
@@ -38,25 +38,25 @@ export default function ArticlesPage() {
             <Link
               key={a.slug}
               href={`/articles/${a.slug}`}
-              className="block bg-white rounded-xl border border-[#E9ECEF] p-5 hover:border-[#228BE6]/30 hover:shadow-sm transition-all group"
+              className="block bg-white rounded-xl border border-[#E5E7EB] p-5 hover:border-[#2563EB]/30 hover:shadow-sm transition-all group"
             >
-              <h2 className="text-[15px] font-semibold text-[#1A1A2E] group-hover:text-[#228BE6] transition-colors leading-relaxed">
+              <h2 className="text-[15px] font-semibold text-[#111827] group-hover:text-[#2563EB] transition-colors leading-relaxed">
                 {a.title}
               </h2>
-              <p className="text-[13px] text-[#868E96] mt-1.5 line-clamp-2">{a.summary}</p>
-              <p className="text-[12px] text-[#ADB5BD] mt-2">{a.date}</p>
+              <p className="text-[13px] text-[#6B7280] mt-1.5 line-clamp-2">{a.summary}</p>
+              <p className="text-[12px] text-[#9CA3AF] mt-2">{a.date}</p>
             </Link>
           ))}
         </div>
 
-        <div className="mt-8 p-5 bg-white rounded-xl border border-[#E9ECEF] text-center">
-          <p className="text-[13px] text-[#868E96]">
-            关注公众号 <span className="text-[#495057] font-semibold">光学科技资讯</span>，获取更多光学技术干货
+        <div className="mt-8 p-5 bg-white rounded-xl border border-[#E5E7EB] text-center">
+          <p className="text-[13px] text-[#6B7280]">
+            关注公众号 <span className="text-[#4B5563] font-semibold">光学科技资讯</span>，获取更多光学技术干货
           </p>
         </div>
 
         <div className="mt-6 text-center">
-          <Link href="/" className="text-[13px] text-[#868E96] hover:text-[#495057] transition-colors">
+          <Link href="/" className="text-[13px] text-[#6B7280] hover:text-[#4B5563] transition-colors">
             ← 返回首页
           </Link>
         </div>

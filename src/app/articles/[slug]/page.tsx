@@ -46,33 +46,33 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const next = idx > 0 ? articles[idx - 1] : null;
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA]">
+    <div className="min-h-screen bg-[#F9FAFB]">
       <div className="max-w-[720px] mx-auto px-4 py-8">
-        <Link href="/articles" className="inline-flex items-center gap-1 text-[13px] text-[#868E96] hover:text-[#495057] transition-colors mb-6">
+        <Link href="/articles" className="inline-flex items-center gap-1 text-[13px] text-[#6B7280] hover:text-[#4B5563] transition-colors mb-6">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           返回文章列表
         </Link>
 
-        <div className="bg-white rounded-xl border border-[#E9ECEF] shadow-sm overflow-hidden">
-          <div className="px-6 pt-6 pb-3 border-b border-[#F1F3F5]">
-            <h1 className="text-[22px] font-bold text-[#1A1A2E] leading-relaxed">{article.title}</h1>
-            <p className="text-[13px] text-[#ADB5BD] mt-2">{article.date}</p>
+        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+          <div className="px-6 pt-6 pb-3 border-b border-[#F3F4F6]">
+            <h1 className="text-[22px] font-bold text-[#111827] leading-relaxed">{article.title}</h1>
+            <p className="text-[13px] text-[#9CA3AF] mt-2">{article.date}</p>
           </div>
           <div className="px-6 py-4" dangerouslySetInnerHTML={{ __html: html }} />
         </div>
 
         <div className="mt-8 flex justify-between items-center text-[13px]">
           {prev ? (
-            <Link href={`/articles/${prev.slug}`} className="text-[#228BE6] hover:underline">← {prev.title}</Link>
+            <Link href={`/articles/${prev.slug}`} className="text-[#2563EB] hover:underline">← {prev.title}</Link>
           ) : <span />}
           {next ? (
-            <Link href={`/articles/${next.slug}`} className="text-[#228BE6] hover:underline text-right">{next.title} →</Link>
+            <Link href={`/articles/${next.slug}`} className="text-[#2563EB] hover:underline text-right">{next.title} →</Link>
           ) : <span />}
         </div>
 
-        <div className="mt-8 p-5 bg-white rounded-xl border border-[#E9ECEF] text-center">
-          <p className="text-[13px] text-[#868E96]">
-            关注公众号 <span className="text-[#495057] font-semibold">光学科技资讯</span>，获取更多光学技术干货
+        <div className="mt-8 p-5 bg-white rounded-xl border border-[#E5E7EB] text-center">
+          <p className="text-[13px] text-[#6B7280]">
+            关注公众号 <span className="text-[#4B5563] font-semibold">光学科技资讯</span>，获取更多光学技术干货
           </p>
         </div>
       </div>

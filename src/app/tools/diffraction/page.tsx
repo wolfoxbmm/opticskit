@@ -240,22 +240,22 @@ export default function DiffractionPage() {
     <div className="min-h-[calc(100vh-56px)] flex flex-col">
       <main className="flex-1 flex flex-col lg:flex-row gap-4 p-3 md:p-4 min-h-0 overflow-hidden">
         {/* Display area */}
-        <div className="flex-1 flex flex-col min-h-0 rounded-xl overflow-hidden border border-[#E9ECEF]">
+        <div className="flex-1 flex flex-col min-h-0 rounded-xl overflow-hidden border border-[#E5E7EB]">
           {/* 2D Diffraction pattern — colormap */}
           <div className="relative" style={{ flexBasis: "65%", minHeight: 200 }}>
             <canvas ref={patternCanvasRef} className="w-full h-full absolute inset-0" style={{ width: "100%", height: "100%" }} />
           </div>
           {/* Intensity curve */}
-          <div className="relative border-t border-[#E9ECEF]" style={{ flexBasis: "35%", minHeight: 140 }}>
+          <div className="relative border-t border-[#E5E7EB]" style={{ flexBasis: "35%", minHeight: 140 }}>
             <canvas ref={intensityCanvasRef} className="w-full h-full absolute inset-0" style={{ width: "100%", height: "100%" }} />
           </div>
         </div>
 
         {/* Mobile collapse toggle */}
-        <div className="lg:hidden border-t border-[#E9ECEF] bg-white">
+        <div className="lg:hidden border-t border-[#E5E7EB] bg-white">
           <button
             onClick={() => setPanelOpen(!panelOpen)}
-            className="w-full py-2.5 px-4 flex items-center justify-between text-sm font-medium text-[#495057] hover:bg-[#F8F9FA] transition-colors"
+            className="w-full py-2.5 px-4 flex items-center justify-between text-sm font-medium text-[#4B5563] hover:bg-[#F9FAFB] transition-colors"
           >
             <span>参数控制</span>
             <span className="text-xs transition-transform duration-200" style={{ transform: panelOpen ? "rotate(180deg)" : "rotate(0deg)" }}>
@@ -265,21 +265,21 @@ export default function DiffractionPage() {
         </div>
 
         {/* Controls sidebar */}
-        <aside className={`w-full lg:w-[320px] lg:border border-[#E9ECEF] rounded-xl bg-white px-4 py-3 space-y-3 overflow-y-auto flex-shrink-0
+        <aside className={`w-full lg:w-[320px] lg:border border-[#E5E7EB] rounded-xl bg-white px-4 py-3 space-y-3 overflow-y-auto flex-shrink-0
           ${panelOpen ? "block" : "hidden lg:block"}`}>
           <div>
-            <h1 className="text-base font-semibold text-[#1A1A2E]">🌊 衍射与干涉模拟</h1>
-            <p className="text-xs text-[#868E96]">标量衍射 · Fraunhofer 远场 · 2D 光强分布</p>
+            <h1 className="text-base font-semibold text-[#111827]">🌊 衍射与干涉模拟</h1>
+            <p className="text-xs text-[#6B7280]">标量衍射 · Fraunhofer 远场 · 2D 光强分布</p>
           </div>
 
           {/* Mode selector */}
-          <div className="flex gap-1 bg-[#F1F3F5] rounded-lg p-1">
+          <div className="flex gap-1 bg-[#F3F4F6] rounded-lg p-1">
             {(["single", "double", "grating"] as const).map(m => (
               <button
                 key={m}
                 onClick={() => setMode(m)}
                 className={`flex-1 py-1.5 text-xs rounded-md transition-colors ${
-                  mode === m ? "bg-[#1A1A2E] text-white font-medium" : "text-[#495057] hover:text-[#1A1A2E]"
+                  mode === m ? "bg-[#111827] text-white font-medium" : "text-[#4B5563] hover:text-[#111827]"
                 }`}
               >
                 {m === "single" ? "单缝" : m === "double" ? "双缝" : "多缝(N)"}
@@ -289,7 +289,7 @@ export default function DiffractionPage() {
 
           {/* Colormap selector */}
           <div>
-            <label className="text-xs font-medium text-[#495057] block mb-1.5">🎨 色谱方案</label>
+            <label className="text-xs font-medium text-[#4B5563] block mb-1.5">🎨 色谱方案</label>
             <div className="flex flex-wrap gap-1">
               {(["inferno", "jet", "hot", "viridis", "thermal"] as ColormapName[]).map(c => (
                 <button
@@ -297,8 +297,8 @@ export default function DiffractionPage() {
                   onClick={() => setCmap(c)}
                   className={`px-2 py-1 text-xs rounded-md border transition-colors ${
                     cmap === c
-                      ? "border-[#1A1A2E] bg-[#1A1A2E] text-white"
-                      : "border-[#DEE2E6] text-[#868E96] hover:border-[#ADB5BD]"
+                      ? "border-[#111827] bg-[#111827] text-white"
+                      : "border-[#E5E7EB] text-[#6B7280] hover:border-[#9CA3AF]"
                   }`}
                 >
                   {c}
@@ -313,12 +313,12 @@ export default function DiffractionPage() {
               <div className="flex items-center gap-2">
                 <input type="range" min={380} max={780} step={5} value={wavelength}
                   onChange={e => setWavelength(parseInt(e.target.value))}
-                  className="flex-1 accent-[#228BE6]" />
+                  className="flex-1 accent-[#2563EB]" />
                 <input type="text" inputMode="numeric" value={wlInput}
                   onChange={e => setWlInput(e.target.value)}
                   onBlur={() => clampCommit(wlInput, 380, 780, setWavelength)}
                   onKeyDown={e => { if (e.key === "Enter") clampCommit(wlInput, 380, 780, setWavelength); }}
-                  className="w-[58px] text-xs text-center font-mono font-semibold text-[#228BE6] border border-[#DEE2E6] rounded-md px-0.5 focus:border-[#228BE6] focus:outline-none"
+                  className="w-[58px] text-xs text-center font-mono font-semibold text-[#2563EB] border border-[#E5E7EB] rounded-md px-0.5 focus:border-[#2563EB] focus:outline-none"
                 />
               </div>
             </div>
@@ -332,7 +332,7 @@ export default function DiffractionPage() {
                   onChange={e => setSwInput(e.target.value)}
                   onBlur={() => clampCommit(swInput, 5, 300, setSlitWidth)}
                   onKeyDown={e => { if (e.key === "Enter") clampCommit(swInput, 5, 300, setSlitWidth); }}
-                  className="w-[54px] text-xs text-center font-mono font-semibold text-[#00E676] border border-[#DEE2E6] rounded-md px-0.5 focus:border-[#00E676] focus:outline-none"
+                  className="w-[54px] text-xs text-center font-mono font-semibold text-[#00E676] border border-[#E5E7EB] rounded-md px-0.5 focus:border-[#00E676] focus:outline-none"
                 />
               </div>
             </div>
@@ -347,7 +347,7 @@ export default function DiffractionPage() {
                     onChange={e => setSsInput(e.target.value)}
                     onBlur={() => clampCommit(ssInput, slitWidth + 5, 800, setSlitSep)}
                     onKeyDown={e => { if (e.key === "Enter") clampCommit(ssInput, slitWidth + 5, 800, setSlitSep); }}
-                    className="w-[54px] text-xs text-center font-mono font-semibold text-[#FFD740] border border-[#DEE2E6] rounded-md px-0.5 focus:border-[#FFD740] focus:outline-none"
+                    className="w-[54px] text-xs text-center font-mono font-semibold text-[#FFD740] border border-[#E5E7EB] rounded-md px-0.5 focus:border-[#FFD740] focus:outline-none"
                   />
                 </div>
               </div>
@@ -363,7 +363,7 @@ export default function DiffractionPage() {
                     onChange={e => setScInput(e.target.value)}
                     onBlur={() => clampCommit(scInput, 2, 20, setSlitCount)}
                     onKeyDown={e => { if (e.key === "Enter") clampCommit(scInput, 2, 20, setSlitCount); }}
-                    className="w-[44px] text-xs text-center font-mono font-semibold text-[#FF6B00] border border-[#DEE2E6] rounded-md px-0.5 focus:border-[#FF6B00] focus:outline-none"
+                    className="w-[44px] text-xs text-center font-mono font-semibold text-[#FF6B00] border border-[#E5E7EB] rounded-md px-0.5 focus:border-[#FF6B00] focus:outline-none"
                   />
                 </div>
               </div>
@@ -378,31 +378,31 @@ export default function DiffractionPage() {
                   onChange={e => setSdInput(e.target.value)}
                   onBlur={() => clampCommit(sdInput, 200, 5000, setScreenDist)}
                   onKeyDown={e => { if (e.key === "Enter") clampCommit(sdInput, 200, 5000, setScreenDist); }}
-                  className="w-[58px] text-xs text-center font-mono font-semibold text-[#9C27B0] border border-[#DEE2E6] rounded-md px-0.5 focus:border-[#9C27B0] focus:outline-none"
+                  className="w-[58px] text-xs text-center font-mono font-semibold text-[#9C27B0] border border-[#E5E7EB] rounded-md px-0.5 focus:border-[#9C27B0] focus:outline-none"
                 />
               </div>
             </div>
-            <label className="flex items-center gap-2 text-sm text-[#495057] cursor-pointer">
-              <input type="checkbox" checked={showLabels} onChange={e => setShowLabels(e.target.checked)} className="accent-[#1A1A2E]" />
+            <label className="flex items-center gap-2 text-sm text-[#4B5563] cursor-pointer">
+              <input type="checkbox" checked={showLabels} onChange={e => setShowLabels(e.target.checked)} className="accent-[#111827]" />
               显示参数标签
             </label>
           </div>
 
-          <div className="bg-[#F8F9FA] border border-[#DEE2E6] rounded-lg overflow-hidden">
-            <div className="flex border-b border-[#DEE2E6]">
+          <div className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg overflow-hidden">
+            <div className="flex border-b border-[#E5E7EB]">
               {(["help", "formula", "fringe"] as const).map(t => (
                 <button
                   key={t}
                   onClick={() => setInfoTab(t)}
                   className={`flex-1 py-1.5 text-xs transition-colors ${
-                    infoTab === t ? "bg-white text-[#1A1A2E] font-medium" : "text-[#868E96] hover:text-[#495057]"
+                    infoTab === t ? "bg-white text-[#111827] font-medium" : "text-[#6B7280] hover:text-[#4B5563]"
                   }`}
                 >
                   {t === "help" ? "📖 说明" : t === "formula" ? "📐 公式" : "🌑 暗纹"}
                 </button>
               ))}
             </div>
-            <div className="p-3 text-xs text-[#868E96] space-y-1">
+            <div className="p-3 text-xs text-[#6B7280] space-y-1">
               {infoTab === "help" && (
                 <>
                   <p>上方为 2D 衍射斑图（伪彩色光强分布），下方为 1D 光强曲线 I/I₀。</p>
@@ -447,14 +447,14 @@ export default function DiffractionPage() {
             </div>
           </div>
 
-          <a href="/community" className="flex items-center justify-between px-3 py-2 mt-3 rounded-lg bg-[#F8F9FA] border border-[#E9ECEF] hover:border-[#228BE6] hover:bg-[#E7F5FF] transition-all no-underline group">
-              <span className="text-xs text-[#495057] group-hover:text-[#228BE6] flex items-center gap-1.5">
+          <a href="/community" className="flex items-center justify-between px-3 py-2 mt-3 rounded-lg bg-[#F9FAFB] border border-[#E5E7EB] hover:border-[#2563EB] hover:bg-[#EFF6FF] transition-all no-underline group">
+              <span className="text-xs text-[#4B5563] group-hover:text-[#2563EB] flex items-center gap-1.5">
                 <span className="text-sm">💬</span> 有问题或建议？去留言区聊聊
               </span>
-              <span className="text-[10px] text-[#ADB5BD] group-hover:text-[#228BE6]">→</span>
+              <span className="text-[10px] text-[#9CA3AF] group-hover:text-[#2563EB]">→</span>
             </a>
 
-          <p className="text-xs text-[#ADB5BD] pt-2">
+          <p className="text-xs text-[#9CA3AF] pt-2">
             ⚠ 基于 Fraunhofer 远场标量衍射（屏幕距离远大于缝宽）。
             不包含近场 Fresnel 衍射或矢量衍射效应。
           </p>
