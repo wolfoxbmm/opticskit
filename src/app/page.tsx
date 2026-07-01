@@ -141,7 +141,7 @@ function ArticleSection() {
         ))}
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-center">
         <Link
           href="/articles"
           className="inline-flex items-center gap-1 text-[13px] text-[#228BE6] hover:text-[#1c7ed6] font-medium transition-colors"
