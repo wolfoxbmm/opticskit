@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>柯西拟合 · Cauchy Fit — OpticsKit</title>
+<style>
+:root {
+  --bg: #0A0A0A; --surface: #141414; --border: #2A2A2A;
+  --text: #E8E8E8; --text-secondary: #999;
+  --accent: #00BFFF; --accent-glow: rgba(0,191,255,0.10);
+  --warn: #F59E0B; --danger: #EF4444; --success: #10B981;
+  --radius: 6px; --text-sm: 12px; --text-base: 13px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{background:#E8EAED;height:100%;overflow:hidden;}
+body{
+  font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+  background:var(--bg);color:var(--text);
+  font-size:var(--text-base);line-height:1.5;
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:min(calc(100vw - 80px),calc((100vh - 80px)*16/9));
+  height:min(calc(100vh - 80px),calc((100vw - 80px)*9/16));
+  border-radius:10px;padding:16px 24px 20px;overflow:hidden;
+  display:flex;flex-direction:column;gap:8px;
+  box-shadow:0 2px 20px rgba(0,0,0,0.3);
+}
+.top-bar{
+  display:flex;align-items:center;gap:16px;
+  padding-bottom:8px;border-bottom:1px solid var(--border);
+}
+.top-bar h1{font-size:18px;font-weight:700;color:#fff;white-space:nowrap;}
+.top-bar .sub{font-size:11px;color:#999;margin-left:4px;}
+.top-bar .spacer{flex:1;}
+.top-bar label{font-size:var(--text-sm);color:var(--text-secondary);white-space:nowrap;}
+.top-bar input[type=number]{
+  width:80px;padding:4px 8px;background:#111;border:1px solid var(--border);
+  border-radius:4px;color:var(--text);font-size:var(--text-base);
+  font-family:monospace;text-align:center;
+}
+.top-bar input[type=number]:focus{outline:none;border-color:var(--accent);}
+.top-bar .unit{font-size:var(--text-sm);color:#999;}
+.btn-fit{
+  padding:6px 20px;background:var(--accent);border:none;border-radius:4px;
+  color:#000;font-size:var(--text-base);font-weight:600;cursor:pointer;
+}
+.btn-fit:hover{background:#33CCFF;}
+.main-row{display:flex;gap:12px;flex:1;min-height:0;}
+@media(max-width:860px){.main-row{flex-direction:column;}}
+.left-panel{width:360px;min-width:300px;flex-shrink:0;display:flex;flex-direction:column;gap:8px;}
+@media(max-width:860px){.left-panel{width:100%;min-width:0;}}
+.mode-tabs{display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.mode-tab{
+  flex:1;padding:5px 8px;background:#111;border:none;
+  border-right:1px solid var(--border);color:#999;font-size:11px;cursor:pointer;
+}
+.mode-tab:last-child{border-right:none;}
+.mode-tab.active{background:var(--accent-glow);color:var(--accent);}
+.data-panel{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:6px;overflow-y:auto;min-height:0;
+  display:flex;flex-direction:column;
+}
+.table-wrap{flex:1;overflow-y:auto;min-height:0;}
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{text-align:left;font-size:11px;color:#CCC;font-weight:600;padding:3px 6px;letter-spacing:0.5px;}
+.data-table td{padding:2px 6px;}
+.data-table .idx{color:#888;font-size:10px;text-align:center;width:22px;}
+.data-table input{
+  width:100%;padding:3px 6px;background:#111;border:1px solid transparent;
+  border-radius:3px;color:var(--text);font-size:12px;font-family:monospace;
+}
+.data-table input:focus{outline:none;border-color:var(--accent);}
+.data-table input::placeholder{color:#555;}
+.delete-btn{background:none;border:none;color:#666;cursor:pointer;font-size:13px;padding:0 4px;}
+.delete-btn:hover{color:var(--danger);}
+.add-row{
+  width:100%;padding:5px;margin-top:4px;background:none;
+  border:1px dashed #333;border-radius:4px;color:#888;font-size:10px;cursor:pointer;
+}
+.add-row:hover{border-color:var(--accent);color:var(--accent);}
+.csv-input{
+  width:100%;height:100%;padding:6px;background:#111;border:1px solid #333;
+  border-radius:4px;color:var(--text);font-family:monospace;font-size:12px;resize:none;
+}
+.csv-input:focus{outline:none;border-color:var(--accent);}
+.csv-hint{font-size:9px;color:#666;margin-top:2px;}
+.preset-select{
+  width:100%;padding:6px;background:#111;border:1px solid #333;
+  border-radius:4px;color:var(--text);font-size:12px;cursor:pointer;
+}
+.btn-outline{
+  padding:4px 10px;background:none;border:1px solid #333;
+  border-radius:4px;color:#999;font-size:10px;cursor:pointer;margin-top:4px;
+}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+
+.right-panel{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;overflow:hidden;}
+.chart-wrap{
+  flex:0 0 55%;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;position:relative;min-height:180px;
+}
+.chart-wrap canvas{display:block;width:100%;height:100%;position:absolute;top:0;left:0;}
+.chart-placeholder{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  color:#555;font-size:13px;
+}
+
+.result-bar{display:flex;gap:8px;}
+.result-item{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:8px 10px;text-align:center;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.result-item .rl{font-size:12px;color:#BBB;text-transform:uppercase;letter-spacing:1px;}
+.result-item .rv{font-size:20px;font-weight:700;color:#fff;font-family:monospace;}
+.result-item .ru{font-size:12px;color:#999;}
+.result-target{background:rgba(0,191,255,0.06);border-color:rgba(0,191,255,0.12);}
+.result-target .rv{color:var(--accent);font-size:20px;}
+
+.quality-compact{
+  padding:5px 10px;border-radius:4px;font-size:11px;
+  display:flex;align-items:center;gap:5px;margin-top:6px;margin-bottom:6px;
+}
+.quality-compact.good{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.12);color:var(--success);}
+.quality-compact.warn{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.12);color:var(--warn);}
+.quality-compact.bad{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.12);color:var(--danger);}
+.qdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.qdot.g{background:var(--success);}
+.qdot.w{background:var(--warn);}
+.qdot.b{background:var(--danger);}
+.warn-inline{font-size:10px;color:var(--warn);}
+.warn-inline.danger{color:var(--danger);}
+.cauchy-note{font-size:11px;color:#888;margin-top:8px;margin-bottom:6px;}
+
+.validation{
+  margin-top:10px;padding:6px 12px;border-radius:4px;font-size:11px;
+  display:flex;align-items:center;gap:6px;
+}
+.validation.ok{background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.10);color:var(--success);}
+.validation.warn{background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.10);color:var(--warn);}
+.validation.err{background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.10);color:var(--danger);}
+.hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <h1>柯西拟合<span class="sub">Cauchy Fit</span></h1>
+  <span class="spacer"></span>
+  <label>目标波长</label>
+  <input type="number" id="targetWl" value="1550" min="10" max="50000" step="1">
+  <span class="unit">nm</span>
+  <button class="btn-fit" id="fitBtn" onclick="doFit()">开始拟合</button>
+</div>
+
+<div class="main-row">
+  <div class="left-panel">
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="switchMode('manual')">手动输入</button>
+      <button class="mode-tab" onclick="switchMode('csv')">CSV 粘贴</button>
+      <button class="mode-tab" onclick="switchMode('preset')">预设材料</button>
+    </div>
+
+    <div class="data-panel" id="manualMode">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th></th><th>λ (nm)</th><th>n</th><th></th></tr></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+      <button class="add-row" onclick="addRow()">+ 添加行</button>
+    </div>
+
+    <div class="data-panel hidden" id="csvMode">
+      <div class="table-wrap">
+        <textarea class="csv-input" id="csvInput" placeholder="粘贴 CS V数据，每行一对：&#10;400,1.4701&#10;500,1.4623&#10;600,1.4580"></textarea>
+      </div>
+      <div class="csv-hint">逗号/空格/Tab 分隔</div>
+      <button class="btn-outline" onclick="parseCSV()">解析</button>
+    </div>
+
+    <div class="data-panel hidden" id="presetMode">
+      <div class="table-wrap">
+        <select class="preset-select" id="presetSelect" onchange="loadPreset()">
+          <option value="">— 选择材料 —</option>
+          <option value="sio2">SiO₂ (熔融石英)</option>
+          <option value="bk7">N-BK7 (硼硅玻璃)</option>
+          <option value="k9">K9 (中国牌号)</option>
+          <option value="caf2">CaF₂ (氟化钙)</option>
+          <option value="mgf2">MgF₂ (氟化镁)</option>
+          <option value="sf10">SF10 (重火石玻璃)</option>
+          <option value="lasf9">LaSFN9</option>
+          <option value="sapphire">Al₂O₃ (蓝宝石)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="chart-wrap" id="chartWrap">
+      <canvas id="fitChart"></canvas>
+    </div>
+    <div class="chart-placeholder" id="chartPlaceholder">
+      输入数据后点击「开始拟合」
+    </div>
+
+    <div id="resultArea" class="hidden">
+      <div class="result-bar">
+        <div class="result-item"><div class="rl">A</div><div class="rv" id="resA">—</div><div class="ru">无量纲</div></div>
+        <div class="result-item"><div class="rl">B</div><div class="rv" id="resB">—</div><div class="ru">μm²</div></div>
+        <div class="result-item"><div class="rl">C</div><div class="rv" id="resC">—</div><div class="ru">μm⁴</div></div>
+        <div class="result-item result-target">
+          <div class="rl">目标折射率 <span id="resMeta">—</span></div>
+          <div class="rv" id="resN">—</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="quality-compact good" id="qualityBar" style="flex:1;">
+          <span class="qdot g"></span><span id="qualityText">—</span>
+        </div>
+        <div id="warnInline" class="warn-inline"></div>
+      </div>
+      <div class="cauchy-note">Cauchy 外推精度约 0.003−0.005（可见→红外）· 超 5× 范围须实验验证 · 高精度请用 Sellmeier</div>
+      <div id="validationBox"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// ==================== PRESET MATERIALS ====================
+const PRESETS = {
+  sio2: { name: 'SiO₂ (熔融石英)', data: [
+    [400,1.4701],[450,1.4656],[500,1.4623],[550,1.4599],[600,1.4580],[650,1.4564],[700,1.4553],[750,1.4542],[800,1.4533]
+  ]},
+  bk7: { name: 'N-BK7', data: [
+    [400,1.5302],[450,1.5252],[500,1.5214],[550,1.5185],[600,1.5163],[650,1.5145],[700,1.5131],[750,1.5120],[800,1.5108]
+  ]},
+  k9: { name: 'K9', data: [
+    [400,1.5237],[450,1.5202],[500,1.5175],[550,1.5155],[600,1.5139],[650,1.5126],[700,1.5115],[750,1.5106],[800,1.5098]
+  ]},
+  caf2: { name: 'CaF₂ (氟化钙)', data: [
+    [400,1.4421],[450,1.4393],[500,1.4372],[550,1.4357],[600,1.4346],[650,1.4337],[700,1.4330],[750,1.4324],[800,1.4319]
+  ]},
+  mgf2: { name: 'MgF₂ (氟化镁)', data: [
+    [400,1.3894],[450,1.3869],[500,1.3850],[550,1.3835],[600,1.3823],[650,1.3814],[700,1.3806],[750,1.3800],[800,1.3794]
+  ]},
+  sf10: { name: 'SF10 (重火石)', data: [
+    [400,1.7781],[450,1.7648],[500,1.7557],[550,1.7491],[600,1.7442],[650,1.7405],[700,1.7376],[750,1.7353],[800,1.7334]
+  ]},
+  lasf9: { name: 'LaSFN9', data: [
+    [400,1.8690],[450,1.8607],[500,1.8550],[550,1.8509],[600,1.8479],[650,1.8457],[700,1.8440],[750,1.8426],[800,1.8415]
+  ]},
+  sapphire: { name: 'Al₂O₃ (蓝宝石)', data: [
+    [400,1.7862],[450,1.7793],[500,1.7742],[550,1.7704],[600,1.7675],[650,1.7652],[700,1.7633],[750,1.7618],[800,1.7605]
+  ]}
+};
+
+// ==================== CORE MATH ====================
+function invert3x3(m) {
+  const [[a,b,c],[d,e,f],[g,h,i]] = m;
+  const det = a*(e*i - f*h) - b*(d*i - f*g) + c*(d*h - e*g);
+  if (Math.abs(det) < 1e-15) return null;
+  const inv = 1/det;
+  return [
+    [(e*i - f*h)*inv, (c*h - b*i)*inv, (b*f - c*e)*inv],
+    [(f*g - d*i)*inv, (a*i - c*g)*inv, (c*d - a*f)*inv],
+    [(d*h - e*g)*inv, (b*g - a*h)*inv, (a*e - b*d)*inv]
+  ];
+}
+
+function cauchyFit(data) {
+  // data: [{lambda_um: number, n: number}, ...]
+  const m = data.length;
+  let XTX = [[0,0,0],[0,0,0],[0,0,0]];
+  let XTy = [0,0,0];
+
+  for (const {lambda_um, n} of data) {
+    const invL2 = 1 / (lambda_um * lambda_um);
+    const invL4 = invL2 * invL2;
+    const row = [1, invL2, invL4];
+    for (let i = 0; i < 3; i++) {
+      XTy[i] += row[i] * n;
+      for (let j = 0; j < 3; j++) {
+        XTX[i][j] += row[i] * row[j];
+      }
+    }
+  }
+
+  const XTX_inv = invert3x3(XTX);
+  if (!XTX_inv) return null;
+
+  const A = XTX_inv[0][0]*XTy[0] + XTX_inv[0][1]*XTy[1] + XTX_inv[0][2]*XTy[2];
+  const B = XTX_inv[1][0]*XTy[0] + XTX_inv[1][1]*XTy[1] + XTX_inv[1][2]*XTy[2];
+  const C = XTX_inv[2][0]*XTy[0] + XTX_inv[2][1]*XTy[1] + XTX_inv[2][2]*XTy[2];
+
+  // R²
+  const meanN = data.reduce((s,d) => s + d.n, 0) / m;
+  let ssRes = 0, ssTot = 0;
+  for (const {lambda_um, n} of data) {
+    const nFit = A + B/(lambda_um*lambda_um) + C/(lambda_um*lambda_um*lambda_um*lambda_um);
+    ssRes += (n - nFit) ** 2;
+    ssTot += (n - meanN) ** 2;
+  }
+  const R2 = 1 - ssRes/ssTot;
+
+  // Residuals for chart
+  const residuals = data.map(({lambda_um, n}) => ({
+    lambda_um,
+    residual: n - (A + B/(lambda_um*lambda_um) + C/(lambda_um*lambda_um*lambda_um*lambda_um))
+  }));
+
+  return { A, B, C, R2, residuals };
+}
+
+function predictN(lambda_um, A, B, C) {
+  return A + B/(lambda_um*lambda_um) + C/(lambda_um*lambda_um*lambda_um*lambda_um);
+}
+
+// ==================== UI LOGIC ====================
+let currentMode = 'manual';
+
+function switchMode(mode) {
+  currentMode = mode;
+  // Use classList for hidden (respects !important in CSS)
+  const manualEl = document.getElementById('manualMode');
+  const csvEl = document.getElementById('csvMode');
+  const presetEl = document.getElementById('presetMode');
+  if (mode === 'manual') { manualEl.classList.remove('hidden'); csvEl.classList.add('hidden'); presetEl.classList.add('hidden'); }
+  else if (mode === 'csv') { manualEl.classList.add('hidden'); csvEl.classList.remove('hidden'); presetEl.classList.add('hidden'); }
+  else if (mode === 'preset') { manualEl.classList.add('hidden'); csvEl.classList.add('hidden'); presetEl.classList.remove('hidden'); }
+  
+  document.querySelectorAll('.mode-tab').forEach(b => {
+    const t = b.textContent.trim();
+    if ((mode === 'manual' && t === '手动输入') ||
+        (mode === 'csv' && t === 'CSV 粘贴') ||
+        (mode === 'preset' && t === '预设材料')) {
+      b.classList.add('active');
+    } else {
+      b.classList.remove('active');
+    }
+  });
+}
+
+// Table rows
+let rowCount = 5;
+
+function addRow() {
+  rowCount++;
+  const tbody = document.getElementById('tableBody');
+  const tr = document.createElement('tr');
+  tr.id = 'row' + rowCount;
+  tr.innerHTML = `
+    <td style="color:#555;font-size:11px;text-align:center;">${rowCount}</td>
+    <td><input type="number" class="wl-input" min="10" max="50000" step="0.1" placeholder="λ (nm)"></td>
+    <td><input type="number" class="n-input" min="1" max="5" step="0.0001" placeholder="n"></td>
+    <td><button class="delete-btn" onclick="deleteRow('row${rowCount}')">×</button></td>`;
+  tbody.appendChild(tr);
+  tr.querySelector('.wl-input').focus();
+}
+
+function deleteRow(id) {
+  const row = document.getElementById(id);
+  if (row) row.remove();
+  // Renumber
+  const tbody = document.getElementById('tableBody');
+  const rows = tbody.querySelectorAll('tr');
+  rows.forEach((r, i) => {
+    r.querySelector('td').textContent = i + 1;
+  });
+  rowCount = rows.length;
+  if (rowCount < 3) rowCount = 3;
+}
+
+function initTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  rowCount = 0;
+  // Pre-fill with SiO2 data (9 points for better accuracy)
+  const demoData = [
+    [400, 1.4701], [450, 1.4656], [500, 1.4623], [550, 1.4599], [600, 1.4580],
+    [650, 1.4564], [700, 1.4553], [750, 1.4542], [800, 1.4533]
+  ];
+  for (const [wl, n] of demoData) {
+    rowCount++;
+    const tr = document.createElement('tr');
+    tr.id = 'row' + rowCount;
+    tr.innerHTML = `
+      <td style="color:#555;font-size:11px;text-align:center;">${rowCount}</td>
+      <td><input type="number" class="wl-input" min="10" max="50000" step="0.1" value="${wl}"></td>
+      <td><input type="number" class="n-input" min="1" max="5" step="0.0001" value="${n}"></td>
+      <td><button class="delete-btn" onclick="deleteRow('row${rowCount}')">×</button></td>`;
+    tbody.appendChild(tr);
+  }
+}
+
+function getManualData() {
+  const tbody = document.getElementById('tableBody');
+  const wlInputs = tbody.querySelectorAll('.wl-input');
+  const nInputs = tbody.querySelectorAll('.n-input');
+  const data = [];
+  for (let i = 0; i < wlInputs.length; i++) {
+    const wl = parseFloat(wlInputs[i].value);
+    const n = parseFloat(nInputs[i].value);
+    if (!isNaN(wl) && !isNaN(n) && wl > 0 && n > 0) {
+      data.push({ lambda_nm: wl, n });
+    }
+  }
+  return data;
+}
+
+function parseCSV() {
+  const raw = document.getElementById('csvInput').value.trim();
+  if (!raw) return;
+  const lines = raw.split(/[\n\r]+/);
+  const data = [];
+  for (const line of lines) {
+    const parts = line.split(/[,\t\s]+/).map(s => s.trim()).filter(s => s.length > 0);
+    if (parts.length >= 2) {
+      const wl = parseFloat(parts[0]);
+      const n = parseFloat(parts[1]);
+      if (!isNaN(wl) && !isNaN(n) && wl > 0 && n > 0) {
+        data.push({ lambda_nm: wl, n });
+      }
+    }
+  }
+  if (data.length > 0) {
+    // Switch to manual mode and fill
+    switchMode('manual');
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    rowCount = 0;
+    for (const d of data) {
+      rowCount++;
+      const tr = document.createElement('tr');
+      tr.id = 'row' + rowCount;
+      tr.innerHTML = `
+        <td style="color:#555;font-size:11px;text-align:center;">${rowCount}</td>
+        <td><input type="number" class="wl-input" min="10" max="50000" step="0.1" value="${d.lambda_nm}"></td>
+        <td><input type="number" class="n-input" min="1" max="5" step="0.0001" value="${d.n}"></td>
+        <td><button class="delete-btn" onclick="deleteRow('row${rowCount}')">×</button></td>`;
+      tbody.appendChild(tr);
+    }
+    // Add empty rows
+    while (rowCount < 5) { rowCount++; addRow(); }
+  }
+}
+
+function loadPreset() {
+  const key = document.getElementById('presetSelect').value;
+  if (!key || !PRESETS[key]) return;
+  const { data } = PRESETS[key];
+  switchMode('manual');
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  rowCount = 0;
+  for (const [wl, n] of data) {
+    rowCount++;
+    const tr = document.createElement('tr');
+    tr.id = 'row' + rowCount;
+    tr.innerHTML = `
+      <td style="color:#555;font-size:11px;text-align:center;">${rowCount}</td>
+      <td><input type="number" class="wl-input" min="10" max="50000" step="0.1" value="${wl}"></td>
+      <td><input type="number" class="n-input" min="1" max="5" step="0.0001" value="${n}"></td>
+      <td><button class="delete-btn" onclick="deleteRow('row${rowCount}')">×</button></td>`;
+    tbody.appendChild(tr);
+  }
+}
+
+function doFit() {
+  const rawData = getManualData();
+  if (rawData.length < 3) {
+    showValidation('error', '⚠️ 至少需要 3 个数据点进行 Cauchy 拟合（三参数模型）');
+    return;
+  }
+
+  // Sort by wavelength
+  rawData.sort((a, b) => a.lambda_nm - b.lambda_nm);
+
+  // Convert nm → μm for internal calculation
+  const data = rawData.map(d => ({ lambda_um: d.lambda_nm / 1000, n: d.n }));
+
+  const result = cauchyFit(data);
+  if (!result) {
+    showValidation('error', '⚠️ 无法拟合：数据点可能共线或波长为零，请检查输入');
+    return;
+  }
+
+  const { A, B, C, R2, residuals } = result;
+
+  // Predict target
+  const targetNm = parseFloat(document.getElementById('targetWl').value);
+  if (isNaN(targetNm) || targetNm <= 0) {
+    showValidation('error', '⚠️ 请输入有效的目标波长');
+    return;
+  }
+  const targetUm = targetNm / 1000;
+  const nTarget = predictN(targetUm, A, B, C);
+
+  // Determine extrapolation range
+  const minWl = rawData[0].lambda_nm;
+  const maxWl = rawData[rawData.length - 1].lambda_nm;
+  const extrapolation = targetNm < minWl ? 'extrap-low' :
+                        targetNm > maxWl ? 'extrap' : 'interp';
+  const extrapRatio = targetNm > maxWl ? targetNm / maxWl :
+                      targetNm < minWl ? minWl / targetNm : 1;
+                      targetNm < minWl ? minWl / targetNm : 1;
+
+  // Display results
+  document.getElementById('resultArea').classList.remove('hidden');
+  document.getElementById('chartPlaceholder').classList.add('hidden');
+  document.getElementById('resA').textContent = A.toFixed(6);
+  document.getElementById('resB').textContent = B.toExponential(4);
+  document.getElementById('resC').textContent = C.toExponential(4);
+  document.getElementById('resN').textContent = nTarget.toFixed(6);
+  document.getElementById('resMeta').textContent =
+    `@ ${targetNm} nm · ` +
+    (extrapolation === 'extrap' ? `外推 ${extrapRatio.toFixed(1)}× 范围` :
+     extrapolation === 'extrap-low' ? `低波段外推 ${extrapRatio.toFixed(1)}× 范围` : '内插');
+
+  // Quality indicator
+  const qRow = document.getElementById('qualityBar');
+  const wBox = document.getElementById('warnInline');
+  let qualityClass, qualityText, warnings = [];
+
+  if (R2 >= 0.999) {
+    qualityClass = 'good'; qualityText = `R² = ${R2.toFixed(5)} — 拟合精度极高 ✅`;
+  } else if (R2 >= 0.99) {
+    qualityClass = 'good'; qualityText = `R² = ${R2.toFixed(5)} — 拟合精度良好 ✅`;
+  } else if (R2 >= 0.95) {
+    qualityClass = 'warn'; qualityText = `R² = ${R2.toFixed(5)} — 拟合精度一般 ⚠️`;
+    warnings.push('拟合精度偏低，外推结果可靠性下降');
+  } else {
+    qualityClass = 'bad'; qualityText = `R² = ${R2.toFixed(5)} — 拟合精度差 ❌`;
+    warnings.push('拟合质量差，结果不可靠，建议检查数据或使用 Sellmeier 模型');
+  }
+
+  if (extrapolation === 'extrap' || extrapolation === 'extrap-low') {
+    if (extrapRatio > 5) {
+      warnings.push(`外推范围达 ${extrapRatio.toFixed(1)}×，不建议远距离外推`);
+    } else if (extrapRatio > 2) {
+      warnings.push(`外推范围 ${extrapRatio.toFixed(1)}×，结果仅供参考`);
+    }
+  }
+
+  const clsMap={good:'good',warn:'warn',bad:'bad'};qRow.className='quality-compact '+clsMap[qualityClass];qRow.querySelector('.qdot').className='qdot '+qualityClass[0];document.getElementById('qualityText').textContent=qualityText;
+
+  if (warnings.length > 0) {
+    document.getElementById('warnInline').innerHTML=warnings.join(' · ');document.getElementById('warnInline').className='warn-inline'+(extrapRatio>5?' danger':'');
+  } else {
+    document.getElementById('warnInline').innerHTML='';document.getElementById('warnInline').className='warn-inline';
+  }
+
+  showValidation(R2 >= 0.95 ? 'ok' : (R2 >= 0.90 ? 'warn' : 'error'),
+    R2 >= 0.99
+      ? '✅ Cauchy 拟合成功，结果可信'
+      : `⚠️ R² = ${R2.toFixed(4)}，Cauchy 模型适用性有限`);
+
+  // Draw chart
+  drawChart(rawData, A, B, C, targetNm, nTarget, residuals);
+}
+
+function showValidation(type, msg) {
+  const box = document.getElementById('validationBox');
+  box.innerHTML = `<div class="validation-panel ${type}">${msg}</div>`;
+}
+
+// ==================== CHART ====================
+function drawChart(rawData, A, B, C, targetNm, nTarget, residuals) {
+  const canvas = document.getElementById('fitChart');
+  const container = canvas.parentElement;
+  const rect = container.getBoundingClientRect();
+  const w = Math.max(rect.width - 8, 400);
+  const h = Math.max(rect.height - 8, 220);
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const margin = { top: 30, right: 40, bottom: 50, left: 70 };
+  const pw = w - margin.left - margin.right;
+  const ph = h - margin.top - margin.bottom;
+
+  // Background
+  ctx.fillStyle = '#141414';
+  ctx.fillRect(0, 0, w, h);
+
+  // Determine x range (extend to target if extrapolating)
+  const minWl = Math.min(rawData[0].lambda_nm, targetNm);
+  const maxWl = Math.max(rawData[rawData.length-1].lambda_nm, targetNm);
+  const xPad = (maxWl - minWl) * 0.08;
+  const xMin = minWl - xPad;
+  const xMax = maxWl + xPad;
+
+  // Build smooth curve
+  const curvePoints = [];
+  const nCurve = 300;
+  for (let i = 0; i < nCurve; i++) {
+    const lambda_nm = xMin + (xMax - xMin) * i / (nCurve - 1);
+    const lambda_um = (xMin + (xMax - xMin) * i / (nCurve - 1)) / 1000;
+    const nFit = A + B/(lambda_um*lambda_um) + C/(lambda_um*lambda_um*lambda_um*lambda_um);
+    curvePoints.push({ lambda_nm, nFit });
+  }
+
+  // y range
+  const allN = rawData.map(d=>d.n).concat(curvePoints.map(p=>p.nFit));
+  allN.push(nTarget);
+  let nMin = Math.min(...allN), nMax = Math.max(...allN);
+  const nPad = Math.max((nMax - nMin) * 0.1, 0.001);
+  nMin -= nPad; nMax += nPad;
+
+  function xToPx(x) { return margin.left + (x - xMin) / (xMax - xMin) * pw; }
+  function yToPy(y) { return margin.top + ph - (y - nMin) / (nMax - nMin) * ph; }
+
+  // Grid
+  ctx.strokeStyle = '#3A3A3A'; ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = margin.top + ph * i / 4;
+    ctx.beginPath(); ctx.moveTo(margin.left, y); ctx.lineTo(margin.left + pw, y); ctx.stroke();
+  }
+
+  // Extrapolation zone shading
+  if (targetNm > rawData[rawData.length-1].lambda_nm) {
+    const extX = xToPx(rawData[rawData.length-1].lambda_nm);
+    ctx.fillStyle = 'rgba(245,158,11,0.04)';
+    ctx.fillRect(extX, margin.top, margin.left + pw - extX, ph);
+    // Diagonal lines
+    ctx.strokeStyle = 'rgba(245,158,11,0.08)'; ctx.lineWidth = 0.5;
+    for (let x = extX; x < margin.left + pw; x += 16) {
+      ctx.beginPath(); ctx.moveTo(x, margin.top); ctx.lineTo(x + ph, margin.top + ph); ctx.stroke();
+    }
+  }
+
+  // Axes
+  ctx.strokeStyle = '#AAA'; ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.moveTo(margin.left, margin.top);
+  ctx.lineTo(margin.left, margin.top + ph);
+  ctx.lineTo(margin.left + pw, margin.top + ph);
+  ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = '#DDD'; ctx.font = 'bold 13px monospace'; ctx.textAlign = 'center';
+  ctx.fillText('Wavelength (nm)', margin.left + pw/2, margin.top + ph + 36);
+  ctx.save();
+  ctx.fillStyle = '#DDD'; ctx.font = 'bold 13px monospace';
+  ctx.translate(margin.left - 48, margin.top + ph/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Index n', 0, 0);
+  ctx.restore();
+
+  // x ticks
+  ctx.textAlign = 'center'; ctx.fillStyle = '#DDD'; ctx.font = '12px monospace';
+  for (let i = 0; i <= 4; i++) {
+    const x = margin.left + pw * i / 4;
+    const val = xMin + (xMax - xMin) * i / 4;
+    ctx.fillText(val.toFixed(0), x, margin.top + ph + 16);
+  }
+
+  // y ticks
+  ctx.textAlign = 'right'; ctx.fillStyle = '#DDD'; ctx.font = '12px monospace';
+  for (let i = 0; i <= 4; i++) {
+    const y = margin.top + ph * i / 4;
+    const val = nMax - (nMax - nMin) * i / 4;
+    ctx.fillText(val.toFixed(4), margin.left - 8, y + 4);
+  }
+
+  // Data points
+  ctx.fillStyle = '#00BFFF';
+  for (const d of rawData) {
+    const px = xToPx(d.lambda_nm);
+    const py = yToPy(d.n);
+    ctx.beginPath(); ctx.arc(px, py, 3.5, 0, Math.PI*2); ctx.fill();
+  }
+
+  // Cauchy curve
+  ctx.strokeStyle = 'rgba(0,191,255,0.7)'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let i = 0; i < curvePoints.length; i++) {
+    const px = xToPx(curvePoints[i].lambda_nm);
+    const py = yToPy(curvePoints[i].nFit);
+    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+
+  // Target wavelength marker
+  const targetX = xToPx(targetNm);
+  const targetY = yToPy(nTarget);
+  ctx.strokeStyle = '#F59E0B'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  ctx.moveTo(targetX, margin.top); ctx.lineTo(targetX, margin.top + ph);
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // Target dot
+  ctx.fillStyle = '#F59E0B';
+  ctx.beginPath(); ctx.arc(targetX, targetY, 5, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#141414';
+  ctx.beginPath(); ctx.arc(targetX, targetY, 3, 0, Math.PI*2); ctx.fill();
+
+      // Legend below x-axis, left-aligned, single line
+  const lx = margin.left;
+  const ly = margin.top + ph + 30;
+  ctx.font = '12px monospace'; ctx.textAlign = 'left';
+  // Cauchy
+  ctx.strokeStyle = '#00BFFF'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(lx + 22, ly);
+  ctx.stroke();
+  ctx.fillStyle = '#CCC';
+  ctx.fillText('Cauchy fit', lx + 28, ly + 5);
+  // Target
+  const lx2 = lx + 145;
+  ctx.strokeStyle = '#F59E0B'; ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(lx2, ly); ctx.lineTo(lx2 + 22, ly);
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.fillStyle = '#F59E0B';
+  ctx.fillText('n(' + targetNm + 'nm) = ' + nTarget.toFixed(6), lx2 + 28, ly + 5);
+}
+
+// ==================== INIT ====================
+initTable(); doFit();
+
+</script>
+</body>
+</html>
