@@ -3,11 +3,11 @@ import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "OpticsKit · 光谱实验室 - 免费光学工具箱在线 | 光学计算器 色度图 光谱分析 光学模拟",
+  title: "OpticsKit - 免费光学工具箱在线 | 光学计算器 色度图 光谱分析 光学模拟",
   description: "OpticsKit 是为中国光学研究者打造的免费在线光学工具箱，提供色度图在线计算、光谱分析工具、光学模拟、衍射干涉模拟、薄膜干涉、材料折射率查询、激光参数速查、柯西色散拟合、相机镜头选型等 9 个光学在线工具，基于 CIE/ISO 国际标准",
   keywords: "光学工具箱在线,光学计算器,色度图在线,光谱分析工具,光学模拟,CIE色度图,衍射模拟,薄膜干涉,折射率查询,激光参数,光学工具箱",
   openGraph: {
-    title: "OpticsKit · 光谱实验室 - 免费光学工具箱在线",
+    title: "OpticsKit - 免费光学工具箱在线",
     description: "为中国光学研究者打造的在线光学计算与可视化工具集，色度图、光谱分析、光学模拟等9个免费工具",
     type: "website",
     url: "https://opticskit.cn",
@@ -35,7 +35,7 @@ export default function RootLayout({
                   "@type": "WebSite",
                   "@id": "https://opticskit.cn/#website",
                   "url": "https://opticskit.cn/",
-                  "name": "OpticsKit · 光谱实验室",
+                  "name": "OpticsKit ",
                   "description": "为中国光学研究者打造的免费在线光学计算与可视化工具集",
                   "inLanguage": "zh-CN",
                   "potentialAction": {
@@ -72,7 +72,7 @@ export default function RootLayout({
             <Link href="/" className="flex items-center gap-1.5 sm:gap-2.5 no-underline hover:no-underline shrink-0">
               <img src="/logo-header.png" alt="OpticsKit" width="24" height="24" className="sm:w-[24px] sm:h-[24px]" />
               <span className="text-[13px] sm:text-[16px] font-semibold tracking-[-0.02em] text-[#1A1A2E] whitespace-nowrap">OpticsKit</span>
-              <span className="hidden sm:inline text-[14px] sm:text-[16px] font-semibold tracking-[-0.02em] text-[#1A1A2E] whitespace-nowrap">· 光谱实验室</span>
+              <span className="hidden sm:inline text-[14px] sm:text-[16px] font-semibold tracking-[-0.02em] text-[#1A1A2E] whitespace-nowrap"></span>
             </Link>
 
             {/* Nav */}

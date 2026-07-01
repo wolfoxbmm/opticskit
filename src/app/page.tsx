@@ -388,7 +388,7 @@ export default function Home() {
       {/* Navigation — 毛玻璃 */}
       {/* SEO semantic description */}
       <section aria-label="光学工具箱简介" className="sr-only">
-        <h2>OpticsKit · 光谱实验室 - 在线光学工具箱</h2>
+        <h2>OpticsKit - 在线光学工具箱</h2>
         <p>
           OpticsKit 是一套免费的光学工具箱在线，提供光学计算器、色度图在线、光谱分析工具、
           光学模拟等专业功能。涵盖 CIE 色度图在线计算、衍射干涉模拟、光谱数据可视化、
@@ -502,7 +502,7 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-[#E9ECEF] py-8 px-6 text-center space-y-2">
-        <p className="text-[13px] text-[#868E96]">OpticsKit · 光谱实验室 - 中文光学工具箱在线</p>
+        <p className="text-[13px] text-[#868E96]">OpticsKit - 中文光学工具箱在线</p>
         <p className="text-[12px] text-[#ADB5BD]">
           关注公众号 <span className="text-[#495057] font-medium">光学科技资讯</span> · 让计算回归理性
         </p>
