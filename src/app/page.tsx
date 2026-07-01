@@ -121,7 +121,7 @@ function ArticleSection() {
   return (
     <>
       <div className="mb-8">
-        <h2 className="text-[13px] font-medium tracking-[0.06em] uppercase text-[#868E96] mb-0.5">精选文章</h2>
+        <h2 className="text-[18px] font-bold text-[#1A1A2E] tracking-[-0.02em]">📖 精选文章</h2>
         <p className="text-[13px] text-[#868E96]">光学技术干货，每周更新</p>
       </div>
 
