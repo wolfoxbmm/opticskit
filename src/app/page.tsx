@@ -144,7 +144,7 @@ function ArticleSection() {
           <Link
             key={a.slug}
             href={`/articles/${a.slug}`}
-            className="group block bg-white border border-[#E9ECEF] rounded-lg px-4 py-3.5 hover:border-[#228BE6]/40 hover:shadow-md hover:translate-x-1 transition-all duration-200"
+            className="group block bg-white border border-[#E9ECEF] rounded-lg px-4 py-3.5 hover:border-[#228BE6]/40 hover:shadow-md hover:translate-x-1 transition-all duration-250"
           >
             <div className="flex items-baseline justify-between gap-4">
               <h3 className="text-[14px] font-semibold text-[#1A1A2E] group-hover:text-[#228BE6] transition-colors leading-snug flex-1 min-w-0">
@@ -152,7 +152,7 @@ function ArticleSection() {
               </h3>
               <span className="text-[11px] text-[#ADB5BD] whitespace-nowrap flex-shrink-0">{formatDate(a.date)}</span>
             </div>
-            <p className="text-[12px] text-[#868E96] mt-1 line-clamp-2">{a.summary}</p>
+            <p className="text-[12px] text-[#868E96] mt-1 line-clamp-1 sm:line-clamp-2">{a.summary}</p>
           </Link>
         ))}
       </div>
@@ -190,7 +190,7 @@ export default function Home() {
       <section className="pt-16 pb-8 px-6 text-center select-none">
         <div className="max-w-2xl mx-auto space-y-5">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[#DEE2E6] bg-white text-[13px] text-[#495057] font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#0CA678]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#228BE6]" />
             免费 · 9 个光学在线工具
           </div>
           <h1 className="text-[42px] leading-[1.12] font-semibold tracking-[-0.03em] text-[#1A1A2E]">
@@ -199,30 +199,31 @@ export default function Home() {
             <span className="text-[#868E96]">让计算回归理性</span>
           </h1>
           <p className="text-[15px] text-[#495057] leading-relaxed max-w-lg mx-auto">
-            为中国光学研究者打造的免费在线光学计算与可视化工具集。
+            覆盖色度学、光谱分析、薄膜光学、成像光学、激光技术、材料数据库方向
             <br />
-            涵盖 CIE 色度图在线、光谱分析、光学模拟等
-            <br />
-            基于 CIE/ISO 国际标准，为中国光学研究者打造
+            基于 CIE/ISO 国际标准，所有计算在浏览器本地完成
           </p>
 
         </div>
       </section>
 
       {/* Features — 特性标签 */}
-      <section className="pb-6 px-6">
+      <section className="pb-4 px-6">
         <div className="max-w-[960px] mx-auto flex flex-wrap items-center justify-center gap-3">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E9ECEF] text-[13px] text-[#495057] font-medium shadow-sm">📐 基于 CIE/ISO 国际标准</span>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E9ECEF] text-[13px] text-[#495057] font-medium shadow-sm">🔓 完全免费的光学工具箱在线</span>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E9ECEF] text-[13px] text-[#495057] font-medium shadow-sm">🇨🇳 中文优先 · 公众号同步科普</span>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E9ECEF] text-[13px] text-[#495057] font-medium shadow-sm">基于 CIE/ISO 国际标准</span>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E9ECEF] text-[13px] text-[#495057] font-medium shadow-sm">完全免费 · 无需注册</span>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] bg-white border border-[#E9ECEF] text-[13px] text-[#495057] font-medium shadow-sm">中文优先 · 公众号同步科普</span>
         </div>
       </section>
 
             {/* Tool Grid — 3×3 */}
-      <section className="flex-1 px-4 pb-12">
+      <section className="flex-1 px-4 pt-4 pb-12">
         <div className="max-w-[960px] mx-auto">
           <div className="mb-8">
-            <h2 className="text-[16px] font-bold text-[#1A1A2E] tracking-[-0.02em]">光学在线工具</h2>
+            <h2 className="text-[16px] font-bold text-[#1A1A2E] tracking-[-0.02em]">
+            光学在线工具
+            <span className="ml-2 text-[12px] font-normal text-[#ADB5BD]">9 个免费工具 · 即开即用</span>
+          </h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {tools.map((tool, i) => {
@@ -260,7 +261,7 @@ export default function Home() {
                 return (
                   <div
                     key={tool.name}
-                    className="flex flex-col gap-4 p-6 rounded-xl bg-[#F8F9FA] border border-dashed border-[#DEE2E6] hover:border-[#ADB5BD] transition-all duration-200 animate-fade-in group min-h-[180px] relative overflow-hidden"
+                    className="flex flex-col gap-4 p-6 rounded-xl bg-[#F8F9FA] border border-dashed border-[#DEE2E6] hover:border-[#ADB5BD] transition-all duration-250 animate-fade-in group relative overflow-hidden"
                     style={{ animationDelay: `${i * 0.06}s` } as React.CSSProperties}
                   >
                     {CardContent}
@@ -272,7 +273,7 @@ export default function Home() {
                 <Link
                   key={tool.href}
                   href={tool.href}
-                  className="flex flex-col gap-4 p-6 rounded-xl bg-white border border-[#E9ECEF] shadow-sm hover:shadow-md hover:border-[#DEE2E6] hover:-translate-y-0.5 transition-all duration-200 animate-fade-in group no-underline hover:no-underline min-h-[180px] relative overflow-hidden"
+                  className="flex flex-col gap-4 p-6 rounded-xl bg-white border border-[#E9ECEF] shadow-sm hover:shadow-md hover:border-[#DEE2E6] hover:-translate-y-0.5 transition-all duration-250 animate-fade-in group no-underline hover:no-underline relative overflow-hidden"
                   style={{ animationDelay: `${i * 0.06}s` } as React.CSSProperties}
                 >
                   {CardContent}
@@ -312,7 +313,7 @@ export default function Home() {
         </div>
         <div className="max-w-[960px] mx-auto mt-6 pt-4 border-t border-[#F1F3F5] text-center">
           <p className="text-[11px] text-[#CED4DA]">
-            &copy; 2026 OpticsKit.
+            &copy; 2026 OpticsKit &nbsp;·&nbsp; <span className="text-[#CED4DA]">ICP备案中</span>
           </p>
         </div>
       </footer>
