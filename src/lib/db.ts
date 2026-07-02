@@ -59,7 +59,7 @@ function generateId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
-const ANIMALS = ['🦊', '🐧', '🐙', '🐻', '🐹', '🐰', '🦁', '🐶', '🐱', '🐼', '🦄', '🐨', '🐯', '🐮', '🐷', '🐸'];
+const ANIMALS = ['\U0001f98a', '\U0001f427', '\U0001f419', '\U0001f43b', '\U0001f439', '\U0001f430', '\U0001f981', '\U0001f436', '\U0001f431', '\U0001f43c', '\U0001f984', '\U0001f428', '\U0001f42f', '\U0001f42e', '\U0001f437', '\U0001f438'];
 
 function randomAvatar(): string {
   return ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
@@ -87,7 +87,6 @@ export function getPosts(params: {
     replies_count: replies.filter(r => r.post_id === p.id).length,
   }));
 
-  // Filter
   if (params.tag && params.tag !== 'all') {
     result = result.filter(p => p.tag === params.tag);
   }
@@ -96,7 +95,6 @@ export function getPosts(params: {
     result = result.filter(p => p.content.toLowerCase().includes(q));
   }
 
-  // Sort: pinned first, then by hot/new
   const sortByHot = params.sort === 'new'
     ? (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     : (a: any, b: any) => (b.votes_count - a.votes_count) || (new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
@@ -123,7 +121,7 @@ export function createPost(data: {
     id: generateId(),
     content: data.content,
     tag: data.tag,
-    author_name: data.author_name || (data.is_official ? '光学科技资讯' : '匿名用户'),
+    author_name: data.author_name || (data.is_official ? 'OpticsKit' : '\u533f\u540d\u7528\u6237'),
     avatar: data.is_official ? 'OPTICSKIT_LOGO' : randomAvatar(),
     is_pinned: false,
     is_official: data.is_official || false,
@@ -140,7 +138,6 @@ export function deletePost(id: string): boolean {
   posts = posts.filter(p => p.id !== id);
   writeJSON(POSTS_FILE, posts);
 
-  // Cascade delete replies and votes
   let replies = readJSON<Reply[]>(REPLIES_FILE, []);
   replies = replies.filter(r => r.post_id !== id);
   writeJSON(REPLIES_FILE, replies);
@@ -180,7 +177,7 @@ export function createReply(data: {
     id: generateId(),
     post_id: data.post_id,
     content: data.content,
-    author_name: data.author_name || (data.is_official ? '光学科技资讯' : '匿名用户'),
+    author_name: data.author_name || (data.is_official ? 'OpticsKit' : '\u533f\u540d\u7528\u6237'),
     avatar: data.is_official ? 'OPTICSKIT_LOGO' : randomAvatar(),
     is_official: data.is_official || false,
     created_at: now(),
@@ -190,7 +187,6 @@ export function createReply(data: {
   return reply;
 }
 
-
 // Delete a single reply (admin only)
 export function deleteReply(id: string): boolean {
   let replies = readJSON<Reply[]>(REPLIES_FILE, []);
@@ -199,6 +195,7 @@ export function deleteReply(id: string): boolean {
   writeJSON(REPLIES_FILE, replies);
   return replies.length < before;
 }
+
 // ========== Votes ==========
 export function toggleVote(postId: string, fingerprint: string): { voted: boolean; votes_count: number } {
   const votes = readJSON<Vote[]>(VOTES_FILE, []);

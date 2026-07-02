@@ -160,7 +160,7 @@ export default function CommunityPage() {
         content,
         tag: newPostTag,
         is_official: isAdmin && replyAsAdmin,
-        author_name: isAdmin && replyAsAdmin ? '光学科技资讯' : undefined,
+        author_name: isAdmin && replyAsAdmin ? 'OpticsKit' : undefined,
       }),
     });
 
@@ -218,7 +218,7 @@ export default function CommunityPage() {
         post_id: postId,
         content,
         is_official: isAdmin && replyAsAdmin,
-        author_name: isAdmin && replyAsAdmin ? '光学科技资讯' : undefined,
+        author_name: isAdmin && replyAsAdmin ? 'OpticsKit' : undefined,
       }),
     });
     if (res.ok) {
