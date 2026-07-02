@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="普朗克黑体辐射定律在线计算工具，55种材料发射率数据库，支持波段积分、多材料对比、温度扫描分析">
+<title>材料热辐射分析工具 - OpticsKit</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" crossorigin="anonymous"></script>
+<style>
+/* OpticsKit Design System v2 */
+:root{--bg-root:#F3F4F6;--bg-surface:#FFFFFF;--bg-elevated:#F9FAFB;--bg-hover:#F3F4F6;--border-subtle:#E5E7EB;--text-primary:#111827;--text-secondary:#4B5563;--text-tertiary:#6B7280;--text-disabled:#9CA3AF;--accent:#2563EB;--accent-hover:#1D4ED8;--accent-light:#EFF6FF;--shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.06);--radius-sm:8px;--radius-md:12px;--radius-full:9999px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg-root);color:var(--text-primary);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-0.01em;line-height:1.6}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-subtle);border-radius:3px}::selection{background:rgba(34,139,230,0.15);color:var(--text-primary)}
+.app{max-width:1060px;margin:0 auto;padding:32px 20px 24px}
+.hd{text-align:center;margin-bottom:24px}.hd h1{font-size:22px;font-weight:700;letter-spacing:-0.02em}.hd p{font-size:13px;color:var(--text-tertiary);margin-top:4px}.hd .sub{font-size:11px;color:var(--text-disabled);margin-top:2px}
+.tabs{display:inline-flex;gap:4px;margin-bottom:20px;background:var(--bg-elevated);border-radius:var(--radius-md);padding:4px}
+.tab{padding:7px 20px;font-size:13px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;background:transparent;color:var(--text-secondary);transition:all .15s;user-select:none}
+.tab.on{background:var(--accent);color:#fff;box-shadow:var(--shadow-sm)}.tab:hover:not(.on){color:var(--accent)}
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.preset{font-size:11px;padding:5px 14px;border:1px solid var(--border-subtle);border-radius:var(--radius-full);background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;transition:all .15s;user-select:none}
+.preset:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.ctrl{display:flex;gap:16px;margin-bottom:16px;align-items:flex-start}.ctrl-left{width:260px;flex-shrink:0}.ctrl-right{flex:1;display:flex;flex-direction:column;gap:12px}
+.ctrl-row{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+.ctrl-grp{display:flex;flex-direction:column;gap:4px}.ctrl-grp label{font-size:11px;font-weight:600;color:var(--text-secondary);white-space:nowrap}
+.ctrl-grp input,.ctrl-grp select{font-size:13px;padding:7px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-elevated);color:var(--text-primary);outline:none;width:110px;transition:border-color .2s,background .2s;font-family:inherit}
+.ctrl-grp input:focus{border-color:var(--accent);background:var(--bg-surface)}.ctrl-grp input.wl{width:68px}.ctrl-grp input.w120{width:120px}
+.search-input{width:100%!important;font-size:13px;padding:8px 14px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-elevated);color:var(--text-primary);outline:none;transition:border-color .2s,background .2s;font-family:inherit;margin-bottom:8px}
+.search-input:focus{border-color:var(--accent);background:var(--bg-surface)}
+.mat-list{border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--bg-surface);max-height:260px;overflow-y:auto;position:relative}
+.mat-list::after{content:"滚动查看更多";position:sticky;bottom:0;display:block;text-align:center;padding:8px 6px 10px;font-size:10px;color:var(--text-disabled);background:linear-gradient(transparent,var(--bg-surface) 80%);pointer-events:none}
+.mat-cat{padding:6px 12px;font-size:10px;font-weight:700;color:var(--text-disabled);background:var(--bg-elevated);border-bottom:1px solid var(--border-subtle);position:sticky;top:0;z-index:1;letter-spacing:0.03em;text-transform:uppercase}
+.mat-item{padding:8px 12px;font-size:12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--bg-hover);transition:background .12s}
+.mat-item:hover{background:var(--bg-hover)}.mat-item.sel{background:var(--accent-light);color:var(--accent);font-weight:600}
+.mat-item .eps{font-size:10px;color:var(--text-disabled)}.cf-hi{color:#059669;font-size:10px}.cf-md{color:#D97706;font-size:10px}
+.mat-info{font-size:10px;color:var(--text-tertiary);text-align:center;padding:6px 0;border-top:1px solid var(--border-subtle)}
+.btn{font-size:13px;font-weight:600;padding:7px 22px;border:none;border-radius:var(--radius-full);cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit;letter-spacing:-0.01em}
+.btn-p{background:var(--accent);color:#fff}.btn-p:hover{background:var(--accent-hover);box-shadow:0 2px 8px rgba(37,99,235,0.25)}.btn-p:active{transform:scale(0.97)}
+.btn-o{background:var(--bg-surface);color:var(--text-secondary);border:1px solid var(--border-subtle)}.btn-o:hover{border-color:var(--accent);color:var(--accent)}
+.btn-s{padding:5px 14px;font-size:11px}
+.chart-wrap{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:16px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.chart-box{width:100%;height:420px}
+.results{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.r-card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:12px 16px;flex:1;min-width:160px;box-shadow:var(--shadow-sm);transition:box-shadow .2s}
+.r-card:hover{box-shadow:var(--shadow-md)}.r-card .rl{font-size:10px;color:var(--text-disabled);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}.r-card .rv{font-size:16px;font-weight:700;color:var(--text-primary)}.r-card .ru{font-size:10px;color:var(--text-tertiary)}.r-card .rd{font-size:10px;color:var(--text-disabled);margin-top:4px}
+.r-card .rt{position:absolute;top:8px;right:10px;font-size:9px;padding:2px 6px;border-radius:var(--radius-full);font-weight:600}
+.rt-hi{background:#ECFDF5;color:#059669}.rt-md{background:#FFFBEB;color:#D97706}
+.export-row{display:flex;gap:6px;justify-content:center;margin-bottom:8px}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text-primary);color:#fff;padding:10px 24px;border-radius:var(--radius-md);font-size:13px;z-index:99;display:none;box-shadow:var(--shadow-md);font-family:inherit}
+.empty{text-align:center;padding:40px;color:var(--text-disabled);font-size:13px}
+.scan-tbl-wrap{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);max-height:260px;overflow:auto;margin-top:12px;box-shadow:var(--shadow-sm)}
+.scan-tbl{width:100%;font-size:11px;border-collapse:collapse}.scan-tbl thead th{background:var(--bg-elevated);position:sticky;top:0;padding:6px 12px;text-align:left;border-bottom:2px solid var(--border-subtle);font-size:10px;color:var(--text-secondary);font-weight:600;letter-spacing:0.03em}.scan-tbl thead th.th-r{text-align:right}.scan-tbl tbody td{padding:5px 12px;border-bottom:1px solid var(--bg-hover);color:var(--text-primary);font-variant-numeric:tabular-nums}.scan-tbl tbody td.td-r{text-align:right;font-variant-numeric:tabular-nums}.scan-tbl tbody tr:hover{background:var(--bg-hover)}
+.ft{text-align:center;padding:12px 0;font-size:9px;color:var(--text-disabled);line-height:1.6;border-top:1px solid var(--border-subtle)}
+@media(max-width:700px){.ctrl{flex-direction:column}.ctrl-left{width:100%}.chart-box{height:320px}.r-card{min-width:130px}.mat-list{max-height:200px}.app{padding:20px 12px 16px}.hd h1{font-size:18px}}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="app">
+<div class="hd"><h1>材料热辐射分析工具</h1><p style="margin-bottom:2px">Planck Law &middot; 55 Materials &middot; Band Integration &middot; Multi-Material Compare &middot; Temperature Scan</p><p style="font-size:10px;color:#9CA3AF">选择材料与参数，自动计算普朗克辐射曲线与波段积分</p></div>
+
+<div class="tabs" id="tabs"></div>
+<div class="presets" id="presets"></div>
+<div class="ctrl" id="ctrl"></div>
+<div id="toast" class="toast"></div>
+
+<div class="chart-wrap"><div class="chart-box" id="chart"><div style="display:flex;align-items:center;justify-content:center;height:400px;color:#D1D5DB;font-size:13px" id="chartPlaceholder">加载图表中...</div></div></div>
+<div class="results" id="results"></div>
+<div class="export-row">
+  <button class="btn btn-o btn-s" onclick="doExport('csv')">导出CSV</button>
+  <button class="btn btn-o btn-s" onclick="doExport('json')">导出JSON</button>
+  <button class="btn btn-o btn-s" onclick="doExport('png')">导出图片</button>
+</div>
+</div>
+
+<script>
+var M=[{"id": "blackbody", "name": "黑体（理想）", "category": "参照标准", "emissivity": {"model": "constant", "total": 1.0, "bands": []}},{"id": "graybody-08", "name": "灰体（ε=0.8）", "category": "参照标准", "emissivity": {"model": "constant", "total": 0.8, "bands": []}},{"id": "graybody-03", "name": "灰体（ε=0.3）", "category": "参照标准", "emissivity": {"model": "constant", "total": 0.3, "bands": []}},{"id": "al-polished", "name": "铝（高抛光）", "category": "金属", "emissivity": {"model": "band", "total": 0.05, "bands": [{"wl_min_um": 3, "wl_max_um": 5, "value": 0.05}, {"wl_min_um": 8, "wl_max_um": 14, "value": 0.04}]}},{"id": "al-oxidized", "name": "铝（严重氧化）", "category": "金属", "emissivity": {"model": "constant", "total": 0.25, "bands": []}},{"id": "al-anodized", "name": "铝（阳极氧化）", "category": "金属", "emissivity": {"model": "constant", "total": 0.77, "bands": []}},{"id": "cu-polished", "name": "铜（抛光）", "category": "金属", "emissivity": {"model": "band", "total": 0.04, "bands": [{"wl_min_um": 3, "wl_max_um": 5, "value": 0.04}, {"wl_min_um": 8, "wl_max_um": 14, "value": 0.03}]}},{"id": "cu-oxidized", "name": "铜（厚氧化层）", "category": "金属", "emissivity": {"model": "constant", "total": 0.78, "bands": []}},{"id": "ss304-polished", "name": "不锈钢304（抛光）", "category": "金属", "emissivity": {"model": "constant", "total": 0.07, "bands": []}},{"id": "ss304-oxidized", "name": "不锈钢304（氧化）", "category": "金属", "emissivity": {"model": "constant", "total": 0.79, "bands": []}},{"id": "gold-polished", "name": "金（高抛光）", "category": "金属", "emissivity": {"model": "constant", "total": 0.03, "bands": []}},{"id": "silver-polished", "name": "银（抛光）", "category": "金属", "emissivity": {"model": "constant", "total": 0.025, "bands": []}},{"id": "titanium-polished", "name": "钛（抛光）", "category": "金属", "emissivity": {"model": "constant", "total": 0.19, "bands": []}},{"id": "tungsten-polished", "name": "钨（抛光）", "category": "金属", "emissivity": {"model": "constant", "total": 0.04, "bands": []}},{"id": "inconel-oxidized", "name": "Inconel X（氧化）", "category": "金属", "emissivity": {"model": "constant", "total": 0.71, "bands": []}},{"id": "bk7", "name": "BK7 玻璃", "category": "光学玻璃", "emissivity": {"model": "constant", "total": 0.92, "bands": []}},{"id": "quartz", "name": "石英玻璃", "category": "光学玻璃", "emissivity": {"model": "constant", "total": 0.93, "bands": []}},{"id": "sapphire", "name": "蓝宝石", "category": "光学玻璃", "emissivity": {"model": "constant", "total": 0.48, "bands": []}},{"id": "znse", "name": "硒化锌 (ZnSe)", "category": "红外光学", "emissivity": {"model": "constant", "total": 0.9, "bands": []}},{"id": "silicon", "name": "硅（单晶）", "category": "半导体", "emissivity": {"model": "band", "total": 0.6, "bands": [{"wl_min_um": 3, "wl_max_um": 5, "value": 0.65}, {"wl_min_um": 8, "wl_max_um": 14, "value": 0.5}]}},{"id": "germanium", "name": "锗（单晶）", "category": "半导体", "emissivity": {"model": "constant", "total": 0.65, "bands": []}},{"id": "black-paint", "name": "黑漆（高发射率）", "category": "涂层/涂料", "emissivity": {"model": "constant", "total": 0.97, "bands": []}},{"id": "black-silicone", "name": "黑色硅胶漆", "category": "涂层/涂料", "emissivity": {"model": "constant", "total": 0.93, "bands": []}},{"id": "black-epoxy", "name": "黑色环氧漆", "category": "涂层/涂料", "emissivity": {"model": "constant", "total": 0.89, "bands": []}},{"id": "ptfe", "name": "聚四氟乙烯 (PTFE)", "category": "聚合物", "emissivity": {"model": "constant", "total": 0.92, "bands": []}},{"id": "silicon-carbide", "name": "碳化硅 (SiC)", "category": "陶瓷", "emissivity": {"model": "constant", "total": 0.85, "bands": []}},{"id": "alumina", "name": "氧化铝陶瓷", "category": "陶瓷", "emissivity": {"model": "constant", "total": 0.8, "bands": []}},{"id": "carbon-not-oxidized", "name": "碳（未氧化）", "category": "其他", "emissivity": {"model": "constant", "total": 0.81, "bands": []}},{"id": "concrete", "name": "混凝土", "category": "建筑材料", "emissivity": {"model": "constant", "total": 0.85, "bands": []}},{"id": "ni-polished", "name": "镍（抛光）", "category": "金属", "emissivity": {"model": "constant", "total": 0.07, "bands": []}},{"id": "ni-oxidized", "name": "镍（氧化）", "category": "金属", "emissivity": {"model": "constant", "total": 0.7, "bands": []}},{"id": "brass-polished", "name": "黄铜（抛光）", "category": "金属", "emissivity": {"model": "constant", "total": 0.03, "bands": []}},{"id": "brass-oxidized", "name": "黄铜（氧化600°C）", "category": "金属", "emissivity": {"model": "constant", "total": 0.6, "bands": []}},{"id": "cast-iron-new", "name": "铸铁（新加工）", "category": "金属", "emissivity": {"model": "constant", "total": 0.44, "bands": []}},{"id": "cast-iron-heated", "name": "铸铁（加热氧化）", "category": "金属", "emissivity": {"model": "constant", "total": 0.65, "bands": []}},{"id": "iron-polished", "name": "铁（抛光）", "category": "金属", "emissivity": {"model": "constant", "total": 0.25, "bands": []}},{"id": "iron-rusted", "name": "铁（锈蚀红板）", "category": "金属", "emissivity": {"model": "constant", "total": 0.61, "bands": []}},{"id": "mild-steel", "name": "低碳钢", "category": "金属", "emissivity": {"model": "constant", "total": 0.26, "bands": []}},{"id": "steel-oxidized", "name": "钢（氧化）", "category": "金属", "emissivity": {"model": "constant", "total": 0.79, "bands": []}},{"id": "zinc-polished", "name": "锌（抛光）", "category": "金属", "emissivity": {"model": "constant", "total": 0.045, "bands": []}},{"id": "zinc-tarnished", "name": "锌（变暗）", "category": "金属", "emissivity": {"model": "constant", "total": 0.25, "bands": []}},{"id": "lead-oxidized", "name": "铅（氧化）", "category": "金属", "emissivity": {"model": "constant", "total": 0.43, "bands": []}},{"id": "platinum-polished", "name": "铂（抛光）", "category": "金属", "emissivity": {"model": "constant", "total": 0.08, "bands": []}},{"id": "glass-smooth", "name": "玻璃（光滑）", "category": "光学玻璃", "emissivity": {"model": "constant", "total": 0.93, "bands": []}},{"id": "pyrex", "name": "Pyrex 玻璃", "category": "光学玻璃", "emissivity": {"model": "constant", "total": 0.9, "bands": []}},{"id": "porcelain-glazed", "name": "瓷器（上釉）", "category": "陶瓷", "emissivity": {"model": "constant", "total": 0.92, "bands": []}},{"id": "brick-red", "name": "红砖（粗糙）", "category": "建筑材料", "emissivity": {"model": "constant", "total": 0.93, "bands": []}},{"id": "graphite", "name": "石墨", "category": "碳材料", "emissivity": {"model": "constant", "total": 0.75, "bands": []}},{"id": "carbon-pressed", "name": "碳（压制填充表面）", "category": "碳材料", "emissivity": {"model": "constant", "total": 0.98, "bands": []}},{"id": "black-lacquer", "name": "黑漆（铁基底）", "category": "涂层/涂料", "emissivity": {"model": "constant", "total": 0.875, "bands": []}},{"id": "black-parson", "name": "Parson 光学黑漆", "category": "涂层/涂料", "emissivity": {"model": "constant", "total": 0.95, "bands": []}},{"id": "anodize-black", "name": "黑色阳极氧化", "category": "涂层/涂料", "emissivity": {"model": "constant", "total": 0.88, "bands": []}},{"id": "polypropylene", "name": "聚丙烯 (PP)", "category": "聚合物", "emissivity": {"model": "constant", "total": 0.97, "bands": []}},{"id": "ice-smooth", "name": "冰（光滑）", "category": "其他", "emissivity": {"model": "constant", "total": 0.966, "bands": []}},{"id": "soil", "name": "土壤", "category": "其他", "emissivity": {"model": "constant", "total": 0.92, "bands": []}}];
+var H=6.62607015e-34,C=2.99792458e8,KB=1.380649e-23,SB=5.670374419e-8;
+var WIEN_CONST=2898; // Wien displacement constant (um-K)
+var SB_REF=5.670374419e-8; // Stefan-Boltzmann constant alias
+var N_POINTS=400; // default spectral sampling points
+
+
+function planck(wl_m,T){if(T<=0||wl_m<=0)return 0;var x=(H*C)/(wl_m*KB*T);if(x>700)return 0;return(2*H*C*C)/(Math.pow(wl_m,5)*(Math.exp(x)-1))}
+function emis(mat,wl_um){var e=mat.emissivity;if(e.model==='constant')return e.total;var bs=e.bands||[];for(var i=0;i<bs.length;i++)if(wl_um>=bs[i].wl_min_um&&wl_um<=bs[i].wl_max_um)return bs[i].value;return e.total}
+function simp(f,a,b,N){if(N%2)N++;var hh=(b-a)/N,s=f(a)+f(b);for(var i=1;i<N;i++)s+=f(a+i*hh)*(i%2?4:2);return s*hh/3}
+function fm(n,d){d=d||1;if(Math.abs(n)>=1e6||(Math.abs(n)<1e-2&&n!==0))return n.toExponential(d);return n.toLocaleString('en-US',{maximumFractionDigits:d})}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(function(){t.style.display='none'},3000)}
+
+var mode='single',sel=['blackbody'],chart,scanCache;
+
+function $(id){return document.getElementById(id)}
+
+function init(){
+  renderTabs();
+  switchMode('single');
+}
+
+function renderTabs(){
+  var tabs=[{id:'single',label:'单材料分析'},{id:'compare',label:'多材料对比'},{id:'scan',label:'温度扫描'}];
+  $('tabs').innerHTML=tabs.map(function(t){return '<span class="tab'+(t.id===mode?' on':'')+'" onclick="switchMode(\''+t.id+'\')">'+t.label+'</span>'}).join('');
+}
+
+function switchMode(m){
+  mode=m;sel=['blackbody'];
+  try{chart&&chart.clear()}catch(e){}
+  $('results').innerHTML='';
+  renderTabs();
+  renderUI();
+  if(mode==='scan'){ $('presets').style.display='none'; }
+  else{ $('presets').style.display='flex'; }
+}
+
+function renderUI(){
+  var ctrl=$('ctrl');
+  var matHTML='<div class="ctrl-left"><input class="search-input" id="matSearch" type="text" placeholder="🔍 搜索材料..." oninput="renderMatList()"><div class="mat-list" id="matList"></div></div>';
+  
+  if(mode==='scan'){
+    ctrl.innerHTML=matHTML+'<div class="ctrl-right"><div class="ctrl-row"><div class="ctrl-grp"><label>起始温度 (K)</label><input id="tStart" type="number" value="300"></div><div class="ctrl-grp"><label>终止温度 (K)</label><input id="tEnd" type="number" value="1200"></div><div class="ctrl-grp"><label>步长 (K)</label><input id="tStep" type="number" value="50"></div><div class="ctrl-grp"><label>波段 (μm)</label><div style="display:flex;align-items:center;gap:4px"><input id="wlMinS" type="number" value="3" step="0.1" style="width:60px">-<input id="wlMaxS" type="number" value="5" step="0.1" style="width:60px"></div></div><div class="ctrl-grp" style="justify-content:end"><label>&nbsp;</label><button class="btn btn-p" onclick="runScan()">运行扫描</button></div></div></div>';
+    $('presets').style.display='none';
+  } else {
+    ctrl.innerHTML=matHTML+'<div class="ctrl-right"><div class="ctrl-row"><div class="ctrl-grp"><label>温度 (K)</label><input id="tempInput" type="number" value="500" onchange="debounceCalc()"></div><div class="ctrl-grp"><label>波长范围 (μm)</label><div style="display:flex;align-items:center;gap:4px"><input id="wlMin" type="number" value="0.5" step="0.1" style="width:65px" onchange="debounceCalc()">-<input id="wlMax" type="number" value="25" step="0.1" style="width:65px" onchange="debounceCalc()"></div></div><div class="ctrl-grp" style="justify-content:end"><label>&nbsp;</label><button class="btn btn-p" onclick="calculate()">计算</button></div></div></div>';
+    $('presets').style.display='flex';
+  }
+  renderMatList();
+  if(mode!=='scan') calculate();
+}
+
+var calcTimer;
+function debounceCalc(){clearTimeout(calcTimer);calcTimer=setTimeout(calculate,300)}
+
+function set波段(min,max){$('wlMin').value=min;$('wlMax').value=max;calculate()}
+
+function renderMatList(){
+  var l=$('matList');if(!l)return;l.innerHTML='';
+  var s=($('matSearch')?.value||'').toLowerCase();
+  var filtered=M.filter(function(m){return !s||m.name.toLowerCase().includes(s)||m.id.includes(s)||m.category.includes(s)});
+  if(!filtered.length){l.innerHTML='<div class="empty" style="padding:16px">未找到匹配材料</div>';return}
+  var groups={};
+  filtered.forEach(function(m){if(!groups[m.category])groups[m.category]=[];groups[m.category].push(m)});
+  var keys=Object.keys(groups).sort();
+  var total=filtered.length;
+  keys.forEach(function(cat){
+    var hdr=document.createElement('div');hdr.className='mat-cat';hdr.textContent=cat+' ('+groups[cat].length+')';l.appendChild(hdr);
+    groups[cat].forEach(function(m){
+      var it=document.createElement('div');it.className='mat-item'+(sel.includes(m.id)?' sel':'');
+      var ci=m.conf==='high'?'<span class="cf cf-hi" title="High confidence">&#9679;</span>':'<span class="cf cf-md" title="Medium confidence">&#9675;</span>';
+      it.innerHTML='<span>'+m.name+ci+'</span><span class="eps">e='+m.emissivity.total+'</span>';
+      it.onclick=function(){
+        if(mode==='single'||mode==='scan'){sel=[m.id]}
+        else{var idx=sel.indexOf(m.id);if(idx>=0)sel.splice(idx,1);else if(sel.length<10)sel.push(m.id);if(!sel.length)sel=['blackbody']}
+        renderMatList();if(mode!=='scan')calculate()
+      };
+      l.appendChild(it);
+    });
+  });
+  if(mode==='compare'){
+    var info=document.createElement('div');info.className='mat-info';
+    info.innerHTML='已选 '+sel.length+'/10 &middot; <span style="color:#9CA3AF">点击图例开关曲线</span>';
+    l.appendChild(info);
+  }
+}
+
+function calculate(){
+  try{
+    var T=parseFloat($('tempInput')?.value)||500;
+    var wlMin=parseFloat($('wlMin')?.value)||0.5;
+    var wlMax=parseFloat($('wlMax')?.value)||25;
+    var mats=sel.map(function(id){return M.find(function(m){return m.id===id})}).filter(Boolean);
+    if(!mats.length){$('results').innerHTML='';return}
+    var N=400,wl=[];
+    for(var i=0;i<=N;i++)wl.push(wlMin+(wlMax-wlMin)*i/N);
+    var series=mats.map(function(mat){
+      var data=wl.map(function(w){return(Math.PI*planck(w*1e-6,T)*emis(mat,w))/1e6});
+      var pw=WIEN_CONST/T,pv=(Math.PI*planck(pw*1e-6,T)*emis(mat,pw))/1e6;
+      var tr=SB*Math.pow(T,4)*mat.emissivity.total;
+      var br=simp(function(w){return Math.PI*planck(w*1e-6,T)*emis(mat,w)/1e6},wlMin,wlMax,200);
+      return{name:mat.name,conf:mat.conf||'medium',data:data,peakWl:pw,peakVal:pv,totalRad:tr,bandRad:br,bandPct:tr>0?br/tr*100:0}
+    });
+    renderChart(wl,series);
+    renderResults(series,T,wlMin,wlMax);
+  }catch(e){toast('错误: '+e.message)}
+}
+
+function renderChart(wl,series){
+  var dom=$('chart');var ph=$('chartPlaceholder');if(ph)ph.style.display='none';if(!chart)chart=echarts.init(dom);
+  var colors=['#2563EB','#DC2626','#059669','#7C3AED','#D97706','#EC4899','#0891B2','#78716C','#84CC16','#F59E0B'];
+  var selLegend={};series.forEach(function(s,i){selLegend[s.name]=i<4});
+  
+  var sOpts=series.map(function(s,i){return{name:s.name,type:'line',data:wl.map(function(v,j){return[v,s.data[j]]}),smooth:true,symbol:'none',lineStyle:{width:2},color:colors[i%colors.length]}});
+  
+  if(series.length===1){
+    sOpts[0].markLine={silent:true,symbol:'none',lineStyle:{color:'#DC2626',type:'dashed',width:1.5},label:{formatter:'峰值 '+series[0].peakWl.toFixed(2)+' μm',fontSize:10,color:'#DC2626'},data:[{xAxis:series[0].peakWl}]};
+  }
+
+  chart.setOption({
+    tooltip:{trigger:'axis',formatter:function(p){var s='<b>'+p[0].value[0].toFixed(1)+' μm</b><br/>';p.forEach(function(x){s+=x.marker+' '+x.seriesName+': '+x.value[1].toExponential(2)+' W/(m2·μm)<br/>'});return s}},
+    legend:{top:0,textStyle:{fontSize:10,color:'#6B7280'},selected:selLegend},
+    grid:{left:90,right:30,top:series.length>1?35:25,bottom:65},
+    xAxis:{type:'value',name:'波长 (μm)',nameLocation:'center',nameGap:30,nameTextStyle:{fontSize:11,color:'#6B7280'},axisLabel:{fontSize:9,color:'#9CA3AF'},axisLine:{lineStyle:{color:'#E5E7EB'}},axisTick:{show:false},min:function(d){return d.min},max:function(d){return d.max}},
+    yAxis:{type:'value',axisLabel:{formatter:function(v){return v.toExponential(1)},fontSize:9,color:'#9CA3AF'},splitLine:{lineStyle:{color:'#F3F4F6'}},axisLabel:{formatter:function(v){return v.toExponential(1)},fontSize:9,color:'#9CA3AF'},splitLine:{lineStyle:{color:'#F3F4F6'}}},
+    series:sOpts,
+    graphic:{type:'group',left:8,top:'center',children:[{type:'text',rotation:-1.5708,style:{text:'光谱辐出度 (W/(m²·μm))',font:'bold 12px -apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif',fill:'#374151'}}]}
+  },true);
+}
+
+function renderResults(series,T,wlMin,wlMax){
+  var cards=series.map(function(s){
+    var cl=s.conf==='high'?'高置信度':'中置信度',cc=s.conf==='high'?'rt-hi':'rt-md';
+    return'<div class="r-card" style="position:relative"><span class="rt '+cc+'">'+cl+'</span><div class="rl" style="padding-right:36px">'+s.name+'</div><div class="rv">Peak '+s.peakWl.toFixed(2)+' um</div><div class="ru">总辐射 '+fm(s.totalRad,0)+' W/m2</div><div class="rd">波段('+wlMin+'-'+wlMax+'μm): '+fm(s.bandRad,0)+' W/m2 ('+s.bandPct.toFixed(1)+'%)</div></div>'
+  });
+  $('results').innerHTML=cards.join('');
+}
+
+function runScan(){
+  try{
+    var tS=parseFloat($('tStart')?.value)||300,tE=parseFloat($('tEnd')?.value)||1200,tStep=parseFloat($('tStep')?.value)||50;
+    var wlMin=parseFloat($('wlMinS')?.value)||3,wlMax=parseFloat($('wlMaxS')?.value)||5;
+    var mat=M.find(function(m){return m.id===sel[0]})||M[0];
+    var temps=[],peak=[],tot=[],band=[],bpct=[];
+    for(var T=tS;T<=tE;T+=tStep){
+      temps.push(T);
+      peak.push([T,WIEN_CONST/T]);
+      var tr=SB*Math.pow(T,4)*mat.emissivity.total;
+      tot.push([T,tr]);
+      var br=simp(function(w){return Math.PI*planck(w*1e-6,T)*emis(mat,w)/1e6},wlMin,wlMax,200);
+      band.push([T,br]);
+      bpct.push([T,tr>0?br/tr*100:0]);
+    }
+    if(!chart)chart=echarts.init($('chart'));
+    chart.setOption({
+      title:{text:mat.name+' Temperature Scan '+tS+'-'+tE+'K, Band '+wlMin+'-'+wlMax+'um',left:'center',textStyle:{fontSize:12,color:'#111827'}},
+      tooltip:{trigger:'axis',formatter:function(p){var s='';p.forEach(function(x){s+=x.marker+' '+x.seriesName+': '+fm(x.value[1],2)+'<br/>'});return s}},
+      legend:{top:28,textStyle:{fontSize:10}},
+      grid:{left:100,right:30,top:70,bottom:65},
+      xAxis:{type:'value',name:'温度 (K)',axisLabel:{fontSize:9},nameTextStyle:{fontSize:10},nameGap:30},
+      yAxis:{type:'value',axisLabel:{fontSize:9,formatter:function(v){return fm(v,2)}},nameTextStyle:{fontSize:10},splitLine:{lineStyle:{color:'#F3F4F6'}}},
+      series:[
+        {name:'峰值波长 (um)',type:'line',data:peak,smooth:true,color:'#2563EB',symbol:'none',lineStyle:{width:2}},
+        {name:'总辐射 (W/m2)',type:'line',data:tot,smooth:true,color:'#DC2626',symbol:'none',lineStyle:{width:2}},
+        {name:'波段 '+wlMin+'-'+wlMax+'μm (W/m2)',type:'line',data:band,smooth:true,color:'#059669',symbol:'none',lineStyle:{width:2}}
+      ]
+    },true);
+    
+    var tbl='<div class="scan-tbl-wrap"><table class="scan-tbl"><thead><tr><th style="padding:5px 10px;text-align:left;border-bottom:2px solid #E5E7EB;font-size:10px">T (K)</th><th style="padding:5px 10px;text-align:right;border-bottom:2px solid #E5E7EB;font-size:10px">Peak (μm)</th><th style="padding:5px 10px;text-align:right;border-bottom:2px solid #E5E7EB;font-size:10px">总辐射 (W/m2)</th><th style="padding:5px 10px;text-align:right;border-bottom:2px solid #E5E7EB;font-size:10px">波段辐射 (W/m²)</th><th style="padding:5px 10px;text-align:right;border-bottom:2px solid #E5E7EB;font-size:10px">比例</th></tr></thead><tbody>';
+    temps.forEach(function(T,i){
+      tbl+='<tr style="border-bottom:1px solid #F3F4F6"><td style="">'+T+'</td><td style="class=\"td-r\"">'+peak[i][1].toFixed(2)+'</td><td style="class=\"td-r\"">'+fm(tot[i][1],0)+'</td><td style="class=\"td-r\"">'+fm(band[i][1],0)+'</td><td style="class=\"td-r\"">'+bpct[i][1].toFixed(1)+'%</td></tr>';
+    });
+    tbl+='</tbody></table></div>';
+    $('results').innerHTML=tbl;
+    scanCache={temps:temps,peak:peak,tot:tot,band:band,bpct:bpct,wlMin:wlMin,wlMax:wlMax,name:mat.name};
+  }catch(e){toast('扫描错误: '+e.message)}
+}
+
+function doExport(fmt){
+  try{
+    toast('Exporting '+fmt.toUpperCase()+'...');
+    if(mode==='scan'&&scanCache){
+      if(fmt==='csv'){
+        var d=scanCache,csv='\uFEFFT(K),Peak(μm),Total(W/m2),Band'+d.wlMin+'-'+d.wlMax+'μm(W/m2),Ratio(%)\n';
+        d.temps.forEach(function(T,i){csv+=T+','+d.peak[i][1]+','+d.tot[i][1]+','+d.band[i][1]+','+d.bpct[i][1]+'\n'});
+        download('scan.csv',csv,'text/csv');
+      }else if(fmt==='json'){
+        download('scan.json',JSON.stringify(scanCache,null,2),'application/json');
+      }else if(fmt==='png'&&chart){
+        var a=document.createElement('a');a.href=chart.getDataURL({type:'png',pixelRatio:2,backgroundColor:'#fff'});a.download='scan.png';a.click();
+      }
+      return;
+    }
+    if(!chart)return;
+    var o=chart.getOption();
+    if(fmt==='csv'){
+      var x=o.xAxis[0].data,csv='\uFEFFWavelength(μm),'+o.series.map(function(s){return s.name}).join(',')+'\n';
+      o.series[0].data.forEach(function(_,i){csv+=x[i]+','+o.series.map(function(s){return s.data[i]}).join(',')+'\n'});
+      download('data.csv',csv,'text/csv');
+    }else if(fmt==='json'){
+      download('data.json',JSON.stringify({wl_um:o.xAxis[0].data,series:o.series.map(function(s){return{name:s.name,data:s.data}})},null,2),'application/json');
+    }else if(fmt==='png'){
+      var a=document.createElement('a');a.href=chart.getDataURL({type:'png',pixelRatio:2,backgroundColor:'#fff'});a.download='chart.png';a.click();
+    }
+  }catch(e){toast('导出错误: '+e.message)}
+}
+
+function download(fn,ct,mime){
+  var b=new Blob([ct],{type:mime||'text/plain'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=fn;a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+window.addEventListener('resize',function(){chart&&chart.resize()});
+
+// Init presets
+$('presets').innerHTML=['<span class="preset" title="全波段 0.1-100um" onclick="set波段(0.1,100)">Full 0.1-100um</span>','<span class="preset" title="常用红外波段 0.5-25um" onclick="set波段(0.5,25)">0.5-25um</span>','<span class="preset" title="中波红外 3-5um" onclick="set波段(3,5)">MWIR 3-5um</span>','<span class="preset" title="长波红外 8-14um" onclick="set波段(8,14)">LWIR 8-14um</span>','<span class="preset" title="短波红外 1-3um" onclick="set波段(1,3)">SWIR 1-3um</span>'].join('');
+
+init();
+</script>
+<div class="ft">发射率数据来源于 Engineering Toolbox 公开数据集。<br>实际发射率随温度、波长、表面状态变化，本工具提供工程估算参考。</div>
+</body>
+</html>
