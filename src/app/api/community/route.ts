@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPosts, createPost, deletePost, togglePin } from '@/lib/db';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const SENSITIVE_WORDS = [
   '广告', '推广', '免费领取', '免费送', '限时优惠', '优惠券',
@@ -52,6 +53,10 @@ function isAdmin(req: NextRequest): boolean {
   return token === ADMIN_PASSWORD;
 }
 
+function getClientIp(req: NextRequest): string {
+  return req.headers.get('x-forwarded-for')?.split(',')[0] || req.headers.get('x-real-ip') || 'unknown';
+}
+
 // GET /api/community — list posts
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -68,31 +73,36 @@ export async function GET(req: NextRequest) {
 // POST /api/community — create post
 export async function POST(req: NextRequest) {
   try {
-  const body = await req.json();
-  const { content, tag, author_name, is_official } = body;
+    const body = await req.json();
+    const { content, tag, author_name, is_official } = body;
 
-  if (!content || !content.trim()) {
-    return NextResponse.json({ error: '内容不能为空' }, { status: 400 });
-  }
-  if (content.length > 500) {
-    return NextResponse.json({ error: '内容不能超过500字' }, { status: 400 });
-  }
-  if (!['suggestion', 'bug', 'discussion'].includes(tag)) {
-    return NextResponse.json({ error: '请选择分类' }, { status: 400 });
-  }
-
-  // Check sensitive words (admin bypass)
-  if (!isAdmin(req)) {
-    const check = checkSensitive(content);
-    if (check.found) {
-      return NextResponse.json({ error: `包含敏感词: ${check.word}` }, { status: 400 });
+    if (!content || !content.trim()) {
+      return NextResponse.json({ error: '内容不能为空' }, { status: 400 });
     }
-  }
+    if (content.length > 500) {
+      return NextResponse.json({ error: '内容不能超过500字' }, { status: 400 });
+    }
+    if (!['suggestion', 'bug', 'discussion'].includes(tag)) {
+      return NextResponse.json({ error: '请选择分类' }, { status: 400 });
+    }
 
-  // Only admin can post as official
-  const official = isAdmin(req) && is_official === true;
-  const post = createPost({ content: content.trim(), tag, author_name, is_official: official });
-  return NextResponse.json({ post }, { status: 201 });
+    // Rate limit for non-admin: 3 posts per minute per IP
+    if (!isAdmin(req)) {
+      const ip = getClientIp(req);
+      const rl = checkRateLimit('post:' + ip, 3, 60);
+      if (!rl.allowed) {
+        return NextResponse.json({ error: '操作太频繁，请稍后再试' }, { status: 429 });
+      }
+
+      const check = checkSensitive(content);
+      if (check.found) {
+        return NextResponse.json({ error: '包含敏感词: ' + check.word }, { status: 400 });
+      }
+    }
+
+    const official = isAdmin(req) && is_official === true;
+    const post = createPost({ content: content.trim(), tag, author_name, is_official: official });
+    return NextResponse.json({ post }, { status: 201 });
   } catch (e: any) {
     console.error('POST /api/community error:', e);
     return NextResponse.json({ error: '服务器错误: ' + (e.message || '未知') }, { status: 500 });

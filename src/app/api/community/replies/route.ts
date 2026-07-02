@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getReplies, createReply, deleteReply } from '@/lib/db';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 
 function isAdmin(req: NextRequest): boolean {
   const token = req.cookies.get('opticskit_admin')?.value;
   return token === ADMIN_PASSWORD;
+}
+
+function getClientIp(req: NextRequest): string {
+  return req.headers.get('x-forwarded-for')?.split(',')[0] || req.headers.get('x-real-ip') || 'unknown';
 }
 
 // GET /api/community/replies?post_id=xxx
@@ -28,6 +33,15 @@ export async function POST(req: NextRequest) {
   }
   if (content.length > 500) {
     return NextResponse.json({ error: '回复不能超过500字' }, { status: 400 });
+  }
+
+  // Rate limit for non-admin: 5 replies per minute per IP
+  if (!isAdmin(req)) {
+    const ip = getClientIp(req);
+    const rl = checkRateLimit('reply:' + ip, 5, 60);
+    if (!rl.allowed) {
+      return NextResponse.json({ error: '操作太频繁，请稍后再试' }, { status: 429 });
+    }
   }
 
   const official = isAdmin(req) && is_official === true;

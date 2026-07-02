@@ -21,8 +21,16 @@ function readJSON<T>(filePath: string, fallback: T): T {
   return fallback;
 }
 
+function makeBackupIfNeeded(filePath: string) {
+  if (fs.existsSync(filePath)) {
+    const bakPath = filePath.replace('.json', '.bak.json');
+    fs.copyFileSync(filePath, bakPath);
+  }
+}
+
 function writeJSON(filePath: string, data: any) {
   ensureDir();
+  makeBackupIfNeeded(filePath);
   fs.writeFileSync(filePath + '.tmp', JSON.stringify(data, null, 2));
   fs.renameSync(filePath + '.tmp', filePath);
 }

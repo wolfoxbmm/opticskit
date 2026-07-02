@@ -71,6 +71,8 @@ export default function CommunityPage() {
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTag, setNewPostTag] = useState('suggestion');
   const [replyAsAdmin, setReplyAsAdmin] = useState(false);
+  const [replySubmitting, setReplySubmitting] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState('');
   const [posting, setPosting] = useState(false);
   const [expandedReplies, setExpandedReplies] = useState<Set<string>>(new Set());
   const [replyContents, setReplyContents] = useState<Record<string, string>>({});
@@ -110,10 +112,11 @@ export default function CommunityPage() {
   // Fetch posts
   const fetchPosts = useCallback(async () => {
     const params = new URLSearchParams({ sort, tag: tagFilter });
+    if (searchQuery.trim()) params.set('search', searchQuery.trim());
     const res = await fetch(`/api/community?${params}`);
     const data = await res.json();
     setPosts(data.posts || []);
-  }, [sort, tagFilter]);
+  }, [sort, tagFilter, searchQuery]);
 
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
 
@@ -210,7 +213,8 @@ export default function CommunityPage() {
   // Create reply
   const handleReply = async (postId: string) => {
     const content = (replyContents[postId] || '').trim();
-    if (!content) return;
+    if (!content || replySubmitting.has(postId)) return;
+    setReplySubmitting(prev => new Set(prev).add(postId));
     const res = await fetch('/api/community/replies', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -228,6 +232,11 @@ export default function CommunityPage() {
       const data = await rRes.json();
       setRepliesMap(prev => ({ ...prev, [postId]: data.replies || [] }));
     }
+    setReplySubmitting(prev => {
+      const next = new Set(prev);
+      next.delete(postId);
+      return next;
+    });
   };
 
 
@@ -258,9 +267,20 @@ export default function CommunityPage() {
 
       <main className="max-w-[720px] mx-auto px-5 py-8 pb-20">
         <h1 className="text-[22px] font-bold mb-1">💬 留言区</h1>
-        <p className="text-[13px] text-[#6B7280] mb-6 leading-relaxed">
+        <p className="text-[13px] text-[#6B7280] mb-4 leading-relaxed">
           匿名留言，畅所欲言。Bug 反馈、功能建议、光学技术讨论都可以。
         </p>
+
+        {/* Search */}
+        <div className="mb-4">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="搜索留言..."
+            className="w-full h-10 px-4 rounded-xl border border-[#E5E7EB] text-sm outline-none bg-white focus:border-[#2563EB] transition-colors"
+          />
+        </div>
 
         {/* Admin login (hidden) */}
         {showLogin && (
@@ -391,10 +411,10 @@ export default function CommunityPage() {
             <div
               key={post.id}
               className={`relative bg-white border rounded-xl p-[18px] mb-3 transition-shadow hover:shadow-[0_2px_12px_rgba(0,0,0,0.04)] ${
-                post.is_pinned ? 'border-l-[3px] border-l-[#2563EB] bg-[rgba(34,139,230,0.02)]' : 'border-[#E5E7EB]'
+                post.is_pinned ? 'border-l-[3px] border-l-[#2563EB] bg-[rgba(34,139,230,0.03)] ring-1 ring-[rgba(34,139,230,0.15)]' : 'border-[#E5E7EB]'
               }`}
             >
-              {post.is_pinned ? <span className="text-[10px] text-[#2563EB] mr-1.5">📌 置顶</span> : null}
+              {post.is_pinned ? <span className="inline-flex items-center gap-0.5 text-[10px] px-2 py-0.5 rounded-full bg-[rgba(34,139,230,0.08)] text-[#2563EB] font-medium mr-1.5">📌 置顶</span> : null}
 
               {/* Admin actions */}
               {isAdmin && (
@@ -466,8 +486,8 @@ export default function CommunityPage() {
               {expandedReplies.has(post.id) && (
                 <div className="mt-2.5">
                   {(repliesMap[post.id] || []).map(reply => (
-                    <div key={reply.id} className={`p-2.5 rounded-lg mb-1.5 ${
-                      reply.is_official ? 'bg-[rgba(34,139,230,0.04)] border border-[rgba(34,139,230,0.15)]' : 'bg-[#F9FAFB]'
+                    <div key={reply.id} className={`p-2.5 rounded-lg mb-1.5 border-l-[3px] ${
+                      reply.is_official ? 'bg-[rgba(34,139,230,0.04)] border border-[rgba(34,139,230,0.15)] border-l-[#2563EB]' : 'bg-[#F9FAFB] border-l-[#D1D5DB]'
                     }`}>
                       <div className="flex items-center gap-1.5 mb-1">
                         <span className="text-xs font-semibold text-[#4B5563]">{reply.author_name}</span>
@@ -495,9 +515,10 @@ export default function CommunityPage() {
                     />
                     <button
                       onClick={() => handleReply(post.id)}
-                      className="px-3.5 py-2 rounded-lg border-none bg-[#2563EB] text-white text-[11px] font-semibold cursor-pointer"
+                      disabled={replySubmitting.has(post.id)}
+                      className="px-3.5 py-2 rounded-lg border-none bg-[#2563EB] text-white text-[11px] font-semibold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >
-                      回复
+                      {replySubmitting.has(post.id) ? '回复中...' : '回复'}
                     </button>
                   </div>
                 </div>
