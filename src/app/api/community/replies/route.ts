@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getReplies, createReply } from '@/lib/db';
+import { getReplies, createReply, deleteReply } from '@/lib/db';
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 
@@ -33,4 +33,18 @@ export async function POST(req: NextRequest) {
   const official = isAdmin(req) && is_official === true;
   const reply = createReply({ post_id, content: content.trim(), author_name, is_official: official });
   return NextResponse.json({ reply }, { status: 201 });
+}
+
+// DELETE /api/community/replies?id=xxx (admin only)
+export async function DELETE(req: NextRequest) {
+  if (!isAdmin(req)) {
+    return NextResponse.json({ error: '需要管理员权限' }, { status: 403 });
+  }
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get('id');
+  if (!id) return NextResponse.json({ error: '缺少 id' }, { status: 400 });
+
+  const ok = deleteReply(id);
+  if (!ok) return NextResponse.json({ error: '回复不存在' }, { status: 404 });
+  return NextResponse.json({ success: true });
 }

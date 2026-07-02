@@ -190,6 +190,15 @@ export function createReply(data: {
   return reply;
 }
 
+
+// Delete a single reply (admin only)
+export function deleteReply(id: string): boolean {
+  let replies = readJSON<Reply[]>(REPLIES_FILE, []);
+  const before = replies.length;
+  replies = replies.filter(r => r.id !== id);
+  writeJSON(REPLIES_FILE, replies);
+  return replies.length < before;
+}
 // ========== Votes ==========
 export function toggleVote(postId: string, fingerprint: string): { voted: boolean; votes_count: number } {
   const votes = readJSON<Vote[]>(VOTES_FILE, []);

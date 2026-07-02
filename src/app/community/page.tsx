@@ -230,6 +230,17 @@ export default function CommunityPage() {
     }
   };
 
+
+  // Admin: delete reply
+  const handleDeleteReply = async (replyId: string, postId: string) => {
+    if (!confirm("确定删除这条回复吗？此操作不可恢复。")) return;
+    await fetch('/api/community/replies?id=' + replyId, { method: 'DELETE' });
+    const rRes = await fetch('/api/community/replies?post_id=' + postId);
+    const data = await rRes.json();
+    setRepliesMap(prev => ({ ...prev, [postId]: data.replies || [] }));
+    fetchPosts();
+  };
+
   // Admin actions
   const handlePin = async (postId: string) => {
     await fetch(`/api/community?id=${postId}`, { method: 'PATCH' });
@@ -461,6 +472,15 @@ export default function CommunityPage() {
                       <div className="flex items-center gap-1.5 mb-1">
                         <span className="text-xs font-semibold text-[#4B5563]">{reply.author_name}</span>
                         {reply.is_official ? <span className="text-[9px] px-1 py-px rounded bg-[#2563EB] text-white font-semibold">官方</span> : null}
+                        {isAdmin && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDeleteReply(reply.id, post.id); }}
+                            className="ml-auto text-[10px] text-[#9CA3AF] hover:text-[#FA5252] cursor-pointer border-none bg-transparent"
+                            title="删除回复"
+                          >
+                            🗑
+                          </button>
+                        )}
                       </div>
                       <p className="text-[13px] text-[#555] leading-[1.6]">{reply.content}</p>
                     </div>
