@@ -68,6 +68,30 @@ export interface PointInfo {
   outsideLocus: boolean;
 }
 
+// 独立的坐标信息计算函数（输入始终为 CIE xy 坐标）
+export function computePointInfo(xyX: number, xyY: number): PointInfo | null {
+  if (xyY <= 0.0001) return null;
+  const uv = xyToUvPrime(xyX, xyY);
+  const cctResult = cctWithDuv(uv);
+  const XYZ = xyToXYZ(xyX, xyY, 0.5);
+  const sRGB = xyzToSRGB(XYZ);
+  const Lab = xyzToLab(XYZ);
+  const gamutIn: string[] = [];
+  for (const [name, g] of Object.entries(GAMUTS)) {
+    if (pointInGamut(xyX, xyY, g.R, g.G, g.B)) gamutIn.push(name);
+  }
+  const outsideLocus = xyX < 0 || xyY < 0 || xyX + xyY > 1;
+  return {
+    x: xyX, y: xyY, up: uv.uPrime, vp: uv.vPrime,
+    cct: cctResult.cct, duv: cctResult.duv,
+    rgb: { r: Math.round(sRGB.r * 255), g: Math.round(sRGB.g * 255), b: Math.round(sRGB.b * 255) },
+    XYZ: { X: XYZ.X, Y: XYZ.Y, Z: XYZ.Z },
+    Lab: { L: Lab.L, a: Lab.a, b: Lab.b },
+    gamutIn,
+    outsideLocus,
+  };
+}
+
 // Diagram configuration per mode
 function getDiagramConfig(mode: DiagramMode) {
   if (mode === "xy") {
@@ -200,34 +224,8 @@ export default function ChromaticityCanvas({
   );
 
   const computeInfo = useCallback(
-    (x: number, y: number): PointInfo | null => {
-      let xyX: number, xyY: number;
-      if (diagramMode === "xy") { xyX = x; xyY = y; }
-      else { const xy = uvPrimeToXy(x, y); xyX = xy.x; xyY = xy.y; }
-      // 仅保护真正的除零/无意义情况；图外区域仍需给出反馈（前端另做“光谱外”标注）
-      if (xyY <= 0.0001) return null;
-      const uv = xyToUvPrime(xyX, xyY);
-      const cctResult = cctWithDuv(uv);
-      const XYZ = xyToXYZ(xyX, xyY, 0.5);
-      const sRGB = xyzToSRGB(XYZ);
-      const Lab = xyzToLab(XYZ);
-      const gamutIn: string[] = [];
-      for (const [name, g] of Object.entries(GAMUTS)) {
-        if (pointInGamut(xyX, xyY, g.R, g.G, g.B)) gamutIn.push(name);
-      }
-      // 判断是否在可见光谱轨迹（马蹄形）外：x<0、y<0 或 x+y>1 明显越界
-      const outsideLocus = xyX < 0 || xyY < 0 || xyX + xyY > 1;
-      return {
-        x: xyX, y: xyY, up: uv.uPrime, vp: uv.vPrime,
-        cct: cctResult.cct, duv: cctResult.duv,
-        rgb: { r: Math.round(sRGB.r * 255), g: Math.round(sRGB.g * 255), b: Math.round(sRGB.b * 255) },
-        XYZ: { X: XYZ.X, Y: XYZ.Y, Z: XYZ.Z },
-        Lab: { L: Lab.L, a: Lab.a, b: Lab.b },
-        gamutIn,
-        outsideLocus,
-      };
-    },
-    [diagramMode]
+    (xyX: number, xyY: number): PointInfo | null => computePointInfo(xyX, xyY),
+    []
   );
 
   // Main render
@@ -571,8 +569,9 @@ export default function ChromaticityCanvas({
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const [lx, ly] = toLogical(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height);
-    const info = computeInfo(lx, ly);
+    const [mx, my] = toLogical(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height);
+    const xy = diagramMode === "xy" ? { x: mx, y: my } : uvPrimeToXy(mx, my);
+    const info = computeInfo(xy.x, xy.y);
     
     // Check illuminant hover first (64px radius)
     const illPixels = (canvas as any)._illPixels as { x: number; y: number; name: string }[] | undefined;
@@ -597,7 +596,7 @@ export default function ChromaticityCanvas({
       rgb: `rgb(${info.rgb.r},${info.rgb.g},${info.rgb.b})`,
     });
     setHoverVisible(true);
-  }, [toLogical, computeInfo]);
+  }, [diagramMode, toLogical, computeInfo]);
 
   const handleMouseLeave = useCallback(() => {
     setHoverVisible(false);
@@ -608,16 +607,10 @@ export default function ChromaticityCanvas({
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    let lx: number, ly: number;
-    if (diagramMode === "xy") {
-      [lx, ly] = toLogical(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height);
-    } else {
-      const [ul, vl] = toLogical(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height);
-      const xy = uvPrimeToXy(ul, vl);
-      lx = xy.x; ly = xy.y;
-    }
-    const info = computeInfo(lx, ly);
-    onLocate(lx, ly, info);
+    const [mpx, mpy] = toLogical(e.clientX - rect.left, e.clientY - rect.top, rect.width, rect.height);
+    const xy = diagramMode === "xy" ? { x: mpx, y: mpy } : uvPrimeToXy(mpx, mpy);
+    const info = computeInfo(xy.x, xy.y);
+    onLocate(xy.x, xy.y, info);
   }, [diagramMode, toLogical, computeInfo, onLocate]);
 
   return (

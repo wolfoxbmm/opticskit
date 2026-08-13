@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import ChromaticityCanvas, { type PointInfo, type BatchPoint } from "./chromaticity-canvas";
+import ChromaticityCanvas, { type PointInfo, type BatchPoint, computePointInfo } from "./chromaticity-canvas";
 import BatchPanel from "./batch-panel";
 import { trackPageView, trackExport, trackInteract } from "@/lib/analytics";
-import { spectrumToXYZ, xyzToChromaticity, deltaE76 } from "@/lib/colorimetry";
+import { spectrumToXYZ, xyzToChromaticity, deltaE76, uvPrimeToXy } from "@/lib/colorimetry";
 
 type DiagramMode = "xy" | "uv";
 
@@ -64,12 +64,26 @@ function ChromaticityContent() {
 
   const [locateError, setLocateError] = useState("");
   const handleInputLocate = () => {
-    const x = parseFloat(inputX), y = parseFloat(inputY);
-    if (isNaN(x) || isNaN(y)) { setLocateError("请输入有效数值"); return; }
-    if (x < 0 || x > 0.85 || y < -0.1 || y > 1.0) { setLocateError("坐标超出范围 (x: 0~0.85, y: -0.1~1.0)"); return; }
+    const a = parseFloat(inputX), b = parseFloat(inputY);
+    if (isNaN(a) || isNaN(b)) { setLocateError("请输入有效数值"); return; }
+    // 输入坐标语义：xy 模式输入 x,y；uv 模式输入 u',v'
+    let x: number, y: number;
+    if (diagramMode === "xy") {
+      x = a; y = b;
+      if (x < 0 || x > 0.85 || y < -0.1 || y > 1.0) { setLocateError("坐标超出范围 (x: 0~0.85, y: -0.1~1.0)"); return; }
+    } else {
+      if (a < 0 || a > 0.65 || b < 0 || b > 0.62) { setLocateError("坐标超出范围 (u\': 0~0.65, v\': 0~0.62)"); return; }
+      const xy = uvPrimeToXy(a, b);
+      x = xy.x; y = xy.y;
+    }
     setLocateError("");
     setLocateX(x); setLocateY(y);
-    trackInteract("chromaticity", "input-locate", x.toFixed(3) + "," + y.toFixed(3));
+    const info = computePointInfo(x, y);
+    if (info) {
+      setPointInfo(info);
+      setInputX(a.toFixed(4)); setInputY(b.toFixed(4));
+    }
+    trackInteract("chromaticity", "input-locate", a.toFixed(3) + "," + b.toFixed(3));
   };
 
   const handleExportPNG = useCallback(() => {
