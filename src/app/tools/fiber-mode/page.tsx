@@ -7,7 +7,7 @@ import {
   type FiberParams, type ModeResult,
   vNumber, numericalAperture, marcuseMFD, cutoffWavelength,
   isSingleMode, solveModes, materialDispersion, waveguideDispersion, totalDispersion,
-  modeIntensity, jlApprox, SELLMEIER,
+  modeIntensity, jlApprox, radialField, SELLMEIER,
 } from "@/lib/optics/fiber-mode";
 
 // ============================================================
@@ -30,15 +30,19 @@ function useHiDPICanvas(draw: (ctx: CanvasRenderingContext2D, w: number, h: numb
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.getBoundingClientRect();
-    if (rect.width === 0) return;
-    canvas.width = Math.round(rect.width * dpr);
-    canvas.height = Math.round(rect.height * dpr);
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    draw(ctx, rect.width, rect.height);
+    // 用 rAF 节流：把重绘推迟到下一帧，避免同步阻塞滑块事件
+    let rafId = requestAnimationFrame(() => {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0) return;
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      draw(ctx, rect.width, rect.height);
+    });
+    return () => cancelAnimationFrame(rafId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
   return ref;
@@ -85,25 +89,39 @@ export default function FiberModePage() {
     const pxToUm = (3 * coreRadiusUm) / half; // half 像素对应物理 3a
     const img = ctx.createImageData(w, h);
     const data = img.data;
+    const l = selectedMode ? selectedMode.l : 0;
+    const U = selectedMode ? selectedMode.U : 1;
+    const Wv = selectedMode ? selectedMode.W : 1;
+
+    // 预计算径向强度 R(r)² 查找表（256 点，避免每像素重复数值积分）
+    const RTAB = 256;
+    const R2 = new Float64Array(RTAB + 1);
     let maxI = 0;
-    const r = (x: number, y: number) => Math.sqrt(x * x + y * y) * pxToUm;
-    const th = (x: number, y: number) => Math.atan2(y, x);
-    const calc = (x: number, y: number) => selectedMode
-      ? modeIntensity(selectedMode.l, selectedMode.U, selectedMode.W, coreRadiusUm, r(x, y), th(x, y))
-      : 0;
-    // 先求全局最大强度
-    for (let j = 0; j < h; j++) {
-      for (let i = 0; i < w; i++) {
-        const x = i - cx, y = j - cy;
-        const v = calc(x, y);
-        if (v > maxI) maxI = v;
+    if (selectedMode) {
+      for (let k = 0; k <= RTAB; k++) {
+        const rr = (3 * coreRadiusUm) * k / RTAB;
+        const R = radialField(l, U, Wv, coreRadiusUm, rr);
+        R2[k] = R * R;
+        if (R2[k] > maxI) maxI = R2[k];
       }
     }
+    // 像素查找：按像素半径索引 R2，角度解析 cos²(lθ)
     for (let j = 0; j < h; j++) {
+      const y = j - cy;
+      const y2 = y * y;
       for (let i = 0; i < w; i++) {
-        const x = i - cx, y = j - cy;
-        let v = calc(x, y);
-        v = maxI > 0 ? v / maxI : 0;
+        const x = i - cx;
+        const rPx = Math.sqrt(x * x + y2);
+        let v = 0;
+        if (selectedMode && rPx <= half) {
+          const rUm = rPx * pxToUm;
+          const idxF = rUm / (3 * coreRadiusUm) * RTAB;
+          const i0 = idxF | 0;
+          const frac = idxF - i0;
+          const r2 = i0 >= RTAB ? R2[RTAB] : (R2[i0] + (R2[i0 + 1] - R2[i0]) * frac);
+          const ang = l === 0 ? 1 : Math.cos(l * Math.atan2(y, x)) ** 2;
+          v = (r2 * ang) / maxI;
+        }
         const idx = (j * w + i) * 4;
         data[idx] = Math.min(255, Math.round(v * 255));
         data[idx + 1] = Math.min(255, Math.round(Math.pow(v, 0.55) * 230));

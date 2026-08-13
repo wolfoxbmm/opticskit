@@ -36,105 +36,54 @@ export function besselJ1(x: number): number {
   return sum;
 }
 
-/** 0 阶第二类修正贝塞尔函数 K0(x)，x>0 */
+/** 0 阶第二类修正贝塞尔函数 K0(x)，x>0（Numerical Recipes bessk0，有理/多项式近似，精度≈1e-8） */
 export function besselK0(x: number): number {
   if (x <= 0) return Infinity;
-  // 用积分表示或级数。这里用多项式近似（Abramowitz & Stegun 9.8）
   if (x <= 2) {
-    const t = x / 2;
-    const t2 = t * t;
-    const I0 = 1 + t2 * (1 + t2 / 4 * (1 + t2 / 9 * (1 + t2 / 16 * (1 + t2 / 25))));
-    // K0 = -ln(t)·I0 + Σ ...
-    let psi = 0;
-    let term = t2 / 4;
-    let k = 1;
-    // Σ (t²/4)^k / (k!)² · H_k
-    let H = 0;
-    let fact = 1;
-    let f = 1;
-    for (let m = 1; m <= 20; m++) {
-      fact *= m;
-      H += 1 / m;
-      f *= t2 / 4;
-      psi += (f / (fact * fact)) * H;
-    }
-    const lnTerm = Math.log(t);
-    return -lnTerm * I0 + psi;
+    const y = x * x / 4;
+    return (-Math.log(x / 2) * bessI0(x)) + (-0.57721566 + y * (0.42278420 + y * (0.23069756 + y * (0.03488590 + y * (0.00262698 + y * (0.00010750 + y * 0.00000740))))));
   } else {
-    // 大 x 渐近
-    const t = 2 / x;
-    return Math.exp(-x) / Math.sqrt(x) * (1.25331414 + t * (-0.07832358 + t * (0.02189568 + t * (-0.01062446 + t * (0.00587872 + t * (-0.00251540 + t * 0.00053208))))));
+    const y = 2 / x;
+    return (Math.exp(-x) / Math.sqrt(x)) * (1.25331414 + y * (-0.07832358 + y * (0.02189568 + y * (-0.01062446 + y * (0.00587872 + y * (-0.00251540 + y * 0.00053208))))));
   }
 }
 
-/** 1 阶第二类修正贝塞尔函数 K1(x)，x>0 */
+/** 1 阶第二类修正贝塞尔函数 K1(x)，x>0（Numerical Recipes bessk1） */
 export function besselK1(x: number): number {
   if (x <= 0) return Infinity;
   if (x <= 2) {
-    const t = x / 2;
-    const t2 = t * t;
-    // I1(x) = x/2 · Σ (x²/4)^k / (k!·(k+1)!)
-    let I1 = x / 2;
-    let term = x / 2;
-    let fact = 1;
-    for (let k = 1; k <= 20; k++) {
-      fact *= k;
-      term *= t2 / (k * (k + 1));
-      I1 += term;
-    }
-    // K1(x) = 1/x + (x/2)·[ln(x/2)·I1/x·2 + ...]
-    // 使用标准展开：K1 = 1/x + (x/2)[ln(x/2)·I0'...] 较复杂，改用数值积分
-    // 简化：K1(x) = (1/x)·(1 + Σ...)，用 Abramowitz 9.8.6
-    let sum = 0;
-    let H = 0;
-    let ff = 1; // k!
-    let f2 = 1;
-    for (let k = 1; k <= 20; k++) {
-      f2 *= (k * k);
-      H += 1 / k;
-      // 数值实现 K1 的小 x 展开
-    }
-    // 直接数值积分 K1(x) = x ∫_1^∞ e^{-xt}(t²-1)^{1/2} dt ... 改用另一种：
-    // K1(x) = (1/x)·e^{-x}·x·1/x 复杂，这里用关系 K1 = -K0'
-    return approxK1Small(x);
+    const y = x * x / 4;
+    return (Math.log(x / 2) * bessI1(x)) + (1 / x) * (1 + y * (0.15443144 + y * (-0.67278579 + y * (-0.18156897 + y * (-0.01919402 + y * (-0.00110404 + y * (-0.00004686)))))));
   } else {
-    const t = 2 / x;
-    return Math.exp(-x) / Math.sqrt(x) * (1.25331414 + t * (0.23498619 + t * (-0.03655620 + t * (0.01504268 + t * (-0.00780353 + t * (0.00325614 + t * (-0.00068245)))))));
+    const y = 2 / x;
+    return (Math.exp(-x) / Math.sqrt(x)) * (1.25331414 + y * (0.23498619 + y * (-0.03655620 + y * (0.01504268 + y * (-0.00780353 + y * (0.00325614 + y * (-0.00068245)))))));
   }
 }
 
-function approxK1Small(x: number): number {
-  // K1(x) 小 x 展开（Abramowitz & Stegun 9.6.11）
-  const t = x / 2;
-  const t2 = t * t;
-  let I1 = 1; // I1(x)/x/2 归一化后
-  let term = 1;
-  let fact = 1;
-  for (let k = 1; k <= 20; k++) {
-    fact *= k;
-    // (t²)^k/(k!·(k+1)!)
-    term *= t2 / (k * (k + 1));
-    I1 += term;
+function bessI0(x: number): number {
+  let ax = Math.abs(x), ans, y;
+  if (ax < 3.75) {
+    y = x / 3.75; y *= y;
+    ans = 1 + y * (3.5156229 + y * (3.0899424 + y * (1.2067492 + y * (0.2659732 + y * (0.0360768 + y * 0.0045813)))));
+  } else {
+    y = 3.75 / ax;
+    ans = (Math.exp(ax) / Math.sqrt(ax)) * (0.39894228 + y * (0.01328592 + y * (0.00225319 + y * (-0.00157565 + y * (0.00916281 + y * (-0.02057706 + y * (0.02635537 + y * (-0.01647633 + y * 0.00392377))))))));
   }
-  I1 *= (x / 2); // 恢复 I1(x)
-  // K1 = 1/x + (x/2)·[ln(x/2)·I1 关系] —— 用数值稳定的公式
-  // K1(x) = [1 + (x/2)²·(...)]/x 近似
-  // 这里用 Simpson 数值积分保证正确性：
-  return numericalK1(x);
+  return ans;
 }
 
-function numericalK1(x: number): number {
-  // K1(x) = x ∫_1^∞ e^{-xt}(t²-1)^{1/2} dt（改进数值积分）
-  // 用 Gauss-Laguerre 风格或分段 Simpson。简单可靠做法：
-  // K1(x) = ∫_0^∞ e^{-x·cosh(u)} cosh(u) du
-  let sum = 0;
-  const h = 0.05;
-  for (let u = 0; u <= 40; u += h) {
-    const cu = Math.cosh(u);
-    const f = Math.exp(-x * cu) * cu;
-    sum += f * h;
+function bessI1(x: number): number {
+  let ax = Math.abs(x), ans, y;
+  if (ax < 3.75) {
+    y = x / 3.75; y *= y;
+    ans = ax * (0.5 + y * (0.87890594 + y * (0.51498869 + y * (0.15084934 + y * (0.02658733 + y * (0.00301532 + y * 0.00032411))))));
+  } else {
+    y = 3.75 / ax;
+    ans = 0.2282967e-1 + y * (-0.2895312e-1 + y * (0.1787654e-1 - y * 0.420059e-2));
+    ans = 0.39894228 + y * (-0.03988024 + y * (-0.00362018 + y * (0.00163801 + y * (-0.01031555 + y * (0.02282967 + y * (-0.02895312 + y * (0.01787654 + y * (-0.00420059 + y * ans))))))));
+    ans *= Math.exp(ax) / Math.sqrt(ax);
   }
-  return sum;
+  return x < 0 ? -ans : ans;
 }
 
 // 用数值积分统一 K0/K1（保证正确，牺牲一点性能——但光纤计算量很小）
@@ -206,18 +155,18 @@ export function numericalAperture(fiber: FiberParams): number {
 function charEquation(U: number, W: number, l: number): number {
   if (l === 0) {
     const j0 = besselJ0(U), j1 = besselJ1(U);
-    const k0 = besselK0_numeric(W), k1 = besselK1_numeric(W);
+    const k0 = besselK0(W), k1 = besselK1(W);
     if (j0 === 0 || k0 === 0) return Infinity;
     return U * j1 / j0 - W * k1 / k0;
   } else if (l === 1) {
     const j0 = besselJ0(U), j1 = besselJ1(U);
-    const k0 = besselK0_numeric(W), k1 = besselK1_numeric(W);
+    const k0 = besselK0(W), k1 = besselK1(W);
     if (j1 === 0 || k1 === 0) return Infinity;
     return U * j0 / j1 + W * k0 / k1;
   } else {
     // 高阶 l 用近似（弱导下高阶影响小）
     const j0 = besselJ0(U), j1 = besselJ1(U);
-    const k0 = besselK0_numeric(W), k1 = besselK1_numeric(W);
+    const k0 = besselK0(W), k1 = besselK1(W);
     if (j1 === 0 || k1 === 0) return Infinity;
     return U * j0 / j1 + W * k0 / k1;
   }
@@ -413,9 +362,9 @@ export function radialField(l: number, U: number, W: number, a: number, r: numbe
     return jlApprox(l, (U * r) / a);
   } else {
     const x = (W * r) / a;
-    if (l === 0) return besselK0_numeric(x);
-    if (l === 1) return besselK1_numeric(x);
-    return besselK0_numeric(x); // l>1 包层用 K0 近似（径向包层衰减速率相近）
+    if (l === 0) return besselK0(x);
+    if (l === 1) return besselK1(x);
+    return besselK0(x); // l>1 包层用 K0 近似（径向包层衰减速率相近）
   }
 }
 
