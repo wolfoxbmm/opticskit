@@ -1,0 +1,63 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的弱光探测场景原本选了光子计数方案，信噪比却不理想；换成模拟探测后更差。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">两种方案各试了一遍都没解决——因为你的场景根本不在任何一个方案的最佳适用范围里。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">光子计数的最佳适用条件</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光子计数（Photon Counting）本质上是逐个检测和统计光子到达事件。当光强极弱（弱到光子可以相互分开）时，这是最有效的探测方式（来源：Cova et al., J. Mod. Opt. 2004）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>光子到达率 &lt; 10⁶ photons/s</strong>：平均光子间隔 &gt; 1μs，远大于探测器死时间，光子事件基本互不重叠</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>信号持续时间 &gt; 探测器死时间</strong>：InGaAs SPAD死时间约10-100μs，若信号脉冲短于死时间，则后续光子全部漏检（来源：Cova et al., 2004）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>需要单光子分辨率和时间标签</strong>：TCSPC（时间相关光子计数）可达~50ps定时精度，用于荧光寿命测量、量子光学实验</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">（来源：McIntyre, IEEE Trans. Electron Devices, 1966）</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">模拟探测的适用条件</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">当光强大到光子无法相互分开时，继续用光子计数就会因为大量重叠事件导致失真甚至饱和。此时应该切换到模拟探测（Analog Detection）：直接积分光电流，测量平均功率而非逐光子计数（来源：Hobbs, Building Electro-Optical Systems, 2nd ed., 2009）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>光子到达率 &gt; 10⁷ photons/s</strong>：光强大到光子事件高度重叠，计数器几乎总是饱和</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>连续光或调制光</strong>：信号是连续波（CW）或长脉冲（&gt;μs量级），积分测量更稳定</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>需要高动态范围（&gt;60dB）</strong>：模拟探测的动态范围远超光子计数，是测量光功率变化范围大的场景首选</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">两种方案核心参数对比</span></h2>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">参数</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">光子计数</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">模拟探测</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">动态范围</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~40 dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&gt;80 dB</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">死时间</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">10-100 μs（限制最大计数率）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">无（连续积分）</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">定时精度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~50 ps（TCSPC模式）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">受ADC采样率限制</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">最低探测</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">单光子</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~1000 光子/脉冲</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">选型决策逻辑树</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">用三个问题快速判断该用哪种方案：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Q1: 光子到达率是多少？</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">&gt;10⁶ photon/s？→ <strong>选模拟探测</strong>（光子计数已饱和）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">&lt;10⁶ photon/s？→ 进入 Q2</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Q2: 需要亚纳秒定时精度吗？</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">需要（TCSPC/量子光学/荧光寿命）？→ <strong>选光子计数</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">不需要？→ 进入 Q3</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Q3: 动态范围需求多大？</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">&gt;60dB？→ <strong>选模拟探测</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">&lt;40dB？→ <strong>选光子计数</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">还有一类场景同时面对"弱光"和"高动态范围"两个矛盾需求——例如荧光强度分布测量或天文光变观测。此时可考虑<strong>Boxcar平均</strong>（模拟积分+数字平均）作为折中方案：用模拟前端积分弱光信号，再用数字平均压制噪声。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">选探测方案看光子数：单脉冲&lt;1000光子用光子计数（SNR优势&gt;10dB），&gt;10⁶光子用模拟探测。1-10³光子的灰色地带，取决于暗计数率和带宽需求——暗计数&lt;1kHz选光子计数，&gt;100kHz选模拟探测。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">选错了方案，调试三个月也救不回来。</p></div>

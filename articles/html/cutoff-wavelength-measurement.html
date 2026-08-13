@@ -1,0 +1,76 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的光谱仪标称探测范围0.9-1.7μm，但到了1.65μm，信号已经跌到峰值的一半以下。这不是设备故障，是截止波长定义和实际响应之间的认知落差。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">1.7μm截止波长，是怎么定义的</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">InGaAs探测器的截止波长由材料带隙决定。In₀.₅₃Ga₀.₄₇As与InP晶格匹配，带隙约0.75 eV，对应截止波长约1.7μm。但"截止波长"不是一道硬墙——它通常定义为<strong>响应度峰值下降到50%时的波长</strong>，不是响应度归零的波长。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这意味着：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 1.7μm处响应度是峰值的50%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 1.65μm处响应度可能只剩峰值的70%-80%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 1.60μm处可能还有90%以上</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">响应度滚降不是线性的。带边附近（Urbach尾区），吸收系数随能量呈指数下降，响应度滚降比线性更快。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么1.65μm就开始"测不到"</span></h2>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">1. Urbach尾区的指数衰减</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">InGaAs是直接带隙半导体，带边附近的吸收系数遵循：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">α(E) = α₀ exp[(E - E_g)/E_u]</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">其中E_u是Urbach能量（典型值约5-10 meV）。这意味着在带边以下几十nm范围内，吸收系数和响应度呈<strong>指数下降</strong>——不是线性、不是平方根，是指数。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>工程直觉</strong>：每远离带边约10nm，响应度可能下降一个数量级（取决于Urbach尾宽度）。1.65μm到1.7μm只差50nm，但对响应度的影响是指数级的。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">2. 测试条件 vs. 工作条件</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">厂家测试报告上的响应度曲线，通常是在<strong>特定温度、特定偏压、特定光斑尺寸</strong>下测的。你的实际工作条件往往不同：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 温度升高 → 带隙缩小 → 截止波长红移，但响应度滚降更陡</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 偏压不足 → 耗尽区变窄 → 吸收效率下降，尤其是长波区</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 光斑过大 → 边缘电场弱 → 载流子收集效率下降</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">3. 光谱仪校准的陷阱</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光谱仪的波长校准通常用<strong>氖灯或汞灯线谱</strong>，这些线谱在1.6μm以上很稀疏。光谱仪在1.65-1.7μm区间的波长精度可能不如短波区，加上响应度滚降，两个误差叠加——你以为"测不到"，可能是"测不准"加"响应不够"。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">数据对比：不同波长下的响应度</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以下数据基于典型InGaAs PIN响应度曲线（近带边行为参考：Sensors 23, 6556 (2023), MDPI；具体数值因器件结构、温度、AR膜设计而异，趋势一致）：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">波长</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型响应度(A/W)</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">相对峰值比例</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">工程意义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.55μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.95</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">100%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">通信波段C-band，响应峰值区</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.60μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.90</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~95%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">仍接近峰值</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.65μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.60</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~63%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">开始明显下降，SNR降低约2dB</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.70μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.48</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~50%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">厂家定义的"截止波长"</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.75μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt;0.10</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt;10%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">已远超截止，几乎无响应</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>注意</strong>：上表是典型值，实际器件因In组分微调、AR膜设计、温度等差异，具体数值可能不同。但滚降趋势一致。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">三个工程应对策略</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">1. <strong>提前预留波长裕量</strong>：如果目标波长1.65μm，选择截止波长≥1.8μm的扩展InGaAs探测器，而非刚好1.7μm的标品。响应度在1.65μm处可提高2-3倍。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">2. <strong>温控补偿</strong>：InGaAs响应度温度系数约+0.1%/°C（长波区）。如果必须工作在1.65μm，TEC制冷到-20°C可将截止波长蓝移约20nm，1.65μm处响应度提升15-20%。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. <strong>校准用近带边标准源</strong>：不要用氖灯线谱做1.65μm以上校准。用黑体辐射源或波长可调激光器，在目标波长附近直接校准，消除光谱仪响应度不均匀带来的系统误差。</p>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> ：截止波长1.7μm不等于1.7μm以下"全都能测"。响应度在1.65μm已跌到峰值的50%-70%，如果你的信号本身弱、噪声大，1.65μm"测不到"是物理规律，不是设备故障。选探测器时，目标波长至少远离截止波长100nm，或选扩展波长型号。
+</blockquote></div>

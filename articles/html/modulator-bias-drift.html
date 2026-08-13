@@ -1,0 +1,24 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">电光调制器偏压锁定在Quadrature点，前10分钟消光比稳定在20dB。半小时后回来看，偏压显示值没变，但输出光功率悄然偏离了最初设定值。检查了驱动电路、温控闭环、电源纹波——全正常。问题是铌酸锂（LiNbO₃）晶体自身的DC漂移，一种无法被反馈环路完全消除的"内源性"偏压偏移。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">DC漂移：铌酸锂的材料本能</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">LiNbO₃电光调制器的偏压点（Operation point）是通过在电极上施加直流电压来控制的。但在恒定直流偏压下，LiNbO₃晶体的有效折射率会随时间缓慢漂移，相当于晶体内部的"工作点"自己移动了——这就是DC漂移（bias drift）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">物理机制：LiNbO₃在直流电场下发生电荷迁移。晶体内部的自由电荷（杂质离子、氧空位等）在电场驱动下缓慢重分布，形成内建屏蔽电场，部分抵消外加偏压的效果。等效于有效偏压随时间衰减（Yamada et al., <em>J. Appl. Phys.</em>, 1996）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">衰减曲线近似对数/幂律函数：最初漂移最快（前5分钟可漂移5-10°相位），然后进入缓慢长期漂移（每小时1-3°相位）。表征为"半衰期"——有效偏压降至初始值50%所需时间，"弱"漂移器件约数百小时，"强"漂移器件仅数十分钟。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">反馈环路为什么追不上？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">大多数偏压控制电路采用Dither-then-lock策略：施加小幅度低频调制信号（~1kHz），检测输出光功率的二阶谐波分量，反馈调节DC偏压，锁定在Quadrature点（半功率点）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">反馈环路的局限：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 带宽限制——环路带宽通常&lt;100Hz，而DC漂移初期变化速率等效于&gt;10Hz的扰动分量</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• Dither本身引入残余调制——1kHz Dither的残余AM分量耦合到输出信号</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 温度耦合——LiNbO₃的热光效应（dn/dT≈4×10⁻⁵/°C）与电光效应共存，DC漂移反馈环路无法区分热漂移和电荷漂移（Jungo et al., <em>J. Lightwave Technol.</em>, 2003）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">DC漂移的速度受温度加速：温度每升高10°C，漂移速率约翻倍。调制器工作温度从25°C升到35°C，半小时内相位漂移可以从10°加剧到25°。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">不同切向的漂移差异</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">X-cut LiNbO₃调制器的DC漂移比Z-cut严重约3-5倍（Howerton &amp; Burns, <em>J. Lightwave Technol.</em>, 2001）。因为X-cut的电极电场方向与晶体极化轴不完全对齐，自由电荷迁移驱动力更大。如果使用X-cut调制器且偏压&gt;5V，DC漂移是必须正视的问题。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">结论</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">偏压控制电路锁定的是它测量到的误差信号，不是铌酸锂晶体内部的真实电场。当晶体内部电荷重分布产生屏蔽电场，反馈环路只能"看到"外电路电压稳定，却检测不到内建电场已经削弱了你的偏压效果。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">偏压锁住了——锁的是控制电路，不是铌酸锂。DC漂移让晶体的"有效偏压"悄悄偏离Quadrature点，半小时30°的相位漂移无法靠反馈环路追回。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>诊断建议</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 优先选Z-cut调制器，X-cut的DC漂移严重3-5倍</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 降低环境温度（&lt;30°C），温度每降10°C漂移速度减半</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 采用零啁啾推挽配置，对DC漂移的敏感度降低</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 对偏压控制电路加预偏置补偿——根据漂移历史曲线预测偏移量</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 不能接受漂移的系统考虑用InP基调制器——III-V族材料的DC漂移比LiNbO₃低一个数量级</p></div>

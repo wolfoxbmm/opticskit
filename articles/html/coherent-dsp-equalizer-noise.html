@@ -1,0 +1,77 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的相干接收机DSP里开了自适应均衡（Equalization），信号质量反而不如不开的时候。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你以为是算法bug——其实是均衡器在某些信道损伤类型下会引入额外的噪声放大。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">自适应均衡器的工作原理</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">自适应均衡器（Adaptive Equalizer）是相干接收机DSP中的核心模块，通过FIR（有限冲激响应）或DFE（判决反馈）滤波器补偿信道损伤（来源：Proakis, Digital Communications, 5th ed., 2008），包括：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>色散（CD）</strong>：光纤色散导致不同频率分量以不同速度传播，均衡器重构平坦频率响应</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>偏振模色散（PMD）</strong>：两个偏振通道时延差不同，均衡器分离并补偿两个通道</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>非线性损伤（Kerr效应）</strong>：高功率传输时自相位调制/交叉相位调制引入相位畸变</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">然而在某些信道条件下，自适应均衡器会从"补偿工具"变成"噪声放大器"（来源：Proakis, 2008）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">自适应均衡器出问题的四种情况</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>SNR极低时（SNR&lt;5dB）</strong>：均衡器开始放大噪声而非恢复信号。滤波器系数在噪声驱动下偏离正确值，导致噪声增强</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>高度非线性信道</strong>：Kerr非线性引入的相位噪声不是线性可补偿的，线性均衡器反而引入串扰</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>相位噪声过强（激光线宽&gt;1MHz）</strong>：自适应算法收敛失败，产生cycle slip（相位翻转），误码率急剧上升</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>训练序列与实际信道不匹配</strong>：均衡器收敛到错误均衡点，反而恶化信号质量</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">噪声增强因子（NSF）</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">均衡器引入的噪声放大效应可以用噪声增强因子（Noise Enhancement Factor, NSF）量化（来源：Savage et al., J. Lightwave Technol. 2006）：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">等效噪声 = 原始噪声 × (1 + Σ|g_i|²)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">当信道条件差（高阶PMD、深色散补偿）时，NSF &gt;&gt; 1，均衡器成为主要噪声源</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">补偿类型</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">NSF典型值</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">噪声影响</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">色散补偿后</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">NSF ≈ 1.2</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">轻微</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">PMD补偿后</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">NSF ≈ 1.5 - 3</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">显著，严重时不可忽视（来源：Savage et al., 2006）</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">自适应算法选择指南</span></h2>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">算法</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">优点</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">缺点</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">适用场景</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">LMS</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">实现简单，计算量小</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">收敛慢</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">慢变信道（室内光纤）</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">RLS</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">收敛快</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">计算量大，数值稳定性差</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">快变信道（野外光缆）</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">CMA</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">盲均衡，无需训练序列</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">对相位噪声敏感</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">高阶QAM，无训练序列时</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">均衡器开NSF=3-6dB意味着SNR恶化3-6dB——当信道损伤集中在均衡器不擅长的模式（如偏振相关损耗PDL）时，NSF更大。判断标准：关闭均衡器后SNR反而改善&gt;3dB，说明均衡器在放大噪声而非补偿损伤。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">开了均衡反而更差，先看星座图再查算法。</p></div>

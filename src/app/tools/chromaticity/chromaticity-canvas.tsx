@@ -43,6 +43,15 @@ interface ChromaticityCanvasProps {
   onLocate: (x: number, y: number, info: PointInfo | null) => void;
   point1: PointInfo | null;
   point2: PointInfo | null;
+  batchPoints?: BatchPoint[];
+}
+
+export interface BatchPoint {
+  x: number;
+  y: number;
+  label: string | null;
+  cct: number | null;
+  inZone: boolean | null;
 }
 
 export interface PointInfo {
@@ -56,6 +65,7 @@ export interface PointInfo {
   XYZ: { X: number; Y: number; Z: number };
   Lab: { L: number; a: number; b: number };
   gamutIn: string[];
+  outsideLocus: boolean;
 }
 
 // Diagram configuration per mode
@@ -140,6 +150,7 @@ export default function ChromaticityCanvas({
   onLocate,
   point1,
   point2,
+  batchPoints,
 }: ChromaticityCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -193,7 +204,8 @@ export default function ChromaticityCanvas({
       let xyX: number, xyY: number;
       if (diagramMode === "xy") { xyX = x; xyY = y; }
       else { const xy = uvPrimeToXy(x, y); xyX = xy.x; xyY = xy.y; }
-      if (xyX < 0 || xyY < 0 || xyX + xyY > 1 || xyY === 0) return null;
+      // 仅保护真正的除零/无意义情况；图外区域仍需给出反馈（前端另做“光谱外”标注）
+      if (xyY <= 0.0001) return null;
       const uv = xyToUvPrime(xyX, xyY);
       const cctResult = cctWithDuv(uv);
       const XYZ = xyToXYZ(xyX, xyY, 0.5);
@@ -203,6 +215,8 @@ export default function ChromaticityCanvas({
       for (const [name, g] of Object.entries(GAMUTS)) {
         if (pointInGamut(xyX, xyY, g.R, g.G, g.B)) gamutIn.push(name);
       }
+      // 判断是否在可见光谱轨迹（马蹄形）外：x<0、y<0 或 x+y>1 明显越界
+      const outsideLocus = xyX < 0 || xyY < 0 || xyX + xyY > 1;
       return {
         x: xyX, y: xyY, up: uv.uPrime, vp: uv.vPrime,
         cct: cctResult.cct, duv: cctResult.duv,
@@ -210,6 +224,7 @@ export default function ChromaticityCanvas({
         XYZ: { X: XYZ.X, Y: XYZ.Y, Z: XYZ.Z },
         Lab: { L: Lab.L, a: Lab.a, b: Lab.b },
         gamutIn,
+        outsideLocus,
       };
     },
     [diagramMode]
@@ -499,9 +514,28 @@ export default function ChromaticityCanvas({
       if (point1) drawDeltaPt(point1, "1", "#00e676");
       if (point2) drawDeltaPt(point2, "2", "#ff6b00");
     }
+
+    // Batch point markers (批量分析)
+    if (batchPoints && batchPoints.length > 0) {
+      batchPoints.forEach((bp, idx) => {
+        const buv = xyToUvPrime(bp.x, bp.y);
+        const bx = diagramMode === "xy" ? bp.x : buv.uPrime;
+        const by = diagramMode === "xy" ? bp.y : buv.vPrime;
+        const [bpx, bpy] = toPixel(bx, by, W, H);
+        const col = bp.inZone == null ? "#888888" : bp.inZone ? "#00e676" : "#ff5252";
+        ctx.beginPath(); ctx.arc(bpx, bpy, 5, 0, Math.PI * 2);
+        ctx.fillStyle = col + "33";
+        ctx.fill();
+        ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.stroke();
+        if (bp.label) {
+          ctx.fillStyle = col; ctx.font = "9px monospace";
+          ctx.fillText(bp.label, bpx + 7, bpy - 7);
+        }
+      });
+    }
   }, [
     diagramMode, diagramData, showMacAdam, showBB, showSRGB, showP3, showAdobeRGB, showACES, showRec2020, showLabels,
-    locateX, locateY, point1, point2, illTooltip, toPixel, cfg, locus, bb, macadam, gamuts, wp, xR0, xR1, yR0, yR1,
+    locateX, locateY, point1, point2, batchPoints, illTooltip, toPixel, cfg, locus, bb, macadam, gamuts, wp, xR0, xR1, yR0, yR1,
   ]);
 
   // Main render trigger
@@ -532,8 +566,8 @@ export default function ChromaticityCanvas({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locateX, locateY, point1, point2]);
 
-  // Mouse handlers
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+  // Pointer handlers (统一鼠标 + 触摸)
+  const handlePointerMove = useCallback((e: React.PointerEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -570,7 +604,7 @@ export default function ChromaticityCanvas({
     setIllTooltip(null);
   }, []);
 
-  const handleClick = useCallback((e: React.MouseEvent) => {
+  const handlePointerDown = useCallback((e: React.PointerEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
@@ -588,8 +622,9 @@ export default function ChromaticityCanvas({
 
   return (
     <div ref={containerRef} style={{ flex: 1, position: "relative", minWidth: 0, background: "#050505", borderRadius: 12, overflow: "hidden" }}>
-      <canvas ref={canvasRef} style={{ display: "block", position: "absolute", top: 0, left: 0, cursor: "crosshair" }}
-        onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={handleClick} />
+      <canvas ref={canvasRef}
+        style={{ display: "block", position: "absolute", top: 0, left: 0, cursor: "crosshair", touchAction: "none" }}
+        onPointerMove={handlePointerMove} onPointerLeave={handleMouseLeave} onPointerDown={handlePointerDown} />
       <div style={{
         position: "absolute", top: 16, right: 16,
         background: "rgba(20,20,20,0.94)", backdropFilter: "blur(12px)", border: "1px solid #1f1f1f",

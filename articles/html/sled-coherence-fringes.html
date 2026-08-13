@@ -1,0 +1,73 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的SLED光源标称带宽80nm，中心波长840nm，按理论算相干长度只有约8.8μm——远低于干涉仪的光程差。但你在OCT或干涉测量中，居然看到了清晰的干涉条纹。这不是仪器故障，是SLED光谱里藏着你看不见的"残余相干"。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">80nm带宽，理论相干长度是多少</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SLED的超辐射发光来源于放大的自发辐射，光谱呈宽谱高斯型。理论相干长度由傅里叶变换关系决定：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">L_c = λ² / Δλ</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">代入 λ = 840 nm, Δλ = 80 nm：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">L_c ≈ 8.8 μm</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这意味着光程差超过约8.8 μm，干涉条纹可见度应降到接近零。但实际工程中，OCT的光程差可能到几毫米——条纹依然可见，只是对比度降低。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么"看不见的"光谱结构让你"看得见"条纹</span></h2>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">1. 光谱调制（Spectral Ripple）的残余相干</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SLED的光谱不是理想的高斯型。由于腔内多次反射、自相位调制、以及增益谱的Fabry-Perot效应，实际光谱叠加了<strong>周期性调制</strong>（spectral ripple），典型调制深度0.5-3 dB。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这个调制在频域表现为一系列等间距的"子峰"。对傅里叶变换而言，每个子峰对应一个<strong>延迟域的旁瓣</strong>（sidelobe）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>工程直觉</strong>：80nm宽带的主峰对应8.8μm的相干长度，但光谱调制产生的子峰可能对应几百μm甚至几mm的延迟。这些旁瓣在光程差较大时虽然幅度低，但足以产生"可见的"干涉条纹——不是主峰的条纹，是旁瓣的条纹。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">2. 自相位调制（SPM）的非线性谱结构</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SLED在高功率工作时，超辐射光在增益介质中传播会产生自相位调制。SPM在时域是相位调制，在频域表现为<strong>光谱展宽+精细结构</strong>。这些精细结构同样对应延迟域的长尾相干。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">实验观测：SLED在115mW输出时，3dB带宽50nm，但光谱上可观测到明显的调制结构（Optoelectronics Letters相关研究）。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">3. 放大自发辐射的"部分相干"本质</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SLED介于LED和激光之间。它不是完全非相干光（如热光源），也不是完全相干光（如激光）。其<strong>相干度（degree of coherence）</strong>是波长的连续函数：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 短光程差（&lt; L_c）：高相干度，条纹清晰</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 中等光程差（L_c ~ 10L_c）：部分相干，条纹可见但对比度低</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 长光程差（&gt; 100L_c）：极低相干度，但非零——旁瓣相干导致"幽灵条纹"</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">数据：SLED的相干特性实测</span></h2>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">参数</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型值</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">来源/说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">3dB带宽</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">50-100 nm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">取决于SLED结构和驱动电流</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">理论相干长度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">7-15 μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">L_c = λ²/Δλ</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光谱调制深度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.5-3 dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">实际光谱非理想高斯</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">旁瓣延迟位置</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">100 μm - 2 mm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">取决于光谱调制周期（典型估计）</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">旁瓣可见度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1%-10%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">远低于主瓣，但肉眼/探测器可分辨</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">相干度@1mm光程差</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~0.5%-2%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">部分相干的残余</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">来源：Wiley Online Library — Superluminescent Light-Emitting Diodes (Zang &amp; Qian, 2026); 激光与红外 2021, SLED研制综述</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">三个工程应对策略</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">1. <strong>光谱平滑化</strong>：在SLED后加一段<strong>高双折射光纤</strong>或<strong>Lyot去偏器</strong>，破坏光谱相干性，将光谱调制深度从3dB压到&lt;0.5dB。代价是损失10-20%光功率。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">2. <strong>OCT参考臂光程差控制</strong>：在光学相干断层扫描（OCT）中，如果SLED残余相干导致"镜像伪影"（mirror artifact），将参考臂光程差控制在<strong>主瓣相干长度范围内</strong>（&lt;10μm），避免激发旁瓣相干。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. <strong>选用低光谱调制SLED</strong>：部分厂商的SLED采用<strong>有源MMI结构</strong>（active-MMI），通过自成像效应降低光谱调制，调制深度可&lt;0.3dB。标书选型时要求提供光谱调制深度指标，而非仅看3dB带宽。</p>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> ：SLED的"带宽80nm"只告诉你主峰的相干长度约8.8μm，但光谱调制产生的旁瓣相干可达毫米级。干涉条纹"看得见"不是理论错了，是你的系统激发了旁瓣相干。工程上要么平滑光谱消灭旁瓣，要么利用旁瓣相干（如某些传感应用），但不能假装它不存在。
+</blockquote></div>

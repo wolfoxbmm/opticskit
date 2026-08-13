@@ -66,8 +66,21 @@ export async function GET(req: NextRequest) {
   const limit = parseInt(searchParams.get('limit') || '50');
   const offset = parseInt(searchParams.get('offset') || '0');
 
-  const posts = getPosts({ sort, tag, search, limit, offset });
-  return NextResponse.json({ posts });
+  const posts = getPosts({ sort, tag, search, limit, offset }).map(p => ({
+    ...p,
+    avatar: p.avatar && /^U[0-9A-Fa-f]+$/.test(p.avatar) 
+      ? String.fromCodePoint(parseInt(p.avatar.slice(1), 16)) 
+      : p.avatar,
+  }));
+
+  // Compute tag counts for filter badges (independent of tag filter)
+  const allPosts = getPosts({ sort: "new", tag: "all", limit: 9999, offset: 0 });
+  const counts: Record<string, number> = { all: allPosts.length, suggestion: 0, bug: 0, discussion: 0 };
+  allPosts.forEach((p: any) => {
+    if (counts[p.tag] !== undefined) counts[p.tag]++;
+  });
+
+  return NextResponse.json({ posts, counts });
 }
 
 // POST /api/community — create post

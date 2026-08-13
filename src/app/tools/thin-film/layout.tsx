@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "薄膜干涉模拟 | 光学薄膜反射率 增透膜高反膜 - OpticsKit ",
-  description: "在线薄膜干涉模拟工具，基于传输矩阵法 TMM 计算单层光学薄膜反射率 vs 波长和膜厚扫描，含 13 种预设场景（SiO2增透膜、TiO2高反膜等），正入射计算",
-  keywords: ["薄膜干涉", "光学薄膜", "增透膜", "高反膜", "TMM传输矩阵", "薄膜反射率", "光学镀膜", "光学模拟", "膜厚设计", "光学工具箱"],
+  title: "薄膜干涉模拟 | 单层/多层增透膜 高反膜 滤光片设计 - OpticsKit",
+  description: "在线薄膜干涉模拟工具，单层/多层膜系反射率/透射率光谱计算，增透膜AR/高反膜HR/带通滤光片，特征矩阵法TMM，入射角/偏振角度可调，支持材料库快捷填充",
+  keywords: "薄膜干涉,薄膜光学,增透膜,高反膜,滤光片,TMM,传输矩阵法,膜系设计,光学镀膜,反射率,透射率",
   openGraph: {
-    title: "薄膜干涉模拟 | 光学薄膜反射率 增透膜高反膜",
-    description: "TMM传输矩阵法，单层膜反射率vs波长&膜厚扫描，13种预设场景",
+    title: "薄膜干涉模拟 | 单层/多层增透膜 高反膜 滤光片设计 - OpticsKit",
+    description: "在线薄膜干涉模拟工具，单层/多层膜系反射率/透射率光谱计算，增透膜AR/高反膜HR/带通滤光片，特征矩阵法TMM，入射角/偏振角度可调，支持材料库快捷填充",
     type: "website",
+    url: "https://opticskit.cn/tools/thin-film",
   },
-
   alternates: {
-    canonical: "./",
+    canonical: "https://opticskit.cn/tools/thin-film",
   },
 };
 
-export default function ThinFilmLayout({ children }: { children: React.ReactNode }) {
+export default function ToolLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <>{children}</>;
 }

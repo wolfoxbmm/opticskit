@@ -1,0 +1,59 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的光通信接收机前端TIA，增益调高了带宽就不够用，带宽拉满了增益又太小。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你以为是芯片选错了——其实这是TIA设计的物理极限，没有两全其美的方案。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">跨阻放大器的基本方程</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">跨阻放大器（Transimpedance Amplifier，TIA）将光电探测器输出的微弱电流信号转换为电压信号。其核心关系极为简洁：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">V_out = I_in × R_f</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">R_f 为反馈电阻，其阻值直接决定电压增益（单位：V/A = Ω）（来源：Hobbs, 2009）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">从公式看，似乎只要把 R_f 做大就能同时获得高增益和宽带宽。但现实受限于运算放大器的<strong>增益带宽积（GBW）</strong>这一物理约束。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">增益-带宽的物理矛盾</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">TIA工作在闭环反馈状态，其闭环带宽由以下公式决定：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">f_c ≈ GBW / (2π · R_f)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">GBW = 增益带宽积（gain-bandwidth product），由运放本身决定；R_f ↑ → f_c ↓（严格反比）（来源：Hobbs, Building Electro-Optical Systems, 2nd ed., 2009）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这是一个无法绕开的物理限制：<strong>R_f 增大 2 倍，闭环带宽就缩小 2 倍</strong>。没有运放能逃脱这一数学关系。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这也是为什么商用TIA通常只标注单一R_f配置——厂家在设计时已经为特定速率场景选好了最优R_f。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">典型规格数据对比</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以1550nm波段PIN光电二极管配合商用人眼图优化TIA为例，R_f与带宽/灵敏度的典型对应关系如下：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">反馈电阻 R_f</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">闭环带宽</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">PIN接收灵敏度（1550nm）</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型应用场景</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1 kΩ</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~10 GHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-15 dBm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">25+ Gbps</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">5 kΩ</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~2 GHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-21 dBm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">2.5 / 10 Gbps</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">10 kΩ</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~1 GHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-24 dBm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt; 1 Gbps</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">（来源：典型InGaAs TIA数据表汇总；Hobbs, 2009）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对于25Gbps光模块的典型配置：R_f ≈ 1kΩ，带宽 ≈ 8GHz，灵敏度 ≈ -14dBm（考虑后级DSP处理增益）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">增益不足的系统级后果</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果系统选用了带宽足够但增益偏低的TIA配置，会引发连锁反应：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>信噪比下降</strong>：前置TIA增益不够，后级放大器噪声贡献占比增加，等效输入噪声恶化（来源：Hobbs, 2009）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>误码率上升</strong>：SNR每下降3dB，在相同调制格式下BER呈数量级恶化</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>链路预算收紧</strong>：灵敏度恶化3dB ≈ 光功率预算减少3dB ≈ 无中继传输距离缩短约30%（按光纤损耗0.2dB/km估算）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这意味着：10km链路设计如果灵敏度算少了3dB，可能变成必须加光放才能到达。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">TIA增益-带宽是硬约束：R_f=10kΩ时BW≈100MHz，R_f=1kΩ时BW≈1GHz——想要高增益+宽带宽，只能用多级TIA（第一级低增益宽带+第二级放大），但每加一级多3-5dB噪声。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">没有两全其美的TIA，只有最适合应用场景的取舍。</p></div>

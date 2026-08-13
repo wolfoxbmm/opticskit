@@ -1,0 +1,142 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你买了一片532nm窄带滤光片，带宽1nm，厂家测试报告上中心波长精度±0.2nm。装机后一测，中心波长跑到了531.5nm——信号直接掉了40%。你以为滤光片坏了，退货换了一片，还是一样。问题不在滤光片质量，在于你的光路里有5°的入射角偏差。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">滤光片标称的中心波长，只在正入射时成立</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">窄带滤光片的中心波长，是厂家在<strong>正入射（0°）</strong>条件下用准直光测出来的。这个数值写在测试报告上，也是你以为买到的"532nm"。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但实际装机时，光路里很少有完美的0°入射。常见的情况：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 光束经过反射镜转向后，入射角偏了3°–5°</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 准直透镜有焦距偏差，光束不是严格平行</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 滤光片安装座有机械公差，倾斜了2°–3°</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 多波长系统中，不同波长光束以不同角度汇聚到滤光片上</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这些偏差看起来不大，但对窄带滤光片来说，5°就足以让中心波长漂移0.5nm——如果你的带宽只有1nm，这0.5nm的漂移意味着通带中心已经偏移了半个带宽，透射率急剧下降。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">5°入射角为什么能漂0.5nm？公式拆解</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">窄带滤光片的角度漂移有成熟的物理模型。根据Pidgeon和Smith的经典分析（Pidgeon &amp; Smith, <em>J. Opt. Soc. Am.</em>, 1964），对于小角度入射（&lt;15°），中心波长的相对偏移量可以近似为：</p>
+<blockquote style="text-align:center;margin:0;padding:20px 0;border-left:none;background:transparent;">
+  <p style="font-family:Times New Roman,serif;font-size:17px;color:#000;font-weight:600;margin:0;padding:0 0 8px 0;">Δλ / λ₀ = −θ² / (2n\*²)</p>
+  <p style="font-size:13px;color:#666;margin:0;padding:0 0 4px 0;">θ为入射角（弧度），n\*为滤光片的有效折射率</p>
+</blockquote>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">负号表示<strong>蓝移</strong>——入射角增大，中心波长向短波方向漂移。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">关键参数：有效折射率 n\*</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">有效折射率 n\* 不是单一膜层的折射率，而是整个多层膜堆的等效值。它取决于：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 膜层材料的高低折射率组合（如TiO₂/SiO₂、Ta₂O₅/SiO₂）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 腔体类型（高折射率腔 vs 低折射率腔）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 膜层次数和级次</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">膜系类型</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型n\*范围</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">角度敏感度</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">低折射率腔，Ta₂O₅/SiO₂</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.7–1.9</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">高</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">高折射率腔，TiO₂/SiO₂</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">2.0–2.2</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">中</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">高折射率腔，Ge/ZnS（红外）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">2.5–3.0</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">低</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">（数据来源：Pidgeon &amp; Smith, <em>J. Opt. Soc. Am.</em> 54, 1459, 1964；MacLeod, <em>Thin-Film Optical Filters</em>, 4th ed., CRC Press, 2010）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">n\<em>越高，角度敏感度越低——这就是为什么红外波段滤光片（Ge材料，n\</em>~3）对角度不敏感，而可见光波段滤光片（SiO₂/Ta₂O₅，n\*~1.8）角度一偏就漂。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">代入数字：532nm滤光片，5°入射角</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以一片532nm窄带滤光片为例，n\*=2.0（典型Ta₂O₅/SiO₂高折射率腔设计）：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">θ = 5° = 0.0873 rad</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δλ/λ₀ = −(0.0873)² / (2 × 2.0²) = −0.00762 / 8.0 = −9.52×10⁻⁴</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δλ = −9.52×10⁻⁴ × 532 = −0.506 nm</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>0.5nm，正好是标称带宽1nm的一半。</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果把n\*换成1.8（低折射率腔设计），漂移量更大：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δλ = −(0.0873)² / (2 × 1.8²) × 532 = −0.626 nm</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">不同入射角下的漂移量对比（λ₀=532nm, n\*=2.0）：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">入射角</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">Δλ (nm)</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">占1nm带宽比例</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1°</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">−0.020</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">2%</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">2°</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">−0.080</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">8%</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">3°</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">−0.181</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">18%</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">5°</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">−0.506</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">51%</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">7°</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">−0.990</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">99%</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">10°</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">−2.01</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">201%</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> 5°入射角偏移就能让中心波长漂掉半个带宽。7°偏移直接漂掉一整个带宽——滤光片基本失效。这不是质量问题，是干涉滤光片的物理特性：入射角改变，膜层中的有效光程改变，中心波长必然偏移。
+</blockquote>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么你的光路里总会有几度偏差</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">很多工程师觉得"我装的时候是对准的"，但实际偏差来源远不止安装：</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">1. 反射镜转向带来的角度误差</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光路中用反射镜转向是标准操作，但每面反射镜的安装角度都有±1°–2°的公差。两面反射镜串联，累积偏差就可能达到3°–4°。你以为光束是正入射到滤光片上的，实际可能偏了5°。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">2. 准直透镜的焦距公差</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">准直透镜的焦距有±2%–5%的制造公差。如果光源不在严格焦点上，出射光束带有一定发散角。对于f=50mm的透镜，光源偏离焦点1mm，出射光束发散角约1.15°——全圆锥角2.3°。这不是准直光，而是会聚/发散光锥。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">3. 滤光片安装座倾斜</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">标准的Ø25mm滤光片安装座，机械公差通常在±1°–2°。如果用了螺纹旋转座（如C型接口），旋转过程中倾斜量还会变化。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">4. 会聚光束直接照射滤光片</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这是最严重的情况。如果把滤光片放在会聚光束中（例如透镜焦平面附近），光束中不同光线以不同角度入射到滤光片上。根据Lissberger和Wilcock的分析（Lissberger &amp; Wilcock, <em>J. Opt. Soc. Am.</em>, 1959），会聚光束不仅导致中心波长漂移，还会导致<strong>带宽展宽</strong>和<strong>峰值透过率下降</strong>：</p>
+<blockquote style="text-align:center;margin:0;padding:20px 0;border-left:none;background:transparent;">
+  <p style="font-family:Times New Roman,serif;font-size:17px;color:#000;font-weight:600;margin:0;padding:0 0 8px 0;">W_θ = √(W₀² + Δν'²)</p>
+  <p style="font-size:13px;color:#666;margin:0;padding:0 0 4px 0;">W₀为正入射带宽，Δν'为圆锥半角对应的波长漂移量</p>
+</blockquote>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">半圆锥角5°时，带宽展宽约0.5nm（1nm→1.5nm），峰值透过率下降约10%。半圆锥角10°时，带宽展宽约2nm（1nm→3nm），峰值透过率下降约30%。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">工程上怎么控制角度漂移</span></h2>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">1. 先算你系统的角度误差预算</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">把光路中所有角度误差源列出来，按均方根叠加：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 反射镜安装误差：±1.5°</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 透镜焦距引起的发散角：±1.2°</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 滤光片座倾斜：±1.0°</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 总RMS误差：√(1.5² + 1.2² + 1.0²) ≈ 2.1°</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对应的波长漂移：Δλ ≈ 0.09nm——如果你的带宽是1nm，这个漂移可以接受（&lt;10%带宽）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但如果任何一个环节误差加大（比如反射镜调偏了3°），总误差可能飙到5°以上，0.5nm的漂移就直接吃掉半个带宽。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">2. 滤光片放在准直光路中</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这是最基本的原则。滤光片应该放在光束最准直的位置——通常是两个准直透镜之间，而不是焦点附近。如果光路中有会聚点，滤光片要远离会聚点至少一个焦距。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">3. 利用角度漂移做精调</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">角度漂移不一定是坏事。如果你买的滤光片中心波长偏了+0.3nm（在厂家公差范围内），可以故意倾斜滤光片2°–3°来蓝移中心波长，补偿这0.3nm偏差。很多荧光显微镜中就是这么做的——滤光片安装在可调倾斜座上，用螺丝微调入射角。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">4. 选择高有效折射率的膜系</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果系统对角度敏感，优先选择高n\<em>膜系的滤光片。n\</em>=2.2的膜系比n\<em>=1.8的膜系角度敏感度低约33%。但高n\</em>膜系通常带宽更宽、峰值透过率略低，需要权衡。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">5. 宽带滤光片不是解决方案</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">有人想：我用3nm带宽的滤光片不就行了？5°漂移0.5nm只占17%，问题不大。但带宽加宽意味着背景光更多，信噪比下降。如果你的应用需要1nm带宽的光谱选择性，换宽带滤光片是在回避问题，不是解决问题。</p>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> 窄带滤光片的角度漂移不是缺陷，是干涉原理的必然结果。控制漂移的关键不在滤光片本身，而在光路设计：把滤光片放在准直区、控制安装角度误差&lt;2°、选择合适n\*膜系。如果必须用在会聚光中，选择半圆锥角&lt;3°的位置，或改用角度不敏感的滤光片设计。
+</blockquote></div>

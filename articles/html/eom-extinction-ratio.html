@@ -1,0 +1,109 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的LiNbO₃ Mach-Zehnder调制器规格书写着Vπ=3.5V、消光比&gt;20dB。你按要求供了5V驱动，消光比实测15dB——不仅没达标，而且连16QAM的星座图都收不全。问题不在驱动，在偏置点漂移。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">Vπ达标只是起点，不是终点</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">LiNbO₃电光调制器是电压控制器件，光强输出与施加电压的关系是：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">I_out / I_in = cos²(πV / 2Vπ)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>Vπ</strong>定义为光强从最大到最小（或反之）所需的电压摆幅。规格书上的Vπ通常是<strong>DC或低频（如1kHz）</strong>下的值。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但你的信号是<strong>射频（RF）</strong>——10GHz、25GHz、甚至更高。RF电极的传输线效应导致：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• <strong>频率滚降</strong>：Vπ随频率上升而增大，10GHz时的Vπ可能比DC值高30%-50%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• <strong>阻抗失配</strong>：驱动器50Ω输出与调制器电极（通常40-45Ω）不完全匹配，反射损耗降低有效驱动电压</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• <strong>行波电极长度有限</strong>：电光相互作用长度不足，高频下调制效率下降</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>工程直觉</strong>：规格书说Vπ=3.5V@1kHz。你的10Gbps信号基频约5GHz，实际Vπ可能已经是5V。你供5V，刚好在Vπ附近摆动，调制深度不足。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">消光比退化的真正杀手：偏置点漂移</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">即使Vπ和驱动都达标，消光比还有一个独立变量——<strong>偏置点（Bias Point）</strong>。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Mach-Zehnder的传输函数是余弦平方，偏置点决定工作区间：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• <strong>正交点（Quadrature, 50%传输）</strong>：线性区，适合模拟调制</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• <strong>峰点（Peak, 100%传输）</strong>：最大输出，但斜率为零</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• <strong>谷点（Null, 0%传输）</strong>：消光比最大，但斜率为零</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">偏置漂移的物理来源</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">LiNbO₃是热电光晶体，存在<strong>光折变效应（Photorefractive Effect）</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 光功率在晶体中沉积 → 局部加热 → 折射率变化 → 两臂相位差漂移</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 漂移速率：小时级（慢漂移），可达Vπ的100%（即1.0×Vπ）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 温度漂移：20°C→30°C范围内约0.035V，相对可忽略</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">来源：EPJ Quantum Technology 2023, "Arbitrary bias control of LiNbO3 based Mach-Zehnder intensity modulator"</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">实测数据：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">调制器</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">偏置漂移幅度</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">测试时间</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">样品1</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.24×Vπ</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~30h</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">样品2</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.00×Vπ</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~30h</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">系统崩溃阈值</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.30×Vπ</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">仿真</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">偏置漂移如何吃掉消光比</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">消光比（ER）定义为峰点与谷点的光强比：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">ER = 10·log₁₀(I_max / I_min)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果偏置点从理想的谷点漂移到"半谷"位置：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• I_min不再接近零 → 消光比从&gt;20dB跌到15dB</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 对数字信号："0"电平有残余光 → 接收端判决阈值困难 → 误码率上升</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 对模拟信号：二次谐波失真增大 → 无杂散动态范围（SFDR）下降</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">数据：消光比与偏置误差的定量关系</span></h2>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">偏置偏离谷点</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">理论I_min/I_max</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">消光比</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">工程影响</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0（理想）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">∞ dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">理论完美，不存在</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">±0.1×Vπ</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~0.024</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">16 dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">勉强可用，BER余量小</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">±0.2×Vπ</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~0.095</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">10 dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">16QAM无法正常工作</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">±0.5×Vπ</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~0.5</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">3 dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">完全失效，眼图闭合</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">上表基于理想MZM传输函数计算。实际器件因两臂不对称、插入损耗不等，ER还会再低2-3dB。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">三个工程应对策略</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">1. <strong>自动偏置控制（ABC）</strong>：必须配置。常用方案：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 抖动信号型：叠加低频抖动（如1kHz），监测谐波功率反馈控制偏压</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 光功率监控型：监测输出功率，锁定在正交点或谷点</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 反馈速率： typically 1-10 Hz，足以跟踪小时级漂移</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">2. <strong>预留Vπ裕量</strong>：驱动电压按<strong>Vπ_RF × 1.5</strong>设计，而非规格书的DC Vπ。如果10GHz下Vπ=5V，驱动至少供7.5V峰峰值，确保调制深度足够。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. <strong>温度稳定</strong>：虽然温度漂移（0.035V）比偏置漂移（1.455V）小两个数量级，但剧烈温变（如户外设备）仍需温控。将调制器安装在TEC上，±0.1°C稳定度即可消除温度贡献。</p>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> ：电光调制器的消光比不是"Vπ达标+驱动达标"就自动保证的。偏置点漂移是独立变量，小时级漂移可达1×Vπ，直接把20dB消光比吃掉到15dB以下。没有自动偏置控制的MZM系统，消光比随时间衰减是物理规律，不是器件质量问题。
+</blockquote></div>

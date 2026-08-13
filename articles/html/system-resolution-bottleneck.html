@@ -1,0 +1,107 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的光学系统分辨率标称0.1 μm，装上镜头实测，别说0.1 μm，连0.3 μm的线对都糊成一片（来源：典型高NA物镜实测与标称对比）——光学分辨率、采样分辨率、系统分辨率，这三个数根本不是一回事。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Rayleigh判据给的是衍射极限，你的传感器像素、像差公差、环境振动每一样都在吃分辨率——最终到手的，是链路里最弱的一环。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">衍射极限：0.1 μm是怎么算出来的</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光学系统的分辨率，理论上的天花板是衍射极限。Rayleigh判据告诉我们，两个点光源刚好可分辨的条件是：一个的艾里斑中心落在另一个的第一暗环上。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">δ = 0.61 λ / NA（来源：Born &amp; Wolf, Principles of Optics, 7th ed., 1999）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">δ为最小可分辨距离，λ为工作波长，NA为数值孔径</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">假设你用633 nm的He-Ne激光，NA=0.4的物镜：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">δ = 0.61 × 0.633 / 0.4 ≈ 0.97 μm</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">要达到0.1 μm的衍射极限分辨率，需要NA &gt; 3.86——这在可见光波段是不可能的（固体浸没物镜NA最大约1.8~2.0）。所以当你看到"分辨率0.1 μm"时，它大概率不是衍射极限分辨率，而是采样分辨率或者某种特定条件下的标称值。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对于紫外光刻（193 nm ArF准分子激光），NA=1.35的浸没式物镜：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">δ = 0.61 × 0.193 / 1.35 ≈ 0.087 μm</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这才是0.1 μm分辨率的真实来源——特定波长、特定NA、特定工作条件。你拿不到这个数，不是设备问题，是条件不对。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">像差与公差：理想光学系统不存在</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">衍射极限是理想条件。实际光学系统有像差，像差会显著降低有效分辨率。常用Strehl比来衡量实际系统与衍射极限的偏离：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">S = exp[−(2π σ / λ)²]</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">S为Strehl比，σ为波前RMS误差，λ为波长。Maréchal判据：S ≥ 0.8 时认为衍射极限（来源：Maréchal, Rev. Opt. 1947）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">反推一下：要满足S ≥ 0.8，需要σ ≤ λ/14。对于633 nm的波长，波前误差必须控制在45 nm以内。而实际系统中：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">误差来源</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型波前误差(nm RMS)</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">对Strehl比的影响</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">设计残差（高级像差）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">20~40</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">S ≈ 0.80~0.96</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">加工公差（面型偏差）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">15~30</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">S ≈ 0.88~0.98</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">装调误差（偏心/倾斜）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">10~50</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">S ≈ 0.61~0.97</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">环境（温度梯度）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">20~100</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">S ≈ 0.02~0.88</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这些误差是平方和根（RSS）关系叠加的。哪怕每一项单独都合格，RSS后总波前误差很容易超过λ/14，Strehl比跌破0.8，有效分辨率衰减20%~50%。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">采样分辨率：像素间距的硬限制</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光学分辨率解决了"能不能分开两个点"，采样分辨率解决"能不能记下来"。Nyquist采样定理要求：采样频率至少是信号最高频率的2倍。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对于成像系统，这意味着：要分辨δ大小的特征，像素尺寸p（经放大率折算到物面）必须满足：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">p ≤ δ / 2（来源：Shannon, Proc. IRE 1949）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">即至少2个像素覆盖一个最小可分辨单元</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">假设光学分辨率δ = 0.5 μm（10×物镜，NA=0.25，λ=550 nm），放大率10×，则像面上艾里斑直径约5 μm。像素尺寸如果是5.5 μm（常见CMOS），折算回物面就是0.55 μm &gt; δ/2 = 0.25 μm——欠采样，空间频率信息丢失。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">更隐蔽的问题是填充因子。CMOS像素的感光面积不等于像素面积，微透镜间隙、读出电路占据了空间。有效填充因子通常只有60%~80%，这意味着相邻像素之间有信息盲区。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">环境因素：分辨率最无形的杀手</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">实验室里调好的系统，到产线上分辨率就缩水——这锅不是光学设计背，是环境因素背。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">①<strong>机械振动</strong>：曝光期间物面与像面的相对位移超过λ/4时，MTF急剧下降。1 μm的振动位移在NA=0.8时就能让分辨率恶化30%以上。光学平台的共振频率通常在1~3 Hz，但地基传导的环境振动可以覆盖0.1~100 Hz。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">②<strong>温度漂移</strong>：玻璃的折射率温度系数dn/dT通常为±(1~10)×10⁻⁶/°C。对于焦距100 mm的物镜，1°C的温度变化就能产生0.1~1 μm的离焦量。NA越大，焦深越浅（Δz ≈ λ/NA²），NA=0.8时焦深仅约0.86 μm——温度变化1°C就可能导致离焦。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">③<strong>大气湍流</strong>：长光路系统中，空气折射率不均匀导致波前畸变。室内环境下，Cn² ≈ 10⁻¹⁶~10⁻¹⁴ m⁻²/³，1 m光程的波前畸变可达λ/10~λ/2，长光路更严重。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">④<strong>杂散光</strong>：非成像光线在传感器上形成背景，降低对比度。MTF在低频段的衰减主要来自杂散光，它不改变截止频率，但让所有空间频率的对比度都打折扣。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">系统分辨率：链路中最弱的一环</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">系统分辨率不是光学分辨率的单一值，是整条链路的乘积：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">MTFsys(f) = MTFopt(f) × MTFsamp(f) × MTFvib(f) × MTFenv(f)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">系统MTF = 光学MTF × 采样MTF × 振动MTF × 环境MTF</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">每个环节的MTF都小于1，乘积只会更小。假设各个环节在目标空间频率处的MTF分别为：光学0.6、采样0.7、振动0.8、环境0.9，则系统MTF = 0.6 × 0.7 × 0.8 × 0.9 = 0.30。对比度只剩30%——人眼勉强可分辨的阈值约MTF=0.1，机器视觉通常要求MTF&gt;0.2。</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">分辨率类型</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型值(NA=0.4, λ=633nm)</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">衰减来源</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">衍射极限</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.97 μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">物理极限</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">像差修正后</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.2~1.5 μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">残差+公差</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">采样限制</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.5~3.0 μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">像素尺寸</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">系统实测</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">2.0~5.0 μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">振动+温度+杂散光</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">结论</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">系统分辨率=链路最弱环节：衍射极限0.1μm（NA=0.95@550nm）→像差退化到0.2μm（λ/4公差难以全视场满足）→采样极限0.15μm（像素间距75nm）→环境振动再退化到0.3μm。最终到手的是0.3μm，不是0.1μm——每多一个环节就多一次打折，积木效应让分辨率缩水3倍。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">改善系统分辨率的优先级：先确保采样不低于Nyquist（2×过采样更稳），再控制环境振动与温度（隔振台+温控±0.1°C），最后才去追求更高NA的物镜——因为NA越高，焦深越浅，对环境越敏感。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">分辨率不是物镜一个参数说了算，是整条链路里最弱的那一环。</p></div>

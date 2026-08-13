@@ -1,0 +1,64 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你拿到两块金刚石车削的金属反射镜，表面粗糙度仪都显示Ra ≈ 5nm。你直觉地认为它们散射损耗差不多。但装到光路里一测，一块镜子的杂散光把邻近通道的SNR压了3dB，另一块却完全没问题。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">问题不在Ra这个数，在你没看功率谱密度（PSD）。Ra只告诉你的表面平均有多"起伏"，没告诉你起伏发生在什么空间频率上。而光学散射只关心一件事：表面粗糙度的空间频率分量是否与入射光波长发生耦合。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">Ra只是一个统计平均值，丢失了空间频率信息</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Ra的定义很简单：表面轮廓偏离中心线的绝对值的算术平均（ISO 10110-8，表面纹理标准）。它把不同尺度的起伏全混在一起，用一个纳米数概括。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">一个表面上既有1mm周期的长波纹，也有10μm周期的细密刀纹，两者对Ra的贡献可能相同。但它们对光学散射的影响完全不同。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">原因是：每个空间频率分量对应一个特定的散射角，由光栅方程决定（Harvey-Shack表面散射理论，Optics Express, 2011；Fraunhofer IOF散射模型综述）：</p>
+<blockquote style="text-align:center;margin:0;padding:20px 0;border-left:none;background:transparent;">
+  <p style="font-family:Times New Roman,serif;font-size:17px;color:#000;font-weight:600;margin:0;padding:0 0 8px 0;">d(sin θ_i + sin θ_m) = mλ</p>
+  <p style="font-size:13px;color:#666;margin:0;padding:0 0 4px 0;">f_x = (sin θ_s cos φ_s - sin θ_i) / λ</p>
+</blockquote>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">其中f_x是表面空间频率，θ_i是入射角，θ_s是散射角，λ是波长（Fraunhofer IOF，Optics Express 2011）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这意味着：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• 低频大周期起伏（f &lt; 0.1 μm⁻¹） → 小角度散射 → 主要影响波前质量</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• 中频周期（f ~ 1–10 μm⁻¹） → 中角度散射 → 可能落入相邻光学通道或探测器像面</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• 高频细密刀纹（f &gt; 10 μm⁻¹） → 大角度散射 → 远离光轴，但积分后仍贡献总损耗</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Ra只把这三个频段的功率加起来，不告诉你它们各有多少。两个Ra同为5nm的表面，低频占优和中频占优的散射角分布完全不同，落在你的光路中的能量也完全不同。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">散射损耗真正依赖的是带限RMS，不是Ra</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">当表面粗糙度远小于波长（σ &lt;&lt; λ）时，总积分散射（TIS）与RMS粗糙度Rq的关系由Bennett-Porteus公式给出（Bennett &amp; Porteus, JOSA 1961；Eckhardt Optics散射教程）：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">TIS = R₀[1 - exp(-(4π Rq cos θ_i / λ)²)]</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">其中R₀是理论反射率，Rq是RMS粗糙度，θ_i是入射角。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对于光滑表面（Rq &lt;&lt; λ），近似为：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">TIS ≈ (4π Rq cos θ_i / λ)²</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">关键数值（Eckhardt Optics，散射教程）：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• Rq = 25nm，λ = 500nm，θ_i = 60° → TIS ≈ 10%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• Rq = 17nm，相同条件 → TIS ≈ 5%（散射减半）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• Rq = 1.2nm（普通抛光玻璃）→ TIS &lt; 1%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• Rq = 0.1–0.2nm（超抛光）→ 接近原子尺度的物理极限</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">注意公式里用的是Rq（RMS），不是Ra。两者关系取决于表面轮廓分布：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• 典型表面：Rq ≈ 1.4 × Ra（Eckhardt Optics）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• 但具体比例取决于峰谷分布，不是固定值</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">更关键的是：TIS公式中的Rq是<strong>带限RMS</strong>，只包含对你的光学系统有实际影响的频段。如果表面仪的测量带宽过窄，或者测量方向不对（比如只测垂直于刀纹的方向），你得到的Rq就不能直接代入TIS公式。</p>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> <strong>Ra既不是RMS，也不是带限RMS。它只是仪器在固定测量带宽和方向下读出的一个平均量。用Ra直接估算散射损耗，本质上是在用错误的数据做正确的公式。</strong>
+</blockquote>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">金刚石车削的特殊之处：刀纹是周期性结构，不是随机粗糙</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">金刚石车削（SPDT）的表面与其他抛光不同：刀具每转一圈进给一个固定距离，会在表面留下规则的周期性刀纹。这些刀纹不是随机粗糙度，而是近似一维衍射光栅。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">车纹周期d直接对应进给率（f_eed rate）除以主轴转速。例如，进给率10 μm/rev，转速2000 rpm → 每转一圈进给10μm，刀纹周期d ≈ 10μm。这个周期对应的空间频率：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">f = 1/d = 0.1 μm⁻¹</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果用λ = 650nm的可见光照射，衍射角满足：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">d(sin θ_i + sin θ_m) = mλ</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">取正入射（θ_i ≈ 0）、一级衍射（m = 1）：sin θ_m = λ/d = 0.065 → θ_m ≈ 3.7°。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">也就是说，这把刀纹周期10μm的镜子会把一部分光定向衍射到3.7°方向。这不是漫散射，而是集中的"鬼影"能量。如果你的光学系统在这个角度有相邻通道或探测器，它造成的干扰比随机RMS粗糙度严重得多（ScienceDirect，2025，FFT分析车削纹衍射）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">更麻烦的是：当Ra做到很低（比如5nm）时，随机漫反射已经减弱，这种周期性衍射反而会成为主导的光学缺陷。ScienceDirect 2025的研究指出，FFT二次谐波幅值与衍射强度高度相关（Kendall's K &gt; 0.89），说明车纹的周期性分量可以直接用PSD中的谐波峰来预测。</p>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> <strong>金刚石车削表面，Ra小只说明随机粗糙度低，不代表没有散射。周期性的车纹会产生定向衍射，PSD中表现为离散的谐波峰。峰的高度和位置，由进给率和转速决定。</strong>
+</blockquote>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">验收报告应该看什么？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">常规验收只写一条"Ra &lt; 5nm"是不够的。对于光学级表面，更合理的做法：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">1. <strong>同时标注Ra和Rq</strong>，并说明测量带宽和方向。Rq比Ra更接近散射物理，但两者都不能替代PSD。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">2. <strong>要求提供PSD曲线</strong>。至少要关注两个频段：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• 低频段（f &lt; 0.1 μm⁻¹）：对应波前畸变和成像质量</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• 中频段（f ~ 0.1–10 μm⁻¹）：对应可能进入系统杂散光通道的散射</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• 高频段（f &gt; 10 μm⁻¹）：通常贡献总损耗，但角度较大</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. <strong>金刚石车削件特别检查车纹谐波</strong>。在PSD中寻找对应进给率的离散峰。如果峰高明显，即使Ra很低，也要考虑降低进给率或采用更精密的轨迹规划。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">4. <strong>散射实测</strong>：直接测总积分散射（TIS）或角分辨散射（ARSCA/BS 7006仪器），而不是只靠粗糙度仪。TIS是散射损耗的直接物理量，TIS测量本质上就是在积分带限RMS对应的PSD。</p>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> <strong>光学散射不是Ra的函数，是PSD的函数。Ra相同的两个表面，PSD形状可能完全不同，散射损耗也可能相差数倍。验收金刚石车削光学表面时，PSD和TIS比Ra更能说明问题。</strong>
+</blockquote>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">可操作建议</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">1. <strong>不要跟供应商只谈Ra</strong>。要求同时给出Rq、PSD曲线和测量带宽。对于金刚石车削件，再要求进给率和转速参数，估算车纹空间频率是否落在你关心的散射角范围内。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">2. <strong>计算你的有效RMS时，先定义带限</strong>。你的光学系统只关心特定频段内的粗糙度。如果测量仪器带宽不覆盖这个频段，或者只测了一个方向，Rq数据不能直接代入TIS公式。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. <strong>金刚石车削表面重点查周期性</strong>。用PSD或FFT找车纹谐波峰。如果峰在0.1 μm⁻¹附近且幅度显著，即使Ra只有5nm，也要考虑它对成像鬼影和杂散光的影响。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">4. <strong>散射实测优先</strong>。对于关键光学表面，直接测TIS或角分辨BSDF。粗糙度仪便宜方便，但它不是散射性能的真实反映。</p></div>

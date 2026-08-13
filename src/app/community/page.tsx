@@ -66,7 +66,10 @@ export default function CommunityPage() {
   const [loginError, setLoginError] = useState('');
   const [logoClicks, setLogoClicks] = useState(0);
   const [posts, setPosts] = useState<Post[]>([]);
-  const [sort, setSort] = useState<'hot' | 'new'>('hot');
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const PAGE_SIZE = 20;
+  const [sort, setSort] = useState<'hot' | 'new'>('new');
   const [tagFilter, setTagFilter] = useState('all');
   const [newPostContent, setNewPostContent] = useState('');
   const [newPostTag, setNewPostTag] = useState('suggestion');
@@ -79,6 +82,7 @@ export default function CommunityPage() {
   const [votedPosts, setVotedPosts] = useState<Set<string>>(new Set());
   const [repliesMap, setRepliesMap] = useState<Record<string, Reply[]>>({});
   const [filterWarning, setFilterWarning] = useState('');
+  const [tagCounts, setTagCounts] = useState<Record<string, number>>({ all: 0, suggestion: 0, bug: 0, discussion: 0 });
 
   // Check URL hash for admin access (on load + on hash change)
   useEffect(() => {
@@ -110,13 +114,32 @@ export default function CommunityPage() {
   }, [isAdmin]);
 
   // Fetch posts
-  const fetchPosts = useCallback(async () => {
-    const params = new URLSearchParams({ sort, tag: tagFilter });
+  const fetchPosts = useCallback(async (append = false) => {
+    const offset = append ? posts.length : 0;
+    const params = new URLSearchParams({ sort, tag: tagFilter, limit: String(PAGE_SIZE), offset: String(offset) });
     if (searchQuery.trim()) params.set('search', searchQuery.trim());
+    if (append) setLoadingMore(true);
     const res = await fetch(`/api/community?${params}`);
     const data = await res.json();
-    setPosts(data.posts || []);
-  }, [sort, tagFilter, searchQuery]);
+    const batch: Post[] = data.posts || [];
+    if (append) {
+      setPosts(prev => [...prev, ...batch]);
+    } else {
+      setPosts(batch);
+      if (!append) {
+        const idsWithReplies = batch.filter(p => p.replies_count > 0).map(p => p.id);
+        setExpandedReplies(new Set(idsWithReplies));
+        idsWithReplies.forEach(async (pid) => {
+          const rRes = await fetch(`/api/community/replies?post_id=${pid}`);
+          const rData = await rRes.json();
+          setRepliesMap(prev => ({ ...prev, [pid]: rData.replies || [] }));
+        });
+      }
+    }
+    setHasMore(batch.length >= PAGE_SIZE);
+    setLoadingMore(false);
+    if (!append && data.counts) setTagCounts(data.counts);
+  }, [sort, tagFilter, searchQuery, posts.length]);
 
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
 
@@ -395,6 +418,7 @@ export default function CommunityPage() {
                 }`}
               >
                 {t === 'all' ? '全部' : tagLabels[t]}
+                <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${tagFilter === t ? 'bg-[#2563EB] text-white' : 'bg-[#E5E7EB] text-[#6B7280]'}`}>{tagCounts[t] || 0}</span>
               </button>
             ))}
           </div>
@@ -525,6 +549,20 @@ export default function CommunityPage() {
               )}
             </div>
           ))
+        )}
+        {hasMore && posts.length >= PAGE_SIZE && (
+          <div className="text-center py-6">
+            <button
+              onClick={() => fetchPosts(true)}
+              disabled={loadingMore}
+              className="px-6 py-2.5 rounded-xl bg-[#2563EB] text-white text-sm font-medium hover:bg-[#1D4ED8] disabled:opacity-50 transition-all shadow-sm hover:shadow-md"
+            >
+              {loadingMore ? "加载中..." : "加载更多留言"}
+            </button>
+          </div>
+        )}
+        {!hasMore && posts.length > 0 && (
+          <p className="text-center text-[11px] text-[#D1D5DB] pt-4">—— 到底啦 ——</p>
         )}
       </main>
 

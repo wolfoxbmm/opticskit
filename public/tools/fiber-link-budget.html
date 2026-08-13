@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="光纤链路预算在线计算器，支持单模/多模光纤功率预算分析、链路损耗估算。基于ITU-T G.652/TIA-568标准，含连接器损耗、熔接损耗、系统余量计算，快速评估光纤传输可行性。">
+<title>光纤链路预算计算器 - OpticsKit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-root:#F3F4F6;--bg-surface:#FFFFFF;--bg-elevated:#F9FAFB;--bg-hover:#F3F4F6;--border-subtle:#E5E7EB;--text-primary:#111827;--text-secondary:#4B5563;--text-tertiary:#6B7280;--text-disabled:#9CA3AF;--accent:#2563EB;--accent-hover:#1D4ED8;--accent-light:#EFF6FF;--green:#059669;--green-bg:#ECFDF5;--yellow:#D97706;--yellow-bg:#FFFBEB;--red:#DC2626;--red-bg:#FEE2E2;--shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.06);--radius-sm:8px;--radius-md:12px;--radius-full:9999px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg-root);color:var(--text-primary);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-0.01em;line-height:1.6}
+.app{max-width:960px;margin:0 auto;padding:12px 12px 8px}
+.hd{text-align:center;margin-bottom:8px}
+.hd h1{font-size:18px;font-weight:700;letter-spacing:-0.02em}
+.hd p{font-size:11px;color:var(--text-tertiary);margin-top:1px}
+
+.main-layout{display:flex;gap:10px;align-items:stretch}
+.col-params{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:4px}
+.col-chart{flex:1;min-width:0}
+
+.card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:8px;box-shadow:var(--shadow-sm)}
+
+.param-grp{margin-bottom:4px}
+.param-grp label{font-size:9px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:1px}
+.param-grp input,.param-grp select{font-size:12px;padding:5px 8px;border:1px solid var(--border-subtle);border-radius:6px;background:var(--bg-elevated);color:var(--text-primary);outline:none;font-family:inherit;width:100%;transition:border-color .2s}
+.param-grp input:focus,.param-grp select:focus{border-color:var(--accent);background:var(--bg-surface)}
+.param-grp select{cursor:pointer}
+.param-unit{font-size:8px;color:var(--text-disabled);margin-top:1px}
+.param-hint{font-size:7px;color:var(--text-disabled);margin-top:1px;font-style:italic}
+
+.btn-row{display:flex;gap:4px}
+.btn{font-size:11px;font-weight:600;padding:5px 12px;border:none;border-radius:var(--radius-full);cursor:pointer;transition:all .2s;font-family:inherit;flex:1}
+.btn-p{background:var(--accent);color:#fff}
+.btn-p:hover{background:var(--accent-hover)}
+.btn-s{background:var(--bg-hover);color:var(--text-secondary)}
+.btn-s:hover{background:var(--border-subtle)}
+
+.presets{display:flex;flex-wrap:wrap;gap:2px;margin-top:4px}
+.preset{font-size:9px;padding:3px 9px;border:1px solid var(--border-subtle);border-radius:var(--radius-full);background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;transition:all .15s;font-family:inherit;line-height:1.4;white-space:nowrap}
+.preset:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);transform:translateY(-1px)}
+
+.col-chart .card{margin-bottom:8px}
+
+.waterfall{margin-top:4px}
+.wf-row{display:flex;align-items:center;padding:3px 0;border-bottom:1px solid var(--bg-hover);font-size:10px}
+.wf-row:last-child{border-bottom:none}
+.wf-label{width:80px;flex-shrink:0;color:var(--text-secondary);font-weight:500}
+.wf-value{width:60px;flex-shrink:0;text-align:right;font-weight:650;font-variant-numeric:tabular-nums}
+.wf-bar-wrap{flex:1;margin:0 8px;position:relative;height:18px;background:var(--bg-hover);border-radius:4px;overflow:hidden}
+.wf-bar{position:absolute;left:0;top:0;height:100%;border-radius:4px;transition:width .4s}
+.wf-bar.loss{background:linear-gradient(90deg,#FCA5A5,#F87171)}
+.wf-bar.power{background:linear-gradient(90deg,#93C5FD,#2563EB)}
+.wf-bar.margin{background:linear-gradient(90deg,#86EFAC,#22C55E)}
+.wf-end{width:40px;flex-shrink:0;text-align:left;font-weight:650;font-size:10px}
+
+.judge{padding:6px 10px;border-radius:var(--radius-sm);margin-top:8px;font-size:10px;font-weight:600;display:flex;align-items:center;gap:6px}
+.judge-ok{background:var(--green-bg);color:var(--green);border:1px solid rgba(5,150,105,0.2)}
+.judge-warn{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(217,119,6,0.2)}
+.judge-fail{background:var(--red-bg);color:var(--red);border:1px solid rgba(220,38,38,0.2)}
+.judge-icon{font-size:16px}
+
+.link-diagram{display:flex;align-items:center;gap:0;padding:8px 0;overflow-x:auto}
+.link-node{display:flex;flex-direction:column;align-items:center;flex-shrink:0}
+.link-node .icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
+.link-node .lbl{font-size:7px;color:var(--text-disabled);margin-top:2px;text-align:center;max-width:48px}
+.link-conn{width:24px;height:1.5px;background:var(--text-disabled);flex-shrink:0;position:relative}
+.link-conn.splice{background:repeating-linear-gradient(90deg,var(--text-disabled) 0,var(--text-disabled) 3px,transparent 3px,transparent 6px)}
+
+.tx .icon{background:linear-gradient(135deg,#DBEAFE,#93C5FD);color:#1E40AF}
+.fiber .icon{background:linear-gradient(135deg,#FEF3C7,#FCD34D);color:#92400E}
+.conn .icon{background:linear-gradient(135deg,#E5E7EB,#9CA3AF);color:#374151;font-size:10px}
+.rx .icon{background:linear-gradient(135deg,#D1FAE5,#6EE7B7);color:#065F46}
+
+.note{font-size:8px;color:var(--text-disabled);padding:8px 10px;background:var(--bg-elevated);border-radius:var(--radius-sm);margin-top:6px;line-height:1.7}
+
+@media(max-width:800px){.main-layout{flex-direction:column}.col-params{width:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd">
+  <h1>光纤链路预算计算器</h1>
+  <p>功率预算分析 · 链路损耗估算 · 基于 ITU-T G.652 / TIA-568 标准</p>
+</div>
+
+<div class="main-layout">
+  <div class="col-params">
+    <div class="card">
+      <div class="param-grp">
+        <label>光纤类型</label>
+        <select id="fiberType" onchange="onFiberChange()">
+          <option value="sm">单模 G.652</option>
+          <option value="mm-om3">多模 OM3</option>
+          <option value="mm-om4">多模 OM4</option>
+        </select>
+      </div>
+      <div class="param-grp">
+        <label>波长 λ</label>
+        <select id="wavelength" onchange="onLambdaChange()">
+          <option value="1310">1310 nm</option>
+          <option value="1550">1550 nm</option>
+        </select>
+      </div>
+      <div class="param-grp">
+        <label>衰减系数 α</label>
+        <input type="number" id="attenuation" value="0.35" step="0.01" min="0" oninput="debounceCalc()">
+        <div class="param-unit">dB/km</div>
+      </div>
+      <div class="param-grp">
+        <label>链路距离 L</label>
+        <input type="number" id="distance" value="10" step="0.1" min="0" oninput="debounceCalc()">
+        <div class="param-unit">km</div>
+      </div>
+      <div class="param-grp">
+        <label>连接器数量</label>
+        <input type="number" id="connCount" value="2" step="1" min="0" oninput="debounceCalc()">
+        <div class="param-hint">不含设备端接口</div>
+      </div>
+      <div class="param-grp">
+        <label>连接器损耗 (每个)</label>
+        <input type="number" id="connLoss" value="0.3" step="0.05" min="0" oninput="debounceCalc()">
+        <div class="param-hint">典型 0.2-0.5 dB（单连接器）</div>
+      </div>
+      <div class="param-grp">
+        <label>熔接点数量</label>
+        <input type="number" id="spliceCount" value="2" step="1" min="0" oninput="debounceCalc()">
+      </div>
+      <div class="param-grp">
+        <label>熔接损耗 (每个)</label>
+        <input type="number" id="spliceLoss" value="0.1" step="0.01" min="0" oninput="debounceCalc()">
+        <div class="param-hint">热熔 0.02-0.05dB · 冷接 0.1-0.3dB</div>
+      </div>
+      <div class="param-grp">
+        <label>发射功率 Tx</label>
+        <input type="number" id="txPower" value="0" step="0.5" oninput="debounceCalc()">
+        <div class="param-unit">dBm</div>
+      </div>
+      <div class="param-grp">
+        <label>接收灵敏度 Rx</label>
+        <input type="number" id="rxSens" value="-24" step="0.5" oninput="debounceCalc()">
+        <div class="param-unit">dBm (最小可检测功率)</div>
+      </div>
+      <div class="param-grp">
+        <label>系统余量</label>
+        <input type="number" id="sysMargin" value="3" step="0.5" min="0" oninput="debounceCalc()">
+        <div class="param-unit">dB (老化/温度/维修)</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-p" onclick="calculate()">计算</button>
+        <button class="btn btn-s" onclick="resetAll()">重置</button>
+      </div>
+      <div style="font-size:9px;font-weight:650;color:var(--text-secondary);margin:8px 0 2px">🎯 快速预设场景</div>
+      <div class="presets">
+        <button class="preset" onclick="setPreset('sm','1310',0.35,0.5,2,0.3,0,0.05,0,-24,3)">🏢 数据中心</button>
+        <button class="preset" onclick="setPreset('mm-om4','850',3.0,0.15,2,0.3,0,0.1,-3,-18,3)">🏛 园区骨干</button>
+        <button class="preset" onclick="setPreset('sm','1550',0.22,20,2,0.3,4,0.05,0,-28,3)">🌆 城域网</button>
+        <button class="preset" onclick="setPreset('sm','1550',0.22,80,2,0.3,8,0.05,3,-32,4)">🗺 长距干线</button>
+        <button class="preset" onclick="setPreset('sm','1310',0.35,10,2,0.3,3,0.1,-3,-28,3)">🏠 FTTH 接入</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-chart">
+    <div class="card" style="margin-bottom:8px">
+      <div style="font-size:9px;font-weight:650;margin-bottom:4px;color:var(--text-secondary)">📖 链路结构示意</div>
+      <div class="link-diagram" id="linkDiagram">
+        <div class="link-node tx"><div class="icon">Tx</div><div class="lbl">发射端</div></div>
+        <div class="link-conn"></div>
+        <div class="link-node conn"><div class="icon">🔌</div><div class="lbl">连接器</div></div>
+        <div class="link-conn"></div>
+        <div class="link-node fiber"><div class="icon">〰</div><div class="lbl">光纤</div></div>
+        <div class="link-conn splice"></div>
+        <div class="link-node conn"><div class="icon">⊕</div><div class="lbl">熔接</div></div>
+        <div class="link-conn"></div>
+        <div class="link-node rx"><div class="icon">Rx</div><div class="lbl">接收端</div></div>
+      </div>
+      <div class="note">
+        ⚠️ <b>适用范围</b>：本工具计算点对点链路的功率预算，假设光纤均匀无宏弯损耗、无可调光衰减器。<br>
+        ⚠️ <b>高速链路</b>（≥10Gbps）：需额外评估色散代价、PMD 和 OSNR。长距 DWDM 系统还需考虑非线性效应（SPM/XPM/FWM）。<br>
+        💡 实际设计请参考设备厂商规范，并预留充足的维修余量。
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-size:9px;font-weight:650;margin-bottom:6px;color:var(--text-secondary)">📊 功率预算分析</div>
+      <div class="waterfall" id="waterfall"></div>
+      <div id="judgeBox"></div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:9px;font-weight:650;margin-bottom:6px;color:var(--text-secondary)">📋 详细参数</div>
+      <div id="detailTable"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+// Fiber presets: { type: { wavelength: attenuation } }
+const FIBER_DEFAULTS = {
+  'sm': { '1310': 0.35, '1550': 0.22 },
+  'mm-om3': { '850': 3.0, '1310': 0.6 },
+  'mm-om4': { '850': 3.0, '1310': 0.6 }
+};
+
+function $(id){ return document.getElementById(id) }
+function fmt(v,d){ if(v==null||isNaN(v))return '—'; const dd=d!=null?d:2; return Number(v).toFixed(dd) }
+
+let calcTimer;
+function debounceCalc(){ clearTimeout(calcTimer); calcTimer=setTimeout(calculate,200) }
+
+function onFiberChange(){
+  const type = $('fiberType').value;
+  const wlSel = $('wavelength');
+  // Update wavelength options
+  if(type==='sm'){
+    wlSel.innerHTML = '<option value="1310">1310 nm</option><option value="1550">1550 nm</option>';
+  } else {
+    wlSel.innerHTML = '<option value="850">850 nm</option><option value="1310">1310 nm</option>';
+  }
+  onLambdaChange();
+}
+
+function onLambdaChange(){
+  const type = $('fiberType').value;
+  const wl = $('wavelength').value;
+  const def = FIBER_DEFAULTS[type] && FIBER_DEFAULTS[type][wl];
+  if(def!==undefined) $('attenuation').value = def;
+  calculate();
+}
+
+function setPreset(type, wl, att, dist, connC, connL, splC, splL, tx, rx, margin){
+  $('fiberType').value = type;
+  onFiberChange();
+  $('wavelength').value = wl;
+  $('attenuation').value = att;
+  $('distance').value = dist;
+  $('connCount').value = connC;
+  $('connLoss').value = connL;
+  $('spliceCount').value = splC;
+  $('spliceLoss').value = splL;
+  $('txPower').value = tx;
+  $('rxSens').value = rx;
+  $('sysMargin').value = margin;
+  calculate();
+}
+
+function resetAll(){
+  setPreset('sm','1310',0.35,10,2,0.3,2,0.1,0,-24,3);
+}
+
+function calculate(){
+  const att = parseFloat($('attenuation').value)||0;
+  const dist = parseFloat($('distance').value)||0;
+  const connC = parseInt($('connCount').value)||0;
+  const connL = parseFloat($('connLoss').value)||0;
+  const splC = parseInt($('spliceCount').value)||0;
+  const splL = parseFloat($('spliceLoss').value)||0;
+  const tx = parseFloat($('txPower').value)||0;
+  const rxSens = parseFloat($('rxSens').value)||0;
+  const margin = parseFloat($('sysMargin').value)||0;
+  const wl = $('wavelength').value;
+
+  if(dist<0||tx<=rxSens) return;
+
+  // Calculations
+  const fiberLoss = att * dist;
+  const connTotal = connC * connL;
+  const spliceTotal = splC * splL;
+  const totalLoss = fiberLoss + connTotal + spliceTotal;
+  const powerBudget = tx - rxSens;
+  const linkMargin = powerBudget - totalLoss - margin;
+
+  let rxPower = tx - totalLoss;
+
+  // Build waterfall data
+  const steps = [
+    {label:'发射功率 Tx',value:tx,desc:'dBm',type:'power'},
+    {label:'光纤损耗',value:-fiberLoss,desc:(att*dist).toFixed(2)+' dB',type:'loss'},
+  ];
+  if(connTotal>0) steps.push({label:'连接器损耗',value:-connTotal,desc:connC+'×'+connL.toFixed(2)+' dB',type:'loss'});
+  if(spliceTotal>0) steps.push({label:'熔接损耗',value:-spliceTotal,desc:splC+'×'+splL.toFixed(2)+' dB',type:'loss'});
+  steps.push({label:'系统余量',value:-margin,desc:margin.toFixed(1)+' dB',type:'loss'});
+  steps.push({label:'链路余量',value:linkMargin,desc:linkMargin>=0?'✅ 可行':'❌ 不足',type:'margin'});
+  steps.push({label:'接收灵敏度',value:rxSens,desc:'dBm',type:'power'});
+
+  // Render waterfall
+  const maxAbs = Math.max(Math.abs(tx), Math.abs(rxSens), Math.abs(tx+totalLoss+margin), 30);
+  let html = '';
+  let running = tx;
+  for(const s of steps){
+    const pct = Math.abs(s.value)/maxAbs*100;
+    const barClass = s.type==='loss'?'loss':s.type==='margin'?'margin':'power';
+    html += '<div class="wf-row">'+
+      '<span class="wf-label">'+s.label+'</span>'+
+      '<span class="wf-value">'+(s.value>=0?'+':'')+fmt(s.value,2)+'</span>'+
+      '<div class="wf-bar-wrap"><div class="wf-bar '+barClass+'" style="width:'+Math.min(pct,100)+'%"></div></div>'+
+      '<span class="wf-end">'+s.desc+'</span>'+
+      '</div>';
+  }
+  $('waterfall').innerHTML = html;
+
+  // Judge
+  let judgeHtml;
+  if(linkMargin >= 3){
+    judgeHtml = '<div class="judge judge-ok"><span class="judge-icon">✅</span>链路余量充足 (<b>+'+fmt(linkMargin,1)+' dB</b>)，设计可行。推荐余量 ≥3 dB 已满足。</div>';
+  } else if(linkMargin >= 0){
+    judgeHtml = '<div class="judge judge-warn"><span class="judge-icon">⚠️</span>链路余量偏低 (<b>+'+fmt(linkMargin,1)+' dB</b>)，可通信但缺乏老化/维修裕度。</div>';
+  } else {
+    judgeHtml = '<div class="judge judge-fail"><span class="judge-icon">❌</span>链路余量不足 (<b>'+fmt(linkMargin,1)+' dB</b>)。建议：缩短距离、提高发射功率、减少连接器/熔接点、或更换低损耗光纤。</div>';
+  }
+  $('judgeBox').innerHTML = judgeHtml;
+
+  // Detail table
+  const typeLabel = $('fiberType').selectedOptions[0].text;
+  $('detailTable').innerHTML = `
+    <table style="width:100%;font-size:9px;border-collapse:collapse">
+      <tr style="color:var(--text-disabled)"><td style="padding:2px 0">光纤</td><td style="text-align:right;color:var(--text-primary)">${typeLabel} @ ${wl} nm</td></tr>
+      <tr style="color:var(--text-disabled)"><td style="padding:2px 0">功率预算</td><td style="text-align:right;color:var(--text-primary)"><b>${fmt(powerBudget,1)} dB</b> (Tx ${fmt(tx,1)} − Rx ${fmt(rxSens,1)})</td></tr>
+      <tr style="color:var(--text-disabled)"><td style="padding:2px 0">总链路损耗</td><td style="text-align:right;color:var(--text-primary)">${fmt(totalLoss,2)} dB</td></tr>
+      <tr style="color:var(--text-disabled)"><td style="padding:2px 0;padding-left:12px">光纤衰减</td><td style="text-align:right;color:var(--text-primary)">${fmt(fiberLoss,2)} dB (${fmt(dist,1)} km × ${att} dB/km)</td></tr>
+      <tr style="color:var(--text-disabled)"><td style="padding:2px 0;padding-left:12px">连接器</td><td style="text-align:right;color:var(--text-primary)">${fmt(connTotal,2)} dB</td></tr>
+      <tr style="color:var(--text-disabled)"><td style="padding:2px 0;padding-left:12px">熔接</td><td style="text-align:right;color:var(--text-primary)">${fmt(spliceTotal,2)} dB</td></tr>
+      <tr style="color:var(--text-disabled)"><td style="padding:2px 0">接收端功率</td><td style="text-align:right;color:var(--text-primary)"><b>${fmt(rxPower,2)} dBm</b></td></tr>
+      <tr style="color:var(--text-disabled)"><td style="padding:2px 0">链路余量</td><td style="text-align:right;font-weight:700;color:${linkMargin>=3?'var(--green)':linkMargin>=0?'var(--yellow)':'var(--red)'}">${fmt(linkMargin,2)} dB</td></tr>
+    </table>
+  `;
+
+  // Update link diagram labels
+  updateDiagram(connC, splC, dist.toFixed(1));
+}
+
+function updateDiagram(connC, splC, distStr){
+  const d = document.getElementById('linkDiagram');
+  if(!d) return;
+  d.innerHTML = `
+    <div class="link-node tx"><div class="icon">Tx</div><div class="lbl">发射端</div></div>
+    <div class="link-conn"></div>
+    <div class="link-node conn"><div class="icon">🔌</div><div class="lbl">连接器${connC>0?' ×'+connC:''}</div></div>
+    <div class="link-conn"></div>
+    <div class="link-node fiber"><div class="icon">〰</div><div class="lbl">光纤 ${distStr}km</div></div>
+    ${splC>0?'<div class="link-conn splice"></div><div class="link-node conn"><div class="icon">⊕</div><div class="lbl">熔接 ×'+splC+'</div></div>':''}
+    <div class="link-conn"></div>
+    <div class="link-node rx"><div class="icon">Rx</div><div class="lbl">接收端</div></div>
+  `;
+}
+
+// Init
+onFiberChange();
+calculate();
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你买的光子计数器规格书写着"暗计数率&lt;1Hz（室温）"，接上测试发现——实测暗计数是1000Hz。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你以为是产品坏了，联系厂家后得到的回复是"这在正常范围内"。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">盖革模式APD的工作原理</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">单光子探测器（SPAD，又称盖革模式APD）是一种能探测单个光子的光电探测器。与普通线性模式APD不同，盖革模式下偏置电压被设置在<strong>击穿电压 V_br 以上</strong>，使得单个光子触发的雪崩信号足以被外部电路检测到。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">一个完整的探测周期分为三个阶段：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>雪崩触发</strong>：光子入射产生光生载流子，在过偏压驱动下引发自持雪崩，输出可检测的电脉冲</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>淬灭（Quench）</strong>：淬灭电路将偏置电压快速拉低至 V_br 以下，终止雪崩</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>复位（Reset）</strong>：电路将偏置电压缓慢恢复至工作点，准备下一次探测</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">问题在于：雪崩不只能被光子触发。热激发、隧穿电流等机制同样可以引发虚假雪崩——这就是<strong>暗计数</strong>（Dark Count）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">暗计数的三大来源</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">暗计数的来源主要有三类，不同来源在不同条件下占主导：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">① 热激发载流子（最主要来源）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">温度升高时，价带电子获得足够热能越过带隙，在无光照条件下产生载流子。这是室温暗计数高的根本原因，也是制冷能大幅降低暗计数的物理基础。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">② 隧穿电流（Tunneling / Field Emission）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">在极高偏压（V_bias &gt;&gt; V_br）下，电子通过直接隧穿机制穿过禁带形成电流。InGaAs/InP材料的带隙较窄，隧穿效应比硅器件更显著。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">③ 后脉冲（Afterpulsing）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">雪崩过程中，载流子被半导体材料中的陷阱能级俘获。复位后，这些陷阱缓慢释放载流子，在恢复期内再次触发雪崩。后脉冲与死时间紧密相关——门控频率越高，死时间内发生二次触发的概率越大。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">温度：暗计数的决定性因素</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">热激发载流子导致的暗计数对温度极其敏感。经验规律是：<strong>温度每升高约10°C，暗计数率翻倍</strong>（来源：S. Cova et al., IEEE J. Sel. Top. Quantum Electron., 2004）。典型InGaAs/InP SPAD的实测数据如下：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">工作温度</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型暗计数率（InGaAs/InP SPAD）</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">每20°C降幅</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0°C</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~100 Hz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">基准</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-20°C</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~10 Hz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-90%</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-40°C</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~1 Hz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-90%</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-60°C</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~100 mHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-90%</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">粗略估算：<strong>每降低20°C，暗计数约降低一个数量级</strong>（来源：同上，InGaAs/InP SPAD的Arrhenius拟合，激活能约0.5-0.7eV）。-40°C TEC制冷可以将暗计数从1000Hz降到~1Hz，下降1000倍。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">规格书里的隐藏条件</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这是最容易被忽视的陷阱：规格书上的暗计数指标并不是"在任意条件下都成立"，而是<strong>在特定温度和门控条件下测得的</strong>。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">规格值通常在 <strong>-20°C 至 -60°C</strong>（TEC全功率制冷）条件下测得</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">部分规格书标注"&lt;1Hz"还附加了<strong>门控模式</strong>条件（gated mode），自由运行（free-running）模式下暗计数会高出数倍</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">门控频率的影响：当门控频率 &gt;1MHz 时，后脉冲对暗计数的贡献可占总暗计数的 <strong>50%以上</strong>（来源：N. Namekata et al., Opt. Express, 2007），导致等效暗计数远超规格值</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">所以当你看到规格书"&lt;1Hz"，实际在 <strong>室温（25°C）自由运行模式</strong>下测到1000Hz，厂家回复"正常范围内"并非推脱——只是规格书没写清楚前提条件。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">室温使用SPAD时暗计数达到1000Hz完全正常，规格值是在深度制冷条件下测得的。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">暗计数1000Hz≠产品问题，规格书没注明温度条件才是问题所在。</p></div>

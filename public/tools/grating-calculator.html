@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="衍射光栅在线计算器，支持光栅方程、角色散、分辨率、自由光谱范围、闪耀角计算。适用于光谱仪设计、激光调谐和光通信波长选择。">
+<title>衍射光栅计算器 - OpticsKit</title>
+<style>
+:root{--bg-root:#F3F4F6;--bg-surface:#FFFFFF;--bg-elevated:#F9FAFB;--bg-hover:#F3F4F6;--border-subtle:#E5E7EB;--text-primary:#111827;--text-secondary:#4B5563;--text-tertiary:#6B7280;--text-disabled:#9CA3AF;--accent:#2563EB;--accent-hover:#1D4ED8;--accent-light:#EFF6FF;--green:#059669;--green-bg:#ECFDF5;--shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.06);--radius-sm:8px;--radius-md:12px;--radius-full:9999px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg-root);color:var(--text-primary);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-0.01em;line-height:1.6}
+.app{max-width:960px;margin:0 auto;padding:12px 12px 8px}
+.hd{text-align:center;margin-bottom:8px}
+.hd h1{font-size:18px;font-weight:700;letter-spacing:-0.02em}
+.hd p{font-size:11px;color:var(--text-tertiary);margin-top:1px}
+
+.main-layout{display:flex;gap:10px;align-items:flex-start}
+.col-params{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:4px}
+.col-result{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+
+.card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:10px;box-shadow:var(--shadow-sm)}
+
+.param-grp{margin-bottom:4px}
+.param-grp label{font-size:9px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:1px}
+.param-grp input,.param-grp select{font-size:12px;padding:5px 8px;border:1px solid var(--border-subtle);border-radius:6px;background:var(--bg-elevated);color:var(--text-primary);outline:none;font-family:inherit;width:100%;transition:border-color .2s}
+.param-grp input:focus,.param-grp select:focus{border-color:var(--accent);background:var(--bg-surface)}
+.param-grp select{cursor:pointer}
+.param-unit{font-size:8px;color:var(--text-disabled);margin-top:1px}
+.param-hint{font-size:7px;color:var(--text-disabled);margin-top:1px;font-style:italic}
+
+.btn{font-size:11px;font-weight:600;padding:5px 12px;border:none;border-radius:var(--radius-full);cursor:pointer;transition:all .2s;font-family:inherit;width:100%}
+.btn-p{background:var(--accent);color:#fff}
+.btn-p:hover{background:var(--accent-hover)}
+
+.presets{display:flex;flex-wrap:wrap;gap:2px;margin-top:4px}
+.preset{font-size:9px;padding:3px 9px;border:1px solid var(--border-subtle);border-radius:var(--radius-full);background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;transition:all .15s;font-family:inherit;line-height:1.4;white-space:nowrap}
+.preset:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);transform:translateY(-1px)}
+.preset.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light);font-weight:600}
+
+.rslt-header{font-size:9px;font-weight:650;margin-bottom:6px;color:var(--text-secondary)}
+.r-item{border-bottom:1px solid var(--bg-hover);padding:4px 0;display:flex;justify-content:space-between;align-items:baseline}
+.r-item:last-child{border-bottom:none}
+.r-item .rl{font-size:9px;color:var(--text-secondary)}
+.r-item .rv{font-size:13px;font-weight:700;color:var(--text-primary)}
+.r-item .ru{font-size:8px;color:var(--text-disabled);margin-left:8px}
+.r-item{gap:6px}
+
+.r-highlight{background:var(--accent-light);border-radius:6px;padding:6px 10px;margin:4px 0;border-left:3px solid var(--accent)}
+.r-highlight .rv{font-size:15px;font-weight:700;color:var(--accent)}
+.r-highlight .rl{font-size:8px;color:var(--text-disabled)}
+.r-highlight .ru{font-size:8px;color:var(--text-tertiary);margin-top:2px}
+
+.eq-note{font-size:8px;color:var(--text-disabled);padding:6px 8px;background:var(--bg-elevated);border-radius:var(--radius-sm);margin-top:6px;line-height:1.7}
+
+.formula-box{background:var(--bg-elevated);border-radius:var(--radius-sm);padding:8px;margin-top:6px}
+.formula-box .fn{font-size:10px;color:var(--text-secondary);font-family:"SF Mono","Consolas","Monaco",monospace;margin-bottom:2px}
+.formula-box .fd{font-size:8px;color:var(--text-disabled)}
+
+.warn-box{font-size:8px;padding:6px 8px;border-radius:4px;margin-top:6px;line-height:1.6}
+.warn-info{background:#EFF6FF;color:#1D4ED8;border:1px solid rgba(37,99,235,0.15)}
+
+.order-table{width:100%;font-size:9px;border-collapse:collapse;margin-top:4px}
+.order-table th{text-align:left;color:var(--text-disabled);font-weight:500;padding:2px 4px;border-bottom:1px solid var(--border-subtle)}
+.order-table td{text-align:right;padding:2px 4px;font-variant-numeric:tabular-nums}
+.order-table td:first-child{text-align:left;color:var(--text-secondary)}
+
+@media(max-width:800px){.main-layout{flex-direction:column}.col-params{width:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd">
+  <h1>衍射光栅计算器</h1>
+  <p>光栅方程 · 角色散 · 分辨率 · 自由光谱范围 · 闪耀角</p>
+</div>
+
+<div class="main-layout">
+  <div class="col-params">
+    <div class="card">
+      <div class="param-grp">
+        <label>光栅线密度 N</label>
+        <input type="number" id="lineDensity" value="1200" step="1" min="1" oninput="debounceCalc()">
+        <div class="param-unit">lines/mm (刻线/毫米)</div>
+      </div>
+      <div class="param-grp">
+        <label>波长 λ</label>
+        <input type="number" id="wavelength" value="500" step="0.1" min="1" oninput="debounceCalc()">
+        <div class="param-unit">nm</div>
+      </div>
+      <div class="param-grp">
+        <label>衍射级次 m</label>
+        <input type="number" id="order" value="1" step="1" min="-10" max="100" oninput="debounceCalc()">
+        <div class="param-hint">正整数（通常 m=1）</div>
+      </div>
+      <div class="param-grp">
+        <label>入射角 α</label>
+        <input type="number" id="incAngle" value="0" step="0.1" oninput="debounceCalc()">
+        <div class="param-unit">度（相对光栅法线，0=垂直入射）</div>
+      </div>
+      <div class="param-grp">
+        <label>光栅宽度 W</label>
+        <input type="number" id="gratingWidth" value="25" step="0.1" min="0.1" oninput="debounceCalc()">
+        <div class="param-unit">mm（可选，用于计算分辨率）</div>
+      </div>
+      <div class="param-grp">
+        <label>焦距 f</label>
+        <input type="number" id="focalLength" value="200" step="1" min="1" oninput="debounceCalc()">
+        <div class="param-unit">mm（可选，用于计算线色散）</div>
+      </div>
+
+      <div style="font-size:9px;font-weight:650;color:var(--text-secondary);margin:8px 0 2px">🎯 快速预设</div>
+      <div class="presets">
+        <button class="preset" onclick="setPreset(1200,500,1,0,25,200)">🔬 可见光谱仪</button>
+        <button class="preset" onclick="setPreset(2400,250,1,0,15,300)">🔭 紫外高分辨</button>
+        <button class="preset" onclick="setPreset(600,1550,1,0,10,150)">📡 近红外通信</button>
+        <button class="preset" onclick="setPreset(100,10600,1,30,20,250)">⚡ CO₂激光</button>
+        <button class="preset" onclick="setPreset(79,500,20,63.4,50,500)">🎯 Echelle 光栅</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-result">
+    <div class="card" id="resultsCard"></div>
+    <div class="card" id="extraCard"></div>
+  </div>
+</div>
+</div>
+
+<script>
+function $(id){return document.getElementById(id)}
+function fmt(v,d){if(v==null||isNaN(v))return '—';return Number(v).toFixed(d!=null?d:2)}
+function fmtSci(v,d){if(v==null||isNaN(v)||v===0)return '0';const dd=d!=null?d:2;const av=Math.abs(v);if(av>=1e6||av<0.001)return v.toExponential(dd);return v.toFixed(dd)}
+
+let calcTimer;
+function debounceCalc(){clearTimeout(calcTimer);calcTimer=setTimeout(calculate,200)}
+
+function setPreset(N,wl,m,alpha,W,f){
+  $('lineDensity').value=N;$('wavelength').value=wl;$('order').value=m;
+  $('incAngle').value=alpha;$('gratingWidth').value=W;$('focalLength').value=f;
+  document.querySelectorAll('.preset').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  calculate();
+}
+
+function calculate(){
+  const N=parseFloat($('lineDensity').value)||0;
+  const wl=parseFloat($('wavelength').value)||0;
+  const m=parseInt($('order').value)||0;
+  const alphaDeg=parseFloat($('incAngle').value)||0;
+  const W=parseFloat($('gratingWidth').value)||0;
+  const f=parseFloat($('focalLength').value)||0;
+
+  $('resultsCard').innerHTML='';$('extraCard').innerHTML='';
+  if(N<=0||wl<=0)return;
+  if(wl<1||N<1){$('resultsCard').innerHTML='<div style="padding:14px;text-align:center;color:var(--text-disabled)">请输入有效的波长 (≥1nm) 和光栅线密度 (≥1 lines/mm)</div>';return}
+
+  const d_mm=1/N; // grating spacing in mm
+  const d_nm=d_mm*1e6; // in nm
+  const alpha=alphaDeg*Math.PI/180;
+  const sinAlpha=Math.sin(alpha);
+
+  // Coarse grating check: d must be > lambda for m>=1 at normal incidence
+  if(d_nm<wl&&Math.abs(m)>=1&&alphaDeg===0){$('resultsCard').innerHTML='<div style="padding:14px;text-align:center;color:var(--text-disabled)">⚠️ 光栅间距 d ('+fmtSci(d_nm,1)+'nm) 小于波长 ('+fmtSci(wl,1)+'nm)<br>无法传播 m=±1 级次。请降低波长、选用更粗的光栅，或使用斜入射</div>';return}
+  // Grating equation: m*lambda = d*(sin(alpha) + sin(beta))
+  // => sin(beta) = m*lambda/d - sin(alpha)
+  const rhs=(m*wl)/d_nm-sinAlpha;
+
+  if(Math.abs(rhs)>1){
+    $('resultsCard').innerHTML='<div style="padding:20px;text-align:center;color:var(--text-disabled)">⚠️ sin(β)='+fmt(rhs,3)+' 超出范围<br>该级次在当前参数下不存在（倏逝波）</div>';
+    $('extraCard').innerHTML='';
+    return;
+  }
+
+  const beta=Math.asin(rhs);
+  const betaDeg=beta*180/Math.PI;
+
+  // Angular dispersion: d(beta)/d(lambda) = m/(d*cos(beta))
+  const cosBeta=Math.cos(beta);
+  const angDisp_radPerNm=m/(d_nm*cosBeta); // rad/nm
+  const angDisp_mradPerNm=angDisp_radPerNm*1000; // mrad/nm
+  const angDisp_degPerUm=angDisp_radPerNm*180/Math.PI*1000; // deg/um
+
+  // Linear dispersion (plate factor): P = d*cos(beta)/(m*f) [nm/mm]
+  let linDisp_nmPerMm=null;
+  if(f>0&&m!==0) linDisp_nmPerMm=(d_nm*cosBeta)/(m*f);
+  let linDisp_mmPerNm=null;
+  if(f>0&&m!==0&&linDisp_nmPerMm>0) linDisp_mmPerNm=1/linDisp_nmPerMm;
+
+  // Resolving power: R = m*N_total
+  const Ntot=(W>0&&d_mm>0)?W/d_mm:0;
+  const R=(m!==0)?Math.abs(m)*Ntot:0;
+  const deltaLambda=(R>0)?wl/R:null;
+
+  // Free spectral range: FSR = lambda/(|m|+1) for given order m
+  const fsr=(Math.abs(m)>0)?wl/(Math.abs(m)+1):null;
+
+  // Max diffraction order at normal incidence
+  const mMax=Math.floor(d_nm/wl);
+  const mMaxWithAlpha=Math.floor(d_nm/wl*(1+Math.abs(sinAlpha)));
+
+  // Blaze angle in Littrow: theta_B = arcsin(m*lambda/(2*d))
+  const blazeRhs=(Math.abs(m)*wl)/(2*d_nm);
+  let blazeDeg=null;
+  if(blazeRhs<=1) blazeDeg=Math.asin(blazeRhs)*180/Math.PI;
+
+  // Diffraction orders visible
+  const orders=[];
+  // Show all orders: negative, zero, positive
+  for(let k=-mMaxWithAlpha;k<=mMaxWithAlpha;k++){
+    if(k===0){
+      orders.push({m:0,angle:0,disp:0});
+      continue;
+    }
+    const rhsK=(k*wl)/d_nm-sinAlpha;
+    if(Math.abs(rhsK)<=1){
+      const betaK=Math.asin(rhsK)*180/Math.PI;
+      const cosBK=Math.cos(betaK*Math.PI/180);
+      const dispK=k/(d_nm*cosBK)*1000; // mrad/nm
+      orders.push({m:k,angle:betaK,disp:dispK});
+    }
+  }
+  const ordersVisible=orders.length;
+
+  // Results card
+  let html='<div class="rslt-header">📊 光栅衍射结果</div>';
+
+  html+='<div class="r-highlight"><div class="rl">光栅间距 d</div><div class="rv">'+fmtSci(d_nm,1)+' nm</div><div class="ru">1/'+N+' mm = '+fmtSci(d_nm*1e-3,3)+' μm</div></div>';
+
+  html+='<div class="r-item"><span class="rl">衍射角 β</span><span><span class="rv">'+fmt(betaDeg,2)+'°</span><span class="ru">('+fmt(betaDeg*Math.PI/180,3)+' rad)</span></span></div>';
+
+  html+='<div class="r-item"><span class="rl" title="角色散：衍射角随波长的变化率，越大光谱展开越宽">角色散 dβ/dλ</span><span><span class="rv">'+fmt(angDisp_mradPerNm,3)+' mrad/nm</span><span class="ru">'+fmt(angDisp_degPerUm,2)+' °/μm</span></span></div>';
+
+  if(linDisp_nmPerMm!==null){
+    html+='<div class="r-item"><span class="rl" title="倒线色散：焦面上每纳米波长对应的线距离">倒线色散 dx/dλ</span><span><span class="rv">'+fmt(1/linDisp_nmPerMm,2)+' mm/nm</span><span class="ru">@ f='+f+'mm</span></span></div>';
+  }
+
+  if(R>0){
+    html+='<div class="r-item"><span class="rl" title="分辨本领：R=λ/Δλ，表示光栅区分相邻波长的能力">分辨本领 R</span><span><span class="rv">'+fmtSci(R,0)+'</span><span class="ru">λ/Δλ = m·N</span></span></div>';
+    html+='<div class="r-item"><span class="rl">最小可分辨波长差 Δλ</span><span><span class="rv">'+fmtSci(deltaLambda,3)+' nm</span><span class="ru">'+((deltaLambda&&wl)?fmt(deltaLambda*1000,1)+' pm':'')+'</span></span></div>';
+  }
+
+  if(fsr!==null){
+    html+='<div class="r-item"><span class="rl" title="自由光谱范围：相邻级次不重叠的最大波长区间">自由光谱范围 FSR</span><span><span class="rv">'+fmt(fsr,1)+' nm</span><span class="ru">λ/(|m|+1)</span></span></div>';
+  }
+
+  html+='<div class="r-item"><span class="rl">可传播级次</span><span><span class="rv">'+mMaxWithAlpha+'</span><span class="ru">(垂直入射时 '+mMax+')</span></span></div>';
+
+  if(blazeDeg!==null && m!==0){
+    html+='<div class="r-item"><span class="rl" title="Littrow 闪耀角：光栅刻槽倾斜角，由制造商确定。此处反推：给定 m 和 λ，需多大闪耀角才能在此级次达到峰值效率">此波长下的闪耀角 θ_B</span><span><span class="rv">'+fmt(blazeDeg,2)+'°</span><span class="ru">mλ=2d·sinθ_B</span></span></div>';
+    // Blaze wavelength: given blaze angle, what wavelength peaks?
+    const blazeWL = (2*d_nm*Math.sin(blazeDeg*Math.PI/180))/Math.abs(m);
+    html+='<div class="r-item"><span class="rl" title="若闪耀角为 θ_B，在此级次下峰值效率的闪耀波长">→ 闪耀波长 λ_B</span><span><span class="rv">'+fmt(blazeWL,1)+' nm</span><span class="ru">λ_B=2d·sinθ_B/m</span></span></div>';
+  }
+
+  $('resultsCard').innerHTML=html;
+
+  // Extra card: orders table + warnings
+  let extra='<div class="rslt-header">📋 各级衍射角</div>';
+  extra+='<table class="order-table"><tr><th>级次 m</th><th>衍射角 β</th><th>角色散</th></tr>';
+  for(const o of orders){
+    extra+='<tr><td>'+o.m+'</td><td>'+fmt(o.angle,2)+'°</td><td>'+(o.m===0?'0（零级直射）':fmt(o.disp,3)+' mrad/nm')+'</td></tr>';
+  }
+  extra+='</table>';
+
+  // Warnings
+  if(Math.abs(m)>=2){
+    extra+='<div class="warn-box warn-info">💡 当前使用 <b>m='+m+'</b> 级衍射。高衍射级次色散更大，但自由光谱范围更窄（FSR='+fmt(fsr,1)+'nm），可能需要级次分离滤光片。</div>';
+  }
+  if(ordersVisible>=3){
+    extra+='<div class="warn-box warn-info">⚡ 存在 <b>'+ordersVisible+' 个</b>可传播衍射级次。多级次会导致光谱重叠，宽带应用建议使用滤光片限制波长范围。</div>';
+  }
+
+  // Formulas reference
+  extra+='<div class="eq-note"><b>参考公式</b><br>光栅方程：mλ = d·(sinα + sinβ)<br>角色散：dβ/dλ = m/(d·cosβ)<br>分辨本领：R = λ/Δλ = |m|·N<br>自由光谱范围：FSR = λ/(|m|+1)<br>闪耀条件(Littrow)：mλ_B = 2d·sinθ_B</div>';
+
+  // Disclaimer
+  extra+='<div style="margin-top:8px;font-size:7px;color:var(--text-disabled);line-height:1.6">⚠️ 免责声明：本工具基于标量衍射理论（忽略偏振效应和光栅效率曲线）。实际光栅衍射效率依赖于槽形、镀膜和入射偏振态，精确设计需参考光栅厂家效率曲线。Echelle 光栅的级次重叠效应需配合交叉色散元件使用。</div>';
+
+  $('extraCard').innerHTML=extra;
+}
+
+// Init
+setTimeout(calculate,100);
+</script>
+</body>
+</html>

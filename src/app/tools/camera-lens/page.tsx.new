@@ -1,0 +1,13 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "相机镜头选型工具 | 镜头参数计算 焦距 光圈 视场角 - OpticsKit",
+  description: "在线相机镜头选型计算工具，镜头焦距/光圈/视场角/景深计算，传感器靶面匹配，工业相机镜头参数速查，机器视觉镜头选型推荐",
+  keywords: "镜头选型,相机镜头,焦距计算,光圈,视场角,景深计算,传感器靶面,工业镜头,镜头参数,机器视觉镜头",
+};
+
+export default function Page() {
+  return (
+    <iframe src="/tools/camera-lens.html" style={{width:"100%",height:"calc(100vh - 56px)",border:"none",background:"#F3F4F6"}} title="相机镜头选型工具" />
+  );
+}

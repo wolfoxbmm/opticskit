@@ -1,0 +1,51 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的DFB激光器驱动电路纹波RMS值是0.5mV，规格书说没问题。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但用自外差法测出来的线宽比理论值宽了50%——原来，驱动纹波对线宽的影响比你想的要大得多。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">频率调制效应：纹波如何影响线宽</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">当激光器注入电流发生变化时，会引发一系列连锁反应：电流变化→载流子密度变化→折射率变化→相位变化→输出频率波动。这就是<strong>频率调制效应（FM）</strong>。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δf/f ≈ (1/n) · Δn/n ≈ (1/n) · (dn/dN) · ΔN/I（来源：Petermann, 1991）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">频率调制系数：激光器电流变化引起的频率变化，DFB典型值为1-5 GHz/mA（来源：Petermann, 1991）</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">1mA纹波如何让线宽展宽50%</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">让我们来做一个具体的计算：假设驱动纹波RMS值为0.5mV，测量带宽为50Ω（来源：典型低噪声驱动电路指标）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>电流纹波密度计算</strong>：0.5mV / 50Ω ≈ 10μA RMS（在1Hz带宽内）→ 在激光器调制带宽（~100kHz）内，等效约20μA RMS</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>频率噪声计算</strong>：频率调制系数取300MHz/mA（DFB典型值）→ 频率噪声密度 √(S_Δf) ≈ 20μA × 300MHz/mA ≈ 6kHz RMS</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>线宽展宽估算</strong>：展宽因子 ≈ 1 + (S_Δf / Δν_shot) ≈ 1.3-1.5，即展宽30-50%（来源：数字基于FM噪声转线宽理论，Petermann, Laser Diode Modulation and Noise, 1991）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>关键洞察</strong>：纹波的频率成分比幅度更重要。驱动电源的开关频率谐波（100kHz-1MHz）恰好落在激光器的弛豫振荡频率附近，对线宽的影响最为显著。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">纹波来源的三类典型干扰</span></h2>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">纹波类型</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">频率范围</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型来源</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">开关电源纹波</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">100kHz-1MHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">开关电源开关频率及其谐波</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">数字电路串扰</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">高频（&gt;1MHz）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">时钟谐波、FPGA/ MCU噪声</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">电源地线环路</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">低频（50/60Hz及谐波）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">接地不良、接地环路</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">降低纹波的实用方法</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>串联RF扼流圈</strong>：在激光器电源输入端串联高频扼流圈，抑制100kHz-1MHz的高频纹波。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>LD驱动单独线性电源</strong>：为激光器驱动单独供电，避免开关电源的数字噪声串扰。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>低噪声偏置器（bias-tee）</strong>：在激光器两端加装bias-tee，将直流偏置和射频调制分离，直流部分使用超低噪声电源。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">目标：驱动纹波 &lt; 0.1mV RMS</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">高线宽要求的相干通信系统，电源纹波必须控制在0.1mV RMS以下</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">驱动纹波对线宽的量化影响：K_FM=3GHz/mA的DFB，1mA纹波让线宽从1MHz展宽到~1.5MHz（50%恶化）。工程要求：目标线宽1MHz的系统，驱动纹波必须&lt;0.3mA RMS。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">激光线宽，30%由激光器本身决定，70%由驱动电源决定。</p></div>

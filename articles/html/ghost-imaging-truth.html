@@ -1,0 +1,64 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光从物体上反射回来，你却不用看它——只靠一束永远碰不到物体的光，照出了它的形状。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这不是魔法，是鬼成像（Ghost Imaging）。物理学家的困惑持续了20年：图像到底是怎么"凭空"出现的？</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">鬼成像是什么？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">鬼成像（Ghost Imaging，GI）是一种<strong>无需物体光束到达探测器</strong>就能重建图像的成像技术。传统相机拍照：光源照物体 → 物体反射光 → 相机接收。鬼成像反其道而行：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">① <strong>信号臂</strong>：光照射到物体，反射/透射光经过物体调制后，被一个没有空间分辨率的"桶探测器"收集（只测总光强，不成像）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">② <strong>参考臂</strong>：同一束光（或相干孪生光）不经物体，直接被高分辨率相机记录空间分布。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">③ <strong>关联计算</strong>：将桶探测器的总光强时间序列与参考臂的空间图样做<strong>二阶关联</strong>，逐步叠加重建出物体图像。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">换句话说：<strong>物体信息不需要经过物体到达探测器</strong>——只要信号臂和参考臂来自同一光源且光场具有关联性，图像就会在关联计算中"鬼魅般"浮现。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">量子 vs 经典：两种鬼成像机制</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">鬼成像有两套机制，长期引发物理学界争议：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">对比维度</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">量子鬼成像（QGI）</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">经典热光鬼成像（GI）</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光源</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">纠缠光子对（自发参量下转换）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">热光/赝热光（激光散斑）</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">关联方式</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">双光子符合计数（量子干涉）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">强度关联（经典统计）</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">纠缠必要？</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">是（量子光源核心）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">否，热光即可</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">信噪比（SNR）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">随测量时间 N 的 √N 倍增长</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">同样随 N 的 √N 倍增长</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">2001年后争议</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">量子纠缠派坚持</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">经典派：热光就够，无需纠缠</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">1995年，Pittman等人首次用量子纠缠光子对演示鬼成像（来源：Pittman et al., Phys. Rev. Lett. 1995）。2002年，Bennink等人证明<strong>经典热光（用旋转 diffuser 生成赝热光）同样可以鬼成像</strong>（来源：Bennink et al., Phys. Rev. Lett. 2002）——引发物理学界长达数年的"纠缠到底是否必需"之争。最终结论：两者在数学上都可以用<strong>二阶关联函数</strong>统一描述，纠缠光子提供了更稳定的高对比度关联，但经典热光在足够长的测量时间后同样可以重建图像。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">工程价值：为什么工程师关注鬼成像？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">鬼成像的工程价值在于（来源：Shapiro, Phys. Rev. A 2008）：<strong>"信号臂"可以放在极端恶劣环境中，而"参考臂"和探测器留在安全位置。</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>单像素成像</strong>：物体侧无需阵列探测器，只用"桶探测器"（一个光子计数器即可）。在红外、THz、X射线等没有成熟面阵探测器的波段，单像素鬼成像成为主要成像手段。2025年，光学快报（Optics Letters）报道了单光子级量子鬼成像，采样速度已提升至μs量级。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>抗大气湍流干扰</strong>：参考臂可以紧贴发射端，信号臂穿越长距离大气后被收集。大气湍流会扭曲光场，但两臂同时经历相同湍流时，关联计算可以<strong>部分抵消</strong>湍流影响。这在自由空间光通信和卫星-地面链路成像中有重要价值。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>穿透散射介质成像</strong>：生物组织、烟雾等强散射介质中，传统成像因散射而失效。鬼成像利用关联计算，可以在部分散射光被随机调制后，通过参考臂的已知散斑图样"解卷积"出物体信息。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">实用限制：SNR和测量速度</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">鬼成像的核心工程限制：<strong>图像质量随测量次数 N 缓慢增长</strong>，信噪比 ~ √N。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SNR ≈ √N · |g²(τ)|</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SNR ≈ √N × 二阶相干度，N 为测量帧数（独立散斑图样数量）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">要达到 SNR = 10，需要 N ≈ 100 帧叠加；SNR = 100，需要 N ≈ 10,000 帧</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">实际工程中常用<strong>计算鬼成像（CGI）</strong>：用空间光调制器（SLM）或数字微镜器件（DMD）生成已知结构光图样替代随机散斑，大幅减少所需测量次数。压缩感知鬼成像可将采样次数降低10-100倍（来源：Katz et al., Nat. Photonics 2009）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">鬼成像的本质是<strong>二阶关联成像</strong>——不需要物体光到达探测器，只需要两个光场之间存在关联。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">鬼成像的工程价值：用单像素探测器+随机照明实现成像——在传统CCD无法工作的波段（THz/X射线）有独特优势。压缩感知版可将采样次数从N²降到N·logN，但信噪比仍比传统成像低10-20dB。</p></div>

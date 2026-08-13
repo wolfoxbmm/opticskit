@@ -1,0 +1,31 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">打开一条OM4多模光纤的规格书，你会看到两个数字挨着放在一起：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• <strong>OFL带宽 ≥ 3500 MHz·km</strong> @ 850nm（TIA-492-AAAD）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• <strong>EMBc ≥ 4700 MHz·km</strong> @ 850nm（IEC 60793-1-49）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的第一反应可能是：4700比3500大，说明这条光纤很好。然后你按4700 MHz·km去算链路距离，得到一个数字——100G能跑几百米。但你装上去一测，误码率在第100米就开始飙升。不是光纤有问题，是你从一开始就算错了带宽。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">问题出在一个被大多数人忽略的细节上：<strong>这两种带宽测的不是同一种东西</strong>。OFL是LED打满所有模式时的"最坏情况"，EMBc是VCSEL模型算出来的"理论最好情况"——但你的实际链路，两者都不是。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">满注入带宽：LED测出来的"最坏情况"</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">OFL（Overfilled Launch，满注入）带宽的测试方法很简单：用一个LED光源，把光纤的所有模式群全部激发，然后测脉冲展宽。LED的出射角很大，低阶模式、高阶模式一视同仁全部灌进去。这时候测出来的带宽，反映的是光纤在"模式全开"状态下的色散极限。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这种方法的问题是：没有一个实际的高速光模块用LED当光源。数据中心里的100G/400G模块用的是VCSEL（垂直腔面发射激光器），它的发光孔径只有几个微米，发散角比LED小一个数量级。VCSEL注入到50μm纤芯里的模式分布，和LED完全不同。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但OFL测试有一个好处：它标准化、可重复。无论哪根光纤、哪台仪器，LED打满全注入的结果都差不多。所以规格书上的3500 MHz·km是一个保守的、统一的参考值——它不是你的实际值，而是"底线"。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">有效模式带宽：DMD+VCSEL模型算出来的"理论值"</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">EMBc（Effective Modal Bandwidth Calculated）的计算方法比OFL复杂得多。它分两步：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>第一步：测DMD。</strong> 用单模光纤在纤芯不同径向位置扫描，发射一个窄脉冲，记录不同位置的到达时间。最终得到一张DMD图——横轴是径向位置（0~25μm），纵轴是脉冲到达时间（ps/m）。理想情况下，所有位置的到达时间应该重合为一条水平线；实际上，高阶模式走得慢，会拖出一个"尾巴"。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>第二步：加权求和。</strong> 把DMD结果和一个"标准VCSEL"的光强分布模型做卷积。这个模型假设VCSEL的光斑直径大约是4.5μm（1/e²），高斯分布，中心对准纤芯。加权后得到一个等效的脉冲响应，再算带宽。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">所以EMBc的4700 MHz·km不是"测出来的"，是"算出来的"——它依赖于一个理想化的VCSEL模型。但你的实际模块可能不是标准模型：光斑偏了1μm、连接器把模式混合了、光纤弯折引入了模式耦合——这些都会导致实际带宽偏离计算值。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">模式耦合：距离不是简单的线性关系</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">很多人有一个直觉：带宽和距离成反比。3500 MHz·km跑1km是3.5 GHz，跑100m是35 GHz——这个算法对OFL是成立的，但对VCSEL链路不成立。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">原因在于<strong>模式耦合（Mode Coupling）</strong>。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">VCSEL注入时主要激发的是低阶模式（靠近纤芯中心）。这些模式在短距离内传播时，相互之间的延迟差很小，所以带宽很高。但随着距离增加，微小的缺陷（纤芯不均匀、微弯、应力、连接器）会不断把能量从高阶模式耦合到低阶模式、反之亦然。模式耦合的后果是：<strong>模式之间的延迟差被平均化</strong>，长距离上的有效带宽反而比短距离按线性外推的结果要高。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这意味着什么？意味着你不能拿EMBc的4700 MHz·km除以距离来算链路带宽。实际链路的带宽-距离关系不是一条直线，而是一条被模式耦合"拉平"的曲线。短距离（&lt;100m）上，实际带宽可能远低于线性估算；长距离（&gt;500m）上，模式耦合帮你"补救"了一部分，但这时衰减又成了瓶颈。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">IEEE 802.3bm在制定100GBASE-SR4标准时，就是基于实测链路数据，而不是理论带宽值，才把OM4的达标距离定在了<strong>100m</strong>（Corning, 40/100G Multimode Fiber Connectivity White Paper）。不是算错了，是考虑了模式耦合、连接器损耗、老化裕量之后，100m是一个工程上可靠的数字。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">重点结论</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• <strong>OFL带宽（3500 MHz·km）是LED测的"最坏情况"</strong>，你的VCSEL链路不会这么差，但这个数字不能直接用来算距离。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• <strong>EMBc带宽（4700 MHz·km）是DMD+理想VCSEL模型算出来的"理论值"</strong>，实际模块的光斑分布、连接器、弯折都会让这个数字偏高。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• <strong>模式耦合让带宽-距离关系偏离线性</strong>。短距离不能简单按线性外推算，长距离模式耦合会补救一部分色散。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• <strong>IEEE 802.3bm把100GBASE-SR4在OM4上的距离定在100m</strong>，是基于实测链路性能，不是理论带宽除以速率。想按4700 MHz·km算出几百米距离，是你的认知误区。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">可操作建议</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果你负责数据中心的光纤链路设计，记住以下三点：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">1. <strong>不要拿EMBc除以速率来估算距离</strong>。规格书上的4700 MHz·km是计算值，不是实测链路值。设计距离时直接参考IEEE 802.3标准给出的达标距离（100GBASE-SR4: 100m）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">2. <strong>如果必须做自定义计算，用DMD实测数据+你的实际VCSEL光斑分布</strong>，而不是用标准模型。不同厂商的VCSEL光斑大小差异很大，光斑偏离纤芯中心或尺寸偏离标准模型时，实际带宽可能远低于EMBc计算值。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. <strong>短链路（&lt;50m）也要留裕量</strong>。模式耦合在短距离内还没充分起作用，实际带宽可能比长距离链路更低。不要假设"50米肯定比100米好"。</p></div>

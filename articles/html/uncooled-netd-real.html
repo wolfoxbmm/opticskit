@@ -1,0 +1,40 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">一台标称 NETD 50 mK 的非制冷红外热像仪，放到户外搜救现场，操作员发现：人和环境的温差不到 200 mK 时，屏幕上几乎看不出区别。这不是机器坏了，而是"标称 NETD"和"现场可分辨温差"根本不是同一个指标。实验室里的 50 mK 是在 f/1 光学、300 K 黑体、特定帧频和积分时间下测出来的探测器级指标；到了整机系统，F 数变大、帧频变化、探测器温度漂移、非均匀性校正残余都会让有效噪声变差，实际能分清的温差往往是标称 NETD 的 3~5 倍（Niklaus et al., Infrared Physics &amp; Technology, Vol. 51, No. 3, pp. 168-177, 2008, DOI: 10.1016/j.infrared.2007.09.002）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">NETD 是怎么测出来的</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">NETD（Noise Equivalent Temperature Difference，噪声等效温差）的经典定义是：两个并排的大面积黑体，温度相差多少时，系统输出的信噪比刚好等于 1（Niklaus et al., Infrared Physics &amp; Technology, 2008, DOI: 10.1016/j.infrared.2007.09.002）。换句话说，它描述的是探测器"刚好能看见"的最小温差，但这个"刚好"有严格前提。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">实验室测 NETD 通常要求：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 光学 F 数为 f/1，保证尽可能多的红外辐射进入探测器；</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 黑体背景约 300 K，目标和背景的温差很小（典型 2~5 K）；</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 帧频和积分时间固定，且积分时间往往取最长可用值；</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 先做非均匀性校正（NUC），把像元间响应差异压到最低。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">在这些条件下，先进的氧化钒非制冷微测辐射热计阵列可以做到 NETD 低至 25 mK 左右（Niklaus et al., Infrared Physics &amp; Technology, 2008, DOI: 10.1016/j.infrared.2007.09.002）。规格书上常见的 50 mK，正是把探测器从整机中"剥离"出来后、在最优条件下测得的数字。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">实际系统里 NETD 为什么会劣化</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">整机装上镜头、放到现场后，NETD 很少还能保持实验室值。主要劣化来源有四类。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">F 数变大</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">红外光学系统的集光能力与 F 数的平方成反比。理论上，在背景辐射噪声限的理想情况下，NETD 与 F 数的平方成正比（Niklaus et al., Infrared Physics &amp; Technology, 2008, DOI: 10.1016/j.infrared.2007.09.002）。实际系统中由于探测器噪声和电路噪声的存在，劣化程度通常介于 F 的一次方到二次方之间。一个常见经验是：F 数从 f/1 增加到 f/2，NETD 可能恶化 2~4 倍。很多便携式设备为了镜头尺寸和成本，F 数做不到 f/1，这是现场 NETD 首先变差的原因。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">帧频与积分时间不匹配</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">NETD 与积分时间的平方根近似成反比：积分时间越长，收集的光子越多，信噪比越高，NETD 越低。但积分时间受帧频限制，帧频提高意味着积分时间缩短，NETD 会按平方根关系变差。例如帧频从 30 Hz 提高到 60 Hz，积分时间减半，NETD 大约劣化 1.4 倍。反之，若为了低 NETD 强行拉长积分时间，又会牺牲帧频，运动目标拖影加重。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">探测器温度漂移</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">非制冷探测器没有恒温制冷机，焦平面温度会随环境温度变化。氧化钒微测辐射热计的响应率和噪声都对温度敏感，温度漂移会改变偏置、响应斜率和 1/f 噪声水平，使原本校好的 NUC 表失效。结果是：同一场景在不同温度下测，NETD 可能再劣化一倍甚至更多。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">NUC 残余噪声</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">即使做了两点非均匀性校正，像元响应的非线性、漂移和场景温度变化仍会留下残余固定图案噪声（Fixed Pattern Noise, FPN）。与时间噪声不同，FPN 不会通过多帧平均消除，在低对比度场景中它往往比时间噪声更抢眼。NUC 表老化或更新不及时时，FPN 会成为主导噪声源，使有效 NETD 显著变差。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">NETD ≠ 可分辨温差</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">即便探测器 NETD 保持不变，"系统能不能分清两个温差"还要过三关：光学 MTF、显示/处理链、人眼或算法阈值。工程上更合适的指标是 MRTD（Minimum Resolvable Temperature Difference，最小可分辨温差），ASTM E1213-14(2022) 标准对它给出了测试方法。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">MRTD 与 NETD 的区别在于：NETD 只量探测器的温度灵敏度，而 MRTD 量的是"整机+观察者"在特定空间频率下分辨条纹的能力。它已经把光学模糊、噪声带宽、显示特性、人眼积分等因素打包进去，因此 MRTD 的数值通常比 NETD 大几倍。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">另一种系统级噪声分析框架是 3D-Noise 模型（SPIE, "Assessment of 3D noise methodology for thermal sensor simulation", Vol. 4372, 2001, DOI: 10.1117/12.439150）。它把噪声按时间维度和两个空间维度拆开，能区分时间噪声、固定图案噪声、列噪声、行噪声等不同分量。用 3D-Noise 分解后会发现：规格书里的 NETD 往往只反映了时间噪声一个维度，而现场图像质量还被 FPN 和列噪声严重拖累。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么 200 mK 不奇怪</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">把上述因素串起来，50 mK 的标称值被放大数倍是常态：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• F 数从 f/1 变到 f/2，在背景噪声限下按 F² 关系可贡献约 4 倍劣化，实际系统中通常在 2~4 倍之间；</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 帧频从 30 Hz 升到 60 Hz，积分时间减半，NETD 按平方根关系劣化约 1.4 倍；</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 探测器温度漂移和 NUC 残余，还会再贡献显著劣化；</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 最后从 NETD 换到 MRTD 或实际算法阈值，又可能再放大数倍。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">几项乘在一起，现场可分辨温差达到 150~400 mK 并不意外。Niklaus 等人的模型也指出，80~200 mK 的 NETD 对许多商业应用已经足够（Niklaus et al., Infrared Physics &amp; Technology, 2008, DOI: 10.1016/j.infrared.2007.09.002）—— 这句话反过来看，意味着要求现场分辨 50 mK 本身就是不切实际的。</p>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> NETD 50 mK 只是理想探测器指标。实际整机系统里，F 数、帧频、温度漂移、NUC 残余和 MRTD/3D-Noise 阈值会把可分辨温差放大到标称 NETD 的 3~5 倍。看到规格书先除以 3，再跟现场需求比。
+</blockquote>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">可操作建议</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">1. <strong>现场标定，不要只看规格书</strong>。带一个已知温差的黑体到现场，在相同 F 数和帧频下测实际 NETD。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">2. <strong>统一声明条件</strong>。规格书应同时给出 F 数、帧频、积分时间、背景温度和 NUC 状态，否则 50 mK 没有可比性。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">3. <strong>做 3D-Noise 分解</strong>。除了 NETD，还要关注固定图案噪声、列噪声、行噪声分量，它们对低对比度目标影响更大。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">4. <strong>用 MRTD 评估整机</strong>。如果最终是人眼看屏或算法识别，直接测 MRTD 比 NETD 更有指导意义。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">5. <strong>定期更新 NUC</strong>。环境温度变化较大或场景温度范围变化较大时，重新做非均匀性校正，抑制 FPN 劣化。</p></div>

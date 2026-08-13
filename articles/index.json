@@ -1,5 +1,443 @@
 [
   {
+    "slug": "quantum-repeater-chain-decay",
+    "title": "量子中继器5节点成功率<10⁻⁶",
+    "summary": "量子中继器不是\"放大信号\"——经典中继器做的是放大，量子中继器做的是\"延伸纠缠\"",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "edfa-cascade-osnr-budget",
+    "title": "5级EDFA级联OSNR恶化7dB",
+    "summary": "信号越透明地穿越节点，噪声就累积越多；当你美滋滋地以为省掉了 OEO 转换的成本时，链路的 OSNR 已经在悄悄崩塌",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "dcf-residual-dispersion",
+    "title": "色散补偿-1700ps/nm，系统没清零",
+    "summary": "你买了一卷标称-1700 ps/nm的色散补偿光纤，按长度精确裁好接入链路",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "cemented-lens-transmission-drift",
+    "title": "胶合镜片放两年，透光率掉2%",
+    "summary": "两年前装调的透射式光学系统，拆下来用分光光度计扫了一遍透过率光谱——曲线没有移动，但整体透光率比出厂低了2%",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "system-resolution-bottleneck",
+    "title": "系统分辨率0.1μm到手0.3μm",
+    "summary": "你的光学系统分辨率标称0.1 μm，装上镜头实测，别说0.1 μm，连0.3 μm的线对都糊成一片（来源：典型高NA物镜实测与标称对比）——光学分辨率、采样分辨率、系统分辨率，这三个数根本不是一回事",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "narrowband-filter-angle-shift",
+    "title": "窄带滤光片入射角5°，波长漂0.5nm",
+    "summary": "你买了一片532nm窄带滤光片，带宽1nm，厂家测试报告上中心波长精度±0.2nm",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "penetration-wavelength-myth",
+    "title": "穿透力不是物理量，不存在万能波长",
+    "summary": "红外线穿透雾气（来源：Hodges, Environmental Pollution, 1972），红光穿透大气，所以长波长=强穿透，对吧",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "siph-driver-voltage-drop",
+    "title": "硅光驱动器5V输出，电极只有1.5V",
+    "summary": "很多硅光工程师会遇到这个困惑：驱动器面板显示输出5V，但用探头接到调制器电极上，示波器只有1.5Vpp",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "siph-thermal-tuning-efficiency",
+    "title": "硅光热调谐效率100 vs 30GHz/W",
+    "summary": "硅光芯片上的微环谐振器/马赫-曾德尔干涉仪通常靠热光效应调谐——给集成加热器通电加热波导，利用硅的热光系数（dn/dT≈1.8×10⁻⁴/K at 1550nm, Komma et al., Applied Physics Letters",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "coherent-dsp-equalizer-noise",
+    "title": "相干DSP均衡器在放大噪声",
+    "summary": "你的相干接收机DSP里开了自适应均衡（Equalization），信号质量反而不如不开的时候",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "modulator-bias-drift",
+    "title": "电光调制器偏压锁好半小时又漂",
+    "summary": "电光调制器偏压锁定在Quadrature点，前10分钟消光比稳定在20dB",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "eom-extinction-ratio",
+    "title": "电光调制器消光比只有15dB",
+    "summary": "你的LiNbO₃ Mach-Zehnder调制器规格书写着Vπ=3.5V、消光比&gt;20dB",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "time-stretch-imaging",
+    "title": "时间拉伸成像：10ps变100ps",
+    "summary": "你见过用透镜成像——但光还可以用\"时间\"来成像：把飞秒脉冲在时域里拉伸、聚焦、再压缩，像空间透镜操作光束一样",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "interferometer-accuracy-range",
+    "title": "激光干涉仪亚纳米精度，差8μm",
+    "summary": "你的激光干涉仪标称精度±0.5ppm，分辨率1nm，稳频精度±0.05ppm",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "cassinian-diffraction-limit",
+    "title": "卡什纳条件满足，还是不到衍射极限",
+    "summary": "光学检测中的\"卡什纳条件\"（Cashner / null-test condition）给出了干涉检测可接受波前误差的理论界限——通常表述为参考波前与被测波前之差小于某个阈值",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "stray-light-aperture-stop",
+    "title": "杂散光孔径光阑与艾里斑",
+    "summary": "但加了光阑之后图像反而变差了——衍射斑扩大、边缘变暗、分辨率下降，这不是光阑的错，是你没搞清楚\"挡什么\"和\"挡多少\"的区别",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "lo-power-osnr-optimum",
+    "title": "本振功率15dBm，OSNR更差",
+    "summary": "你的相干接收机里，本振激光器功率加到15dBm之后，测出来的OSNR反而比10dBm时更差了",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "grounding-noise-floor",
+    "title": "接地规则全遵守，底噪超标10倍",
+    "summary": "你的低噪声前置放大器板上密密麻麻铺满了铜地线，模拟地数字地分开，星形接地，所有教科书规则都遵守了",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "raman-amplifier-osnr",
+    "title": "拉曼放大器增益+20dB，OSNR-3dB",
+    "summary": "分布式拉曼放大器，on-off增益标称20dB，光谱仪上信号确实抬了20dB",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "cutoff-wavelength-measurement",
+    "title": "截止波长1.7μm，1.65μm测不到",
+    "summary": "你的光谱仪标称探测范围0.9-1.7μm，但到了1.65μm，信号已经跌到峰值的一半以下",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "balanced-detector-cmrr",
+    "title": "平衡探测器CMRR 35dB变22dB",
+    "summary": "你的平衡光电探测器规格书写的是CMRR&gt;35dB（理论上可以压低10dB噪声），但实际接进系统测出来的等效噪声改善只有22dB",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "interferometer-vibration-isolation",
+    "title": "隔振台压着，空调一开条纹飘",
+    "summary": "空调压缩机启动——没有任何机械振动传到台面，但条纹肉眼可见地漂了半个周期",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "interferometer-coherence-length",
+    "title": "干涉仪条纹消失，换激光器好了",
+    "summary": "你的干涉仪条纹突然消失了，明明光源波长没错，偏振也对——问题出在哪",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "fwm-efficiency-gap",
+    "title": "四波混频效率100% vs 实际1%",
+    "summary": "四波混频（FWM）在非线性光学教材中，耦合波方程给出的最大转换效率可以趋近100%",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "deformable-mirror-strehl",
+    "title": "变形镜配置够，Strehl比还是0.3",
+    "summary": "变形镜行程够、致动器数量够，Strehl比还是0.3 打开一份自适应光学（AO）系统的验收报告，你会发现变形镜的行程标注了±10μm——远大于大气湍流引起的波前峰谷值（通常2–4μm）；致动器数量超过140个——满足奈奎斯特采样要求，理论上",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "low-power-nonlinear-accumulation",
+    "title": "0dBm入纤，非线性已积累",
+    "summary": "你的100G DWDM系统调完OSNR余量明明有6dB，结果传到80km就崩了——换光缆、换模块、换EDFA，故障依旧",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "fiber-coupling-thermal-drift",
+    "title": "光纤耦合温漂：5℃丢30%功率",
+    "summary": "透镜光纤耦合系统调了2小时，耦合效率做到85%——说明书上说这已经接近理论极限了",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "fiber-laser-m2-collapse",
+    "title": "光纤激光器M²从1.05崩到2",
+    "summary": "你的光纤激光器在10W输出时，光束质量M²=1.05，接近衍射极限",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "fiber-macrobend-loss",
+    "title": "光纤宏弯损耗：1550nm vs 1310nm",
+    "summary": "你的跳线在机柜里拐了个10mm的小弯，OTDR测出来发现——1550nm波长多了1.5dB损耗",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "photodetector-pulse-saturation",
+    "title": "探测器读平均功率，脉冲峰值已饱和",
+    "summary": "用InGaAs PIN光电二极管测1550nm脉冲激光器的\"平均功率\"，功率计读数稳定显示50mW",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "optical-coating-spectral-shift",
+    "title": "镀膜测试全过，装上光谱偏3nm",
+    "summary": "窄带滤光片的出厂测试报告漂亮——中心波长1550.0nm，峰值透过率98%，带宽1.0nm",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "optical-design-constraint-limit",
+    "title": "30个约束，优化器撑不住了",
+    "summary": "光学设计的思路很简单：给优化器一个评价函数和一组变量，让它找到最优解",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "soliton-power-sensitivity",
+    "title": "光孤子功率偏差10%就崩溃",
+    "summary": "一个光脉冲在光纤里跑了 1000 公里，拿出来一看——波形和出发时一模一样，连时间位置都没变",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "photon-counting-vs-analog",
+    "title": "光子计数vs模拟探测，灰色地带怎么选",
+    "summary": "你的弱光探测场景原本选了光子计数方案，信噪比却不理想；换成模拟探测后更差",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "polarization-tracking-speed",
+    "title": "偏振跟踪跟不上天气变化",
+    "summary": "你的100G DP-QPSK相干系统，明明有偏振跟踪算法，但天气变化时BER偶尔还是会跳一下",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "shg-efficiency-gap",
+    "title": "倍频效率70% vs 实际5%",
+    "summary": "供应商的BBO晶体规格书上写着\"倍频转换效率&gt;70%\"，你买回来搭光路，调了一整天，功率计上读出的转换效率只有 4.8%",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "dark-current-noise-bottleneck",
+    "title": "暗电流散粒噪声不是瓶颈，放大器才是",
+    "summary": "拿到一份InGaAs PIN探测器的规格书，暗电流写的是1 nA",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "ra-roughness-vs-psd",
+    "title": "Ra粗糙度 vs 散射损耗功率谱密度",
+    "summary": "你拿到两块金刚石车削的金属反射镜，表面粗糙度仪都显示Ra ≈ 5nm",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "om4-vcsel-bandwidth",
+    "title": "OM4满注入带宽 vs VCSEL链路带宽",
+    "summary": "打开一条OM4多模光纤的规格书，你会看到两个数字挨着放在一起： • OFL带宽 ≥ 3500 MHz·km @ 850nm（TIA-492-AAAD） • EMBc ≥ 4700 MHz·km @ 850nm（IEC 60793-1-49）",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "ghost-imaging-truth",
+    "title": "鬼成像20年的困惑与工程真相",
+    "summary": "光从物体上反射回来，你却不用看它——只靠一束永远碰不到物体的光，照出了它的形状",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "tia-gain-bandwidth-limit",
+    "title": "TIA增益与带宽的物理极限",
+    "summary": "你的光通信接收机前端TIA，增益调高了带宽就不够用，带宽拉满了增益又太小",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "spad-detection-efficiency",
+    "title": "SPAD量子效率60%，探测概率只有15%",
+    "summary": "你的SPAD规格书写着量子效率60%、填充因子80%、死时间10ns",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "sled-noise-oct-snr",
+    "title": "SLED噪声低25dB，OCT信噪比更差？",
+    "summary": "你的OCT系统原来用ASE光源，换成SLED光源之后信噪比反而更差了——SLED噪声比ASE低25dB，但功率低了20dB，净SNR反而下降",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "qkd-spdc-vs-qdot",
+    "title": "QKD用SPDC，量子计算要量子点",
+    "summary": "\"单光子源\"不是每次只发一个光子——它只是承诺\"一次最多发一个\"，但这个承诺本身，已经颠覆了整个光学的底层逻辑",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "qkd-key-rate-gap",
+    "title": "QKD密钥率1Mbps vs 实测10kbps",
+    "summary": "论文里QKD系统宣称密钥率1 Mbps，实验室实测为什么只有10 kbps",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "osnr-constellation-nonlinear",
+    "title": "OSNR正常但星座图变胖了",
+    "summary": "你的100G QPSK相干系统，在OSNR还没明显下降的时候，星座图的点就开始变\"胖\"了",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "oam-mode-purity",
+    "title": "OAM模式纯度95%，实测l=1.7",
+    "summary": "轨道角动量（OAM）光束用于光通信复用和量子信息编码时，规格书上可能声称模式纯度&gt;95%、拓扑荷l=2",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "ndyag-thermal-lensing",
+    "title": "Nd:YAG功率加倍，M²退化到2.5",
+    "summary": "你的Nd:YAG激光器在2W输出时M²=1.1，非常好；加到5W之后，光束质量反而变差了",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "m2-measurement-variance",
+    "title": "M²分析仪标1.1，换个方法变1.5",
+    "summary": "M²分析仪屏幕上显示M²=1.05——几乎完美的基模高斯光束",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "mfd-splice-loss",
+    "title": "MFD不匹配熔接损耗1.4dB",
+    "summary": "你把掺铒光纤熔接到SMF-28上，熔接机显示损耗0.05dB——完美",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "g654-attenuation-gap",
+    "title": "G.654.E衰减0.15 vs 实测0.17dB/km",
+    "summary": "G.654.E光纤规格书上写衰减系数≤0.17dB/km（ITU-T G.654.E 标准限值），有些厂商标称达到了0.15dB/km",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "g652-cutoff-mode-noise",
+    "title": "G.652截止波长1260nm，1310nm还有噪声",
+    "summary": "打开一条G.652单模光纤的规格书，你会看到一行清晰的数字：截止波长 ≤ 1260nm",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "fbg-sensor-drift",
+    "title": "FBG读数漂了20με，传感器在漂",
+    "summary": "你的FBG应变传感器安装时标定是1000με，装上两周后再测——读数变成了1020με",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "fbg-temperature-drift",
+    "title": "FBG温度补偿做了，还是漂30pm？",
+    "summary": "你的FBG应变传感器标定后放了3个月，再测出来波长怎么漂了30pm（来源：FBG长期稳定性典型数据，Lindner et al., Meas. Sci. Technol. 2011）",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "edfa-s-band-tdfa",
+    "title": "EDFA的S波段盲区：TDFA贵3-5倍",
+    "summary": "EDFA统治C+L波段二十年，但S波段（1460-1530nm）始终是个技术空白——直到掺铥光纤放大器（TDFA）的出现",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "dfb-ripple-linewidth",
+    "title": "DFB驱动纹波0.5mV，线宽却宽了50%",
+    "summary": "你的DFB激光器驱动电路纹波RMS值是0.5mV，规格书说没问题",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "dfb-aging-margin",
+    "title": "DFB老化余量设计：必须留30%余量",
+    "summary": "你的DFB激光器跑了10000小时，监控数据显示阈值电流比初始值涨了15%（来源：Telcordia GR-468-CORE；InGaAsP DFB典型老化数据）",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "dfb-temperature-wdm",
+    "title": "DFB温控精度：DWDM需要多精确？",
+    "summary": "温度升高10°C，你的DFB激光器波长向长波方向漂了约0.8~1.0 nm（来源：典型DFB激光器温度系数）——不是短波，是长波",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "dcm-dispersion-osnr",
+    "title": "DCM补偿色散，插损吃掉OSNR 2dB",
+    "summary": "DCM标称色散补偿-1700ps/nm，色散图也确实走平了——但光纤链路末端的OSNR硬生生少了2dB",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "cwdm-vs-dwdm",
+    "title": "CWDM便宜60%，什么时候够用？",
+    "summary": "为什么一根比头发丝还细的光纤，能同时承载 8000 万路高清视频通话",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "botda-vs-rotdr",
+    "title": "BOTDA还是ROTDR？选错多花一倍钱",
+    "summary": "你用BOTDA测了十几公里的光纤应变，满心以为布里渊能扛住长距离大范围监测——结果系统跑起来才发现，你的场景只需要测温度，而拉曼散射传感器便宜一半、装起来还简单",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "apd-spad-dark-count",
+    "title": "APD/SPAD暗计数率规格陷阱",
+    "summary": "你买的光子计数器规格书写着\"暗计数率&lt;1Hz（室温）\"，接上测试发现——实测暗计数是1000Hz",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "adc-snr-degradation",
+    "title": "ADC规格书SNR 80dB，为什么实测差这么多？",
+    "summary": "你的ADC规格书也这么写，实测200 MHz信号时SNR却只有34 dB——规格书明明写的80 dB",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "apc-dust-contamination",
+    "title": "1μm灰尘让APC回波损耗从-65dB劣化到-35dB",
+    "summary": "FC/APC连接器标称回波损耗65dB，实测只有38dB——8°斜角本身没问题，问题出在你看不见的微米尺度",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "upc-connector-cascade",
+    "title": "15个UPC连接器级联，回波损耗从-55dB恶化到-33dB",
+    "summary": "你的光功率预算算得刚刚好，加了15个连接器之后收光功率却不够了",
+    "date": "2026-07-14"
+  },
+  {
+    "slug": "sled-coherence-fringes",
+    "title": "SLED带宽80nm，干涉条纹照样看得见",
+    "summary": "SLED光谱宽度80nm，相干长度仅几十微米——为什么实验台上还是看到了清晰的干涉条纹？问题不在光源，在你的光路。",
+    "date": "2026-07-07"
+  },
+  {
+    "slug": "ccd-fullwell-overexposure",
+    "title": "CCD满阱容量标称10万电子，为什么图像还是提前过曝？",
+    "summary": "满阱容量10万e⁻，信号才3万e⁻就白了——抗光晕结构、像素间电荷溢出和读出放大器饱和，三个隐藏瓶颈让你的动态范围大打折扣。",
+    "date": "2026-07-07"
+  },
+  {
+    "slug": "mtf-assembly-drop",
+    "title": "镜头仿真MTF=0.55，装起来只剩0.28",
+    "summary": "Zemax 里 MTF 曲线漂漂亮亮，装完实测直接腰斩——公差分析不是没做，是装调环节的隐藏误差你没加进来。",
+    "date": "2026-07-03"
+  },
+  {
+    "slug": "uncooled-netd-real",
+    "title": "非制冷红外NETD标50mK，实际场景200mK温差才分得清",
+    "summary": "一台标称 NETD 50 mK 的非制冷红外热像仪，放到户外搜救现场，操作员发现：人和环境的温差不到 200 mK 时，屏幕上几乎看不出区别",
+    "date": "2026-07-03"
+  },
+  {
+    "slug": "pm-splice-extinction",
+    "title": "保偏光纤熔接消光比（40dB→25dB，消偏振的罪魁祸首不是熔接机）",
+    "summary": "保偏光纤熔接后消光比从40dB跌到25dB——你以为熔接机对轴精度不够，真正的问题可能在几厘米外的应力区。",
+    "date": "2026-07-03"
+  },
+  {
+    "slug": "direct-vs-coherent-detection",
+    "title": "直接检测便宜3倍，什么时候必须上相干检测？80km是分界线",
+    "summary": "直接检测省成本，相干检测吃预算——但80km这条线一旦跨过去，便宜就变成贵了。",
+    "date": "2026-07-03"
+  },
+  {
+    "slug": "fog-warmup-detail",
+    "title": "光纤陀螺开机0.01度每小时，30分钟后才稳——前30分钟数据全是废的",
+    "summary": "你拿到一台光纤陀螺，规格书写着零偏稳定性0.01°/h。你开机、记录、算Allan方差——发现前30分钟的零偏漂到0.1°以上。不是陀螺坏了，是它还没热透。",
+    "date": "2026-07-01"
+  },
+  {
+    "slug": "experiment-repeatability",
+    "title": "同样参数跑两遍，SNR差了3dB——你的实验能重复吗？",
+    "summary": "光学实验台上，所有参数设置一模一样——激光功率、探测器增益、锁相时间常数。跑两遍，SNR差了3dB。是设备漂了，还是你忽略了一个隐藏变量？",
+    "date": "2026-07-02"
+  },
+  {
     "slug": "edfa-transient",
     "title": "EDFA增益标称稳定±0.5dB，为什么信道上下路时过冲3dB？",
     "summary": "你刚把第8个WDM信道切掉，以为功率重新分配的误差也就±0.5dB——结果光谱仪上剩余信道功率猛然跳了3dB。",
@@ -38,19 +476,19 @@
   {
     "slug": "femtosecond-ablation",
     "title": "飞秒激光功率翻5倍，烧蚀深度只增加30%",
-    "summary": "你用飞秒激光在铜片上打孔，脉冲能量从1 µJ调到5 µJ，功率翻了5倍，结果台阶仪测出来的烧蚀深度只增加了 30% （来...",
+    "summary": "你用飞秒激光在铜片上打孔，脉冲能量从1 µJ调到5 µJ，功率翻了5倍，结果台阶仪测出来的烧蚀深度只增加了 30% （来源：基于烧蚀阈值模型的典型数据，Nolte et al., 1997）",
     "date": "2026-06-05"
   },
   {
     "slug": "spectrum-resolution",
     "title": "光谱仪分辨率标称0.1nm，为什么0.05nm的峰测出0.3nm？",
-    "summary": "入射狭缝宽度才是决定实测分辨率的第一道关卡——狭缝函数展宽让你的光谱仪实测分辨率远低于标称值",
+    "summary": "但实际测量时，FWHM 0.05nm的激光谱线测出来是0.3nm，分开0.15nm的双峰直接糊成单峰",
     "date": "2026-06-28"
   },
   {
     "slug": "dfb-linewidth",
     "title": "DFB线宽从1MHz展宽到10MHz：光反馈+驱动纹波两个必查项",
-    "summary": "规格书标称线宽≤1MHz，上电实测10MHz——光反馈和电流噪声如何悄悄拉宽DFB线宽",
+    "summary": "规格书写着\"线宽 ≤ 1 MHz\"，你兴冲冲地焊好电路、接上光纤，用延迟线自拍频仪一测——10 MHz（来源：典型DFB线宽规格与实测对比）",
     "date": "2026-06-25"
   },
   {

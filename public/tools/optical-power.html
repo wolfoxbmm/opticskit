@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>光功率单位换算 - OpticsKit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-root:#F3F4F6;--bg-surface:#FFFFFF;--bg-elevated:#F9FAFB;--bg-hover:#F3F4F6;--border-subtle:#E5E7EB;--text-primary:#111827;--text-secondary:#4B5563;--text-tertiary:#6B7280;--text-disabled:#9CA3AF;--accent:#2563EB;--accent-hover:#1D4ED8;--accent-light:#EFF6FF;--shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.06);--radius-sm:8px;--radius-md:12px;--radius-full:9999px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg-root);color:var(--text-primary);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-0.01em;line-height:1.6}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-subtle);border-radius:3px}::selection{background:rgba(34,139,230,0.15);color:var(--text-primary)}
+.app{max-width:860px;margin:0 auto;padding:32px 20px 24px}
+.hd{text-align:center;margin-bottom:24px}
+.hd h1{font-size:22px;font-weight:700;letter-spacing:-0.02em}
+.hd p{font-size:13px;color:var(--text-tertiary);margin-top:4px}
+
+.tabs{display:inline-flex;gap:4px;margin-bottom:20px;background:var(--bg-elevated);border-radius:var(--radius-md);padding:4px}
+.tab{padding:7px 20px;font-size:13px;font-weight:600;border:none;border-radius:var(--radius-sm);cursor:pointer;background:transparent;color:var(--text-secondary);transition:all .15s;user-select:none;font-family:inherit}
+.tab.on{background:var(--accent);color:#fff;box-shadow:var(--shadow-sm)}
+.tab:hover:not(.on){color:var(--accent)}
+
+.card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:24px;box-shadow:var(--shadow-sm);margin-bottom:16px}
+.card-title{font-size:14px;font-weight:650;color:var(--text-primary);margin-bottom:16px}
+
+/* Quick converter */
+.convert-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
+@media(max-width:640px){.convert-grid{grid-template-columns:1fr;gap:8px}}
+
+.input-box{display:flex;flex-direction:column;gap:4px}
+.input-box label{font-size:11px;font-weight:600;color:var(--text-secondary)}
+.input-box input{font-size:20px;font-weight:600;padding:14px 16px;border:2px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-elevated);color:var(--text-primary);outline:none;font-family:inherit;width:100%;transition:border-color .2s,background .2s;-moz-appearance:textfield}
+.input-box input::-webkit-inner-spin-button,.input-box input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.input-box input:focus{border-color:var(--accent);background:var(--bg-surface)}
+.input-box select{font-size:13px;padding:8px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-surface);color:var(--text-primary);outline:none;cursor:pointer;font-family:inherit}
+.input-box select:focus{border-color:var(--accent)}
+
+.eq-icon{font-size:28px;color:var(--text-disabled);text-align:center;padding-top:16px}
+
+.result-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-top:16px}
+.r-mini{background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:10px 14px}
+.r-mini .rl{font-size:9px;color:var(--text-disabled);text-transform:uppercase;letter-spacing:0.04em}
+.r-mini .rv{font-size:15px;font-weight:700;color:var(--text-primary);margin-top:2px}
+.r-mini .ru{font-size:9px;color:var(--text-tertiary)}
+
+/* Power density extra */
+.extra-grid{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-bottom:12px}
+.extra-grp{display:flex;flex-direction:column;gap:4px}
+.extra-grp label{font-size:11px;font-weight:600;color:var(--text-secondary)}
+.extra-grp input{font-size:13px;padding:7px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-elevated);color:var(--text-primary);outline:none;width:100px;font-family:inherit}
+.extra-grp input:focus{border-color:var(--accent)}
+.extra-grp select{font-size:13px;padding:7px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-surface);color:var(--text-primary);outline:none;cursor:pointer;font-family:inherit;width:130px}
+.extra-grp select:focus{border-color:var(--accent)}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text-primary);color:#fff;padding:8px 20px;border-radius:var(--radius-md);font-size:12px;z-index:99;display:none;box-shadow:var(--shadow-md);font-family:inherit}
+
+.iec-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:4px 10px;border-radius:var(--radius-full);font-weight:600}
+.iec-class1{background:#ECFDF5;color:#059669}
+.iec-class3{background:#FFFBEB;color:#D97706}
+.iec-class4{background:#FEE2E2;color:#DC2626}
+.iec-ref{font-size:10px;color:var(--text-disabled);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd">
+  <h1>光功率单位换算</h1>
+  <p>W ↔ mW ↔ dBm · 功率密度 · 脉冲能量 · IEC 60825 安全等级</p>
+</div>
+
+<div class="tabs">
+  <span class="tab on" data-tab="power" onclick="switchTab('power')">绝对功率</span>
+  <span class="tab" data-tab="density" onclick="switchTab('density')">功率密度</span>
+  <span class="tab" data-tab="pulse" onclick="switchTab('pulse')">脉冲能量</span>
+</div>
+
+<div id="tabContent"></div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+let activeTab = 'power';
+
+const powerUnits = [
+  { id:'w', name:'瓦特 (W)', toMw: 1000, symbol: 'W' },
+  { id:'mw', name:'毫瓦 (mW)', toMw: 1, symbol: 'mW' },
+  { id:'uw', name:'微瓦 (μW)', toMw: 0.001, symbol: 'μW' },
+  { id:'nw', name:'纳瓦 (nW)', toMw: 0.000001, symbol: 'nW' },
+  { id:'dbm', name:'分贝毫瓦 (dBm)', toMw: null, symbol: 'dBm' },
+];
+
+const densityUnits = [
+  { id:'wcm2', name:'W/cm²', toWm2: 10000 },
+  { id:'wm2', name:'W/m²', toWm2: 1 },
+  { id:'mwcm2', name:'mW/cm²', toWm2: 10 },
+  { id:'wmm2', name:'W/mm²', toWm2: 1e6 },
+];
+
+const energyUnits = [
+  { id:'j', name:'焦耳 (J)', toJ: 1, symbol:'J' },
+  { id:'mj', name:'毫焦 (mJ)', toJ: 0.001, symbol:'mJ' },
+  { id:'uj', name:'微焦 (μJ)', toJ: 0.000001, symbol:'μJ' },
+  { id:'nj', name:'纳焦 (nJ)', toJ: 1e-9, symbol:'nJ' },
+];
+
+function $(id){return document.getElementById(id)}
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>{t.style.display='none'},2000)}
+
+function mwToDbm(mw){if(mw<=0)return -Infinity;return 10*Math.log10(mw)}
+function dbmToMw(dbm){return Math.pow(10,dbm/10)}
+
+function format(v){
+  if(v===0)return'0';
+  if(Math.abs(v)>=1e9||(Math.abs(v)<0.0001&&v!==0))return v.toExponential(4);
+  if(Math.abs(v)>=1000)return v.toLocaleString('en-US',{maximumFractionDigits:1});
+  if(Math.abs(v)>=1)return v.toLocaleString('en-US',{maximumFractionDigits:4});
+  return v.toLocaleString('en-US',{maximumFractionDigits:6});
+}
+
+function switchTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tab));
+  renderTab();
+}
+
+function renderTab(){
+  const el=$('tabContent');
+  el.innerHTML='';
+
+  const card=document.createElement('div');card.className='card';
+
+  if(activeTab==='power'){
+    card.innerHTML=`
+      <div class="card-title">⚡ 绝对功率换算</div>
+      <div class="convert-grid">
+        <div class="input-box">
+          <label>功率</label>
+          <input type="number" id="pwrVal" value="1" step="any" min="0" oninput="calcPower()">
+          <select id="pwrFrom" onchange="calcPower()">${powerUnits.map(u=>`<option value="${u.id}">${u.name}</option>`).join('')}</select>
+        </div>
+        <div class="eq-icon">→</div>
+        <div class="input-box">
+          <label>目标单位</label>
+          <select id="pwrTo" onchange="calcPower()">${powerUnits.map((u,i)=>`<option value="${u.id}" ${i===3?'selected':''}>${u.name}</option>`).join('')}</select>
+          <div id="pwrResult" style="font-size:20px;font-weight:700;padding:14px 16px;border:2px solid var(--accent);border-radius:var(--radius-sm);background:var(--accent-light);color:var(--accent);min-height:56px;display:flex;align-items:center">—</div>
+        </div>
+      </div>
+      <div class="result-grid" id="pwrAll"></div>
+      <div class="iec-ref" id="iecInfo"></div>`;
+
+    $('tabContent').appendChild(card);
+    calcPower();
+  }
+  else if(activeTab==='density'){
+    card.innerHTML=`
+      <div class="card-title">☀️ 功率密度换算</div>
+      <div class="extra-grid">
+        <div class="extra-grp">
+          <label>功率</label>
+          <input type="number" id="denPower" value="1" step="any" min="0" oninput="calcDensity()">
+        </div>
+        <div class="extra-grp">
+          <label>单位</label>
+          <select id="denPowerUnit" onchange="calcDensity()">${powerUnits.filter(u=>u.id!=='dbm').map(u=>`<option value="${u.id}" ${u.id==='w'?'selected':''}>${u.name}</option>`).join('')}</select>
+        </div>
+        <div class="extra-grp">
+          <label>光斑直径 (mm)</label>
+          <input type="number" id="denDia" value="1" step="any" min="0" oninput="onDiaChange()">
+        </div>
+        <div class="extra-grp">
+          <label>面积 (mm²)</label>
+          <input type="number" id="denArea" value="0.7854" step="any" min="0" oninput="onAreaChange()">
+        </div>
+      </div>
+      <div class="result-grid" id="denResults"></div>`;
+    $('tabContent').appendChild(card);
+    setTimeout(()=>calcDensity(), 50);
+  }
+  else if(activeTab==='pulse'){
+    card.innerHTML=`
+      <div class="card-title">💥 脉冲能量换算</div>
+      <div class="extra-grid">
+        <div class="extra-grp">
+          <label>峰值功率 (W)</label>
+          <input type="number" id="pulsePeak" value="1000" step="any" min="0" oninput="calcPulse()">
+        </div>
+        <div class="extra-grp">
+          <label>脉宽</label>
+          <div style="display:flex;align-items:center;gap:4px">
+            <input type="number" id="pulseWidth" value="10" step="any" min="0" oninput="calcPulse()" style="width:80px">
+            <select id="pulseWidthUnit" onchange="calcPulse()" style="font-size:12px;padding:6px 8px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm)">
+              <option value="1e-3">ms</option>
+              <option value="1e-6">μs</option>
+              <option value="1e-9" selected>ns</option>
+              <option value="1e-12">ps</option>
+              <option value="1e-15">fs</option>
+            </select>
+          </div>
+        </div>
+        <div class="extra-grp">
+          <label>重复频率 (Hz)</label>
+          <input type="number" id="pulseRep" value="1000" step="any" min="0" oninput="calcPulse()">
+        </div>
+      </div>
+      <div class="result-grid" id="pulseResults"></div>
+      <div class="result-grid" style="margin-top:8px">
+        <div class="r-mini" style="grid-column:1/-1">
+          <div class="rl">脉冲能量换算 (四单位同步)</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px">
+            ${energyUnits.map(u=>`
+              <div class="extra-grp" style="flex:1;min-width:120px">
+                <label>${u.name}</label>
+                <input type="number" id="e_${u.id}" value="${u.id==='j'?'0.00001':''}" step="any" min="0" oninput="onEnergyInput('${u.id}')" style="width:100%">
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>`;
+
+    setTimeout(()=>{onEnergyInput('j');calcPulse()},100);
+  }
+
+  $('tabContent').appendChild(card);
+}
+
+// ===== Power =====
+function calcPower(){
+  const val=parseFloat($('pwrVal')?.value)||0;
+  const from=$('pwrFrom')?.value||'mw';
+  const to=$('pwrTo')?.value||'nw';
+
+  // Convert everything via mW
+  let mw;
+  if(from==='dbm') mw=dbmToMw(val);
+  else{const u=powerUnits.find(p=>p.id===from);mw=val*u.toMw}
+
+  let result;
+  if(to==='dbm') result=mwToDbm(mw);
+  else{const u=powerUnits.find(p=>p.id===to);result=mw/u.toMw}
+
+  const resEl=$('pwrResult');if(resEl)resEl.textContent=format(result);
+  renderAllPower(mw);
+}
+
+function renderAllPower(mw){
+  const el=$('pwrAll');if(!el)return;
+  const values=powerUnits.map(u=>({...u,val:u.id==='dbm'?mwToDbm(mw):mw/u.toMw}));
+  el.innerHTML=values.map(v=>`<div class="r-mini"><div class="rl">${v.name}</div><div class="rv">${format(v.val)}</div><div class="ru">${v.symbol}</div></div>`).join('');
+
+  // IEC classification
+  const w=mw/1000;
+  let cls='',label='';
+  if(w<=0.005){cls='iec-class1';label='IEC 60825-1 Class 1 (≤5mW) 安全';}
+  else if(w<=0.5){cls='iec-class3';label='IEC 60825-1 Class 3R (≤500mW) 需注意';}
+  else{cls='iec-class4';label='IEC 60825-1 Class 4 (>500mW) 危险';}
+  const iec=$('iecInfo');if(iec){iec.innerHTML=`<span class="iec-badge ${cls}">⚠ ${label}</span> · 此分类仅作参考，实际分级取决于波长、脉宽等因素`;}
+}
+
+// ===== Density =====
+function calcDensity(){
+  const power=parseFloat($('denPower')?.value)||0;
+  const pu=$('denPowerUnit')?.value||'w';
+  const area=parseFloat($('denArea')?.value)||1;
+  if(!power||!area)return;
+
+  const puObj=powerUnits.find(u=>u.id===pu);
+  const w=power*puObj.toMw/1000;
+  const wm2=w/(area*1e-6); // mm² → m²
+
+  const results=densityUnits.map(u=>({...u,val:wm2/u.toWm2}));
+  $('denResults').innerHTML=results.map(r=>`<div class="r-mini"><div class="rl">${r.name}</div><div class="rv">${format(r.val)}</div></div>`).join('')+`
+    <div class="r-mini"><div class="rl">mW/mm²</div><div class="rv">${format(wm2/1000)}</div></div>
+    <div class="r-mini"><div class="rl">kW/cm²</div><div class="rv">${format(wm2/1e7)}</div></div>
+    <div class="r-mini"><div class="rl">MW/cm²</div><div class="rv">${format(wm2/1e10)}</div></div>`;
+}
+
+function onDiaChange(){
+  const dia=parseFloat($('denDia')?.value)||0;
+  if(dia>0){$('denArea').value=(Math.PI*dia*dia/4).toFixed(4);calcDensity()}
+}
+function onAreaChange(){
+  const area=parseFloat($('denArea')?.value)||0;
+  if(area>0){$('denDia').value=Math.sqrt(4*area/Math.PI).toFixed(4);calcDensity()}
+}
+
+// ===== Pulse =====
+function calcPulse(){
+  const peak=parseFloat($('pulsePeak')?.value)||0;
+  const pw=parseFloat($('pulseWidth')?.value)||0;
+  const pwUnit=parseFloat($('pulseWidthUnit')?.value)||1e-9;
+  const rep=parseFloat($('pulseRep')?.value)||1;
+  if(!peak||!pw)return;
+
+  const pulseEnergy=peak*pw*pwUnit; // J
+  const avgPower=pulseEnergy*rep; // W
+  const dutyCycle=pw*pwUnit*rep*100; // %
+
+  $('pulseResults').innerHTML=`
+    <div class="r-mini"><div class="rl">脉冲能量</div><div class="rv">${format(pulseEnergy)}</div><div class="ru">J</div></div>
+    <div class="r-mini"><div class="rl">平均功率</div><div class="rv">${format(avgPower)}</div><div class="ru">W</div></div>
+    <div class="r-mini"><div class="rl">占空比</div><div class="rv">${dutyCycle<0.01?dutyCycle.toExponential(2):dutyCycle.toFixed(4)}</div><div class="ru">%</div></div>
+    <div class="r-mini"><div class="rl">能量 (mJ)</div><div class="rv">${format(pulseEnergy*1000)}</div><div class="ru">mJ</div></div>
+    <div class="r-mini"><div class="rl">能量 (μJ)</div><div class="rv">${format(pulseEnergy*1e6)}</div><div class="ru">μJ</div></div>
+  `;
+
+  // Also update energy quick converter
+  const ej=$('e_j');if(ej)ej.value=pulseEnergy;
+}
+
+function onEnergyInput(fromId){
+  const val=parseFloat($('e_'+fromId)?.value)||0;
+  const fromU=energyUnits.find(u=>u.id===fromId);
+  const j=val*fromU.toJ;
+
+  energyUnits.forEach(u=>{
+    const el=$('e_'+u.id);
+    if(el&&u.id!==fromId)el.value=j/u.toJ;
+  });
+}
+
+// Init
+renderTab();
+</script>
+</body>
+</html>

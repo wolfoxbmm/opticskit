@@ -1,0 +1,49 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的100G DP-QPSK相干系统，明明有偏振跟踪算法，但天气变化时BER偶尔还是会跳一下。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">不是算法不好，是跟踪速度跟不上偏振变化的频率。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">偏振态变化的三大来源</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">偏振复用相干系统依赖两个正交偏振通道同时传输数据。如果偏振态发生快速随机变化，而接收端DSP跟不上，就会出现偏振对准失效，导致两个通道相互串扰，BER突发跳升（来源：Krummrich et al., IEEE Photonics Technol. Lett. 2004）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>光纤应力变化</strong>：温度漂移引起光纤长度和折射率变化，进而改变传输光的偏振态。典型值：ΔB/ΔT ≈ 0.03 ps/km/°C（波长漂移等效偏振变化）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>环境振动</strong>：机柜振动（~Hz级）、野外光缆受风载荷（~0.1Hz）、施工震动或重型车辆通过（突发，无规律）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>高阶PMD（偏振模色散）</strong>：2阶PMD引起时变偏振旋转，频率成分可延伸到kHz量级</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">偏振变化频率谱</span></h2>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">光缆类型</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">偏振变化频率范围</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">主要驱动因素</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">室内光缆</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~0.01-0.1 Hz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">温度控制环境，缓慢漂移</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">室外光缆</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~0.001-1 Hz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">昼夜温差+季节性变化</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">野外/野战光缆</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">突发，无规律</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">施工、重载车、风振叠加</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">（来源：Krummrich et al., 2004；Noé et al., J. Lightwave Technol. 2011）</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">跟踪速度需求与实际能力</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">典型PMD变化速率约为 0.1 ps/√km/s（统计值）。对于100km链路，DSP接收端算法需要跟踪的偏振旋转速率可达数十kHz量级（来源：Krummrich et al., 2004）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">偏振跟踪速度需求 &gt; 100 kSa/s</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">典型DSP实现：10-100 kSa/s，实际偏振旋转频率可能偶尔超出此范围（来源：Noé et al., 2011）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">当偏振变化频率超出DSP跟踪速度时，就会出现<strong>跟踪盲区</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">偏振对准失效：两个正交偏振通道不再正交，产生串扰</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">突发BER跳变：瞬时信噪比恶化，纠错前误码突增</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Burst Error：连续错误序列，持续时间由跟踪恢复时间决定</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">偏振跟踪更新率必须&gt;偏振变化率10倍以上——实际系统SOP变化可达10krad/s，意味着跟踪算法更新率&gt;100krad/s（即&gt;5μs更新间隔）才不会丢锁。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">BER跳变查不出故障时，问题往往在偏振跟踪速度。</p></div>

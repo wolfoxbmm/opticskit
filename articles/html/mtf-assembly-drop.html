@@ -1,0 +1,38 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Zemax/Code V里优化到衍射极限的镜头设计，中心视场MTF@100lp/mm=0.55。金光工艺的第一件样品装起来装调——实测MTF只有0.28，差了一半。不是仿真软件骗了你，是"理想设计→物理镜头"中间的鸿沟你没填。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">设计仿真里的"无声假设"</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光学设计软件在MTF计算时有几个默认前提：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 所有表面是完美面形（RMS=0）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 所有元件共轴且无倾斜/偏心</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 折射率和色散是标称值，无批次偏差</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 镜筒是刚性的，无应力变形</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这四个假设在真实镜头中全都不成立。一个设计MTF=0.55的镜头，实际MTF的构成大致是：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">MTF_real = MTF_design − ΔMTF_surface − ΔMTF_alignment − ΔMTF_material − ΔMTF_stress</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">逐一拆解。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">表面面形误差吃掉多少？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">即使抛光到"光学级"的镜片，RMS表面误差通常为λ/20-λ/10（λ=632.8nm）。表面粗糙度和面形误差通过TIS（Total Integrated Scatter）公式转化为等效MTF衰减：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">TIS ≈ (4π·σ/λ)²，σ=RMS粗糙度</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">λ/20→σ≈32nm→TIS≈4%→MTF额外下降约4%。λ/10→TIS≈16%→MTF下降可达10-15%（Stover, <em>Optical Scattering</em>, SPIE Press, 1995）。如果是金刚石车削的金属反射镜，RMS粗糙度可达λ/4→TIS≈100%→所有散射光全成了杂散光。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">多镜片系统中面形误差累积。5片透镜各RMS=λ/15 → 等效RMS≈λ/√5≈λ/33，但残余像差（非球面度、曲率公差）是非随机叠加的，实际效果&gt;简单均方根。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">装调误差：MTF被"偷偷"切掉最大的那块</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">镜片偏心和倾斜对MTF的杀伤力最大。广角镜头（视场&gt;40°）对偏心尤为敏感：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 单片透镜偏心10μm→轴外MTF下降5-10%（Schwemmer, <em>Proc. SPIE</em>, 1998）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 5片透镜各偏心10μm→累计轴外MTF下降可达25-40%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">偏心还产生非对称像差（彗差、像散），MTF曲线的子午和弧矢方向出现分叉。设计仿真中MTF是圆对称的，装调后的MTF是两条分离的曲线——子午MTF可能只有弧矢的60%。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光学镜筒的加工公差叠加到偏心总量上：镜座内孔与镜片外圆的配合间隙（典型5-15μm）、隔圈的平行度（1-2μm）、螺纹锁紧时的偏摆（2-5μm）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">材料公差：标称折射率≠实际折射率</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光学玻璃目录里的折射率nd是批次平均值。实际交付的玻璃批次，折射率偏差可达±0.0002-0.0005，色散系数νd的偏差可达±0.2-0.5%。焦距公式f=R/(n-1)，Δn=0.0005→焦距偏差约0.05%，但经过5片透镜的传递→后焦位置偏移可达设计值的0.2-0.3%=数十微米→离焦直接吃掉MTF。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">结论</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">设计MTF=0.55是软件里完美世界的上限。真实镜头中：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 面形±λ/15吃掉5-10%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 装调偏心10μm吃掉15-25%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 材料批次偏差吃掉3-5%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 应力变形吃掉5-8%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">四项累乘（不是累加）→0.55×0.92×0.80×0.96×0.94≈0.36。你用MTF仪测到的0.28——在工程上完全合理。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">仿真MTF是"零公差版本"。每片镜片的表面误差、偏心、倾斜——五个公差源叠在一起，设计MTF砍掉差不多一半才是真机水平。不是仿真不准，是你算错了它的起点。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>诊断建议</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 做公差分析（Tolerance Analysis），蒙特卡罗200次，看MTF@100lp/mm的0.25分位数才是预期值</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 装调后用MTF仪分视场测量：中心MTF接近设计值但轴外暴跌→偏心/倾斜问题</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 子午和弧矢MTF差值&gt;15%→镜片倾斜</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 批量镜头MTF离散度&gt;20%→机械件公差过松，收紧镜座-镜片配合间隙到5μm以内</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 优先控制轴外敏感元件（非球面透镜、弯月透镜）的公差</p></div>

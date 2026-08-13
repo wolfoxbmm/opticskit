@@ -1,0 +1,23 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的FBG应变传感器安装时标定是1000με，装上两周后再测——读数变成了1020με。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">工程上说这是应力增加了，你怀疑——其实是FBG本身在漂。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">FBG波长漂移的基本原理</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光纤布拉格光栅（FBG）传感器的核心原理是：当外界温度或应力变化时，光纤的折射率和光栅周期发生改变，导致反射波长发生漂移。这个关系可以用以下公式描述：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δλ/λ = (1-α)·ΔT + (1+ν)·ε</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">其中α为热膨胀系数，ν为泊松比，ε为应变，ΔT为温度变化</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">在1550nm波长下，温度引起的波长漂移约为<strong>1.3pm/°C</strong>（来源：K.O. Hill &amp; G. Meltz, J. Lightwave Technol., 1997），而应变引起的漂移约为<strong>1.2pm/με</strong>（来源：同上）。理论上，只要精确测量波长漂移，就能反推出应变或温度变化。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">漂移的真实来源（除了真实应变之外）</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但在实际工程应用中，FBG读数的漂移往往并非来自真实的结构应变，而是以下因素造成的：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>光纤老化松弛</strong>：制造过程中光纤内部存在残余应力，安装后的初始200小时内会发生应力释放，漂移速率可达10με/天（来源：T. Huet et al., Proc. SPIE, 2017）。这是新装传感器读数不稳定的主要原因。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>封装胶粘剂蠕变</strong>：FBG需要粘贴在基体表面，胶粘剂在温度循环作用下会发生蠕变，重新稳定周期约30天。期间读数会持续漂移。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>光纤本身热膨胀</strong>：石英光纤的热膨胀系数α≈0.5×10⁻⁶/°C（来源：K.O. Hill &amp; G. Meltz, J. Lightwave Technol., 1997），温度变化会直接转化为波长漂移，在1550nm处约1.3pm/°C。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>解调仪激光器波长漂移</strong>：如果解调仪采用Pound-Drever-Hall锁频技术但未定期校准，其参考波长本身会漂移，导致所有FBG读数系统性偏移。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">温度补偿方案</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">为了消除温度对FBG应变测量的影响，工程上通常采用温度补偿方案。最简单的方法是在应变FBG附近安装一个<strong>FBG-T温度传感器</strong>（自由状态，不受结构应变），通过差分计算消除温度漂移：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">ε_real = (Δλ_S - Δλ_T) / (1.2 pm/με)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">其中Δλ_S为应变FBG波长漂移，Δλ_T为温度FBG波长漂移</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这种方案的温度补偿精度约为<strong>±5με</strong>（来源：R. Measures, Structural Health Monitoring with Fiber Optic Technology, Academic Press, 2001），适用于大多数结构健康监测场景。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对于更高精度要求的应用，可采用<strong>双FBG共封装方案</strong>：将应变FBG和温度FBG封装在同一保护管内，确保两者经历完全相同的温度和封装胶蠕变，通过差分解调同时消除温度和封装胶的影响，精度可达<strong>±1με</strong>（来源：Y. Rao, Meas. Sci. Technol., 2009）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">FBG传感器读数漂移不只是"温度没补偿"那么简单——老化、胶蠕变、解调仪自身漂移每一项都能贡献10-20με的虚假读数：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">读数漂移20με≠结构变形20με——先排除老化、胶蠕变、解调仪漂移，再下结论。</p></div>

@@ -1,0 +1,70 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">拿到一份InGaAs PIN探测器的规格书，暗电流写的是1 nA。你打开噪声预算表，把1 nA代入散粒噪声公式，算出一个很小的数，然后标为"探测器本底噪声"。但你可能从来没算过TIA跨阻放大器的等效输入噪声电流——那个数比你的暗电流噪声大几十倍，才是真正的瓶颈。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">暗电流散粒噪声：你算对了，但数值太小</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">散粒噪声的电流密度公式是标准结果：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">i_s = √(2qI)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">其中 q = 1.602 × 10⁻¹⁹ C，I 为总电流（暗电流+光电流）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以典型InGaAs PIN为例，暗电流1 nA（1000 μm²有源区，25°C）：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">i_s = √(2 × 1.602 × 10⁻¹⁹ × 1 × 10⁻⁹) ≈ <strong>0.018 pA/√Hz</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">即使暗电流高达10 nA，散粒噪声也只有 <strong>0.057 pA/√Hz</strong>；100 nA时是 <strong>0.18 pA/√Hz</strong>。这个数量级是什么概念？后面会看到，它比你前端放大器的噪声小一到两个数量级。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光电流的散粒噪声同样遵循这个公式。假设响应度0.9 A/W、接收光功率10 μW，光电流约9 μA，对应的散粒噪声约 <strong>1.7 pA/√Hz</strong>——此时光电流散粒噪声与TIA噪声相当，但<strong>暗电流散粒噪声仍然可以忽略</strong>。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">TIA电流噪声：BJT运放 vs FET运放，差距440倍</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">跨阻放大器（TIA）的等效输入噪声电流密度决定了你的系统本底。不同运放架构的噪声差异极大：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">运放类型</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">电流噪声密度</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">电压噪声密度</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">BJT输入架构</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;"><strong>2 pA/√Hz</strong></td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.9 nV/√Hz</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">FET输入架构</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;"><strong>5 fA/√Hz</strong></td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">4–5 nV/√Hz</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">JFET输入架构</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;"><strong>4.5 fA/√Hz</strong></td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">3.3 nV/√Hz</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">（数据来源：典型器件实测数据，Eikonal Optics TIA噪声分析 / MDPI Sensors 2025）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">关键对比：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• 10 nA暗电流的散粒噪声：<strong>0.057 pA/√Hz</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• BJT输入架构电流噪声：<strong>2 pA/√Hz</strong> —— 是暗电流噪声的 <strong>35倍</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• FET输入架构电流噪声：<strong>0.005 pA/√Hz</strong> —— 远低于暗电流噪声</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这个对比揭示了一个核心事实：<strong>用BJT输入运放做TIA时，暗电流散粒噪声根本不是瓶颈，运放自身的电流噪声才是</strong>。只有换到FET/JFET输入架构，电流噪声才降到散粒噪声以下，此时其他噪声源才浮现出来。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">反馈电阻热噪声：另一个被你忽略的pA级噪声源</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">TIA的反馈电阻R_f本身产生热噪声（Johnson-Nyquist噪声），其等效输入噪声电流密度为：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">i_J = √(4kT/R_f)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">其中 k = 1.38 × 10⁻²³ J/K，T = 300 K</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">具体数值：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• R_f = 10 kΩ → i_J ≈ <strong>1.3 pA/√Hz</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• R_f = 100 kΩ → i_J ≈ <strong>0.4 pA/√Hz</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">• R_f = 1 MΩ → i_J ≈ <strong>0.13 pA/√Hz</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对比暗电流散粒噪声（0.02–0.18 pA/√Hz），10 kΩ电阻的热噪声是暗电流噪声的 <strong>7–65倍</strong>。即使换成100 kΩ，热噪声（0.4 pA/√Hz）仍然比10 nA暗电流的散粒噪声（0.057 pA/√Hz）大7倍。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>结论：在TIA系统中，反馈电阻热噪声几乎总是大于暗电流散粒噪声。</strong></p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">电压噪声×输入电容：高频段的噪声峰</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">FET运放的电流噪声虽然极低，但电压噪声（4–5 nV/√Hz）与输入电容（光电二极管结电容+杂散电容，典型5–20 pF）相互作用，在高频端产生一个噪声增益峰：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">e_n × C_in × 2πf → 噪声电流随频率上升</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">在跨阻增益10 kΩ、输入电容10 pF、FET输入架构（GBW≈500 MHz）的配置中，噪声峰出现在约 <strong>28 MHz</strong> 附近，峰值可比低频本底高出一个数量级（Eikonal Optics TIA噪声分析，LTspice仿真验证）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这意味着：<strong>即使你在低频段把电流噪声和电阻热噪声都压下去了，高频段的电压噪声峰仍然可能是带宽限制下的实际瓶颈。</strong></p>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> 暗电流1 nA看起来很大，但它的散粒噪声只有0.02 pA/√Hz。在实际光电接收系统中，噪声预算的排序通常是：<strong>TIA电流噪声（BJT）&gt; 反馈电阻热噪声 &gt; 电压噪声×电容峰（高频）&gt; 暗电流散粒噪声</strong>。你花心思降低暗电流，可能只改善了噪声预算的第四项。
+</blockquote>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">可操作建议</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">1. <strong>做噪声预算时，先算TIA的等效输入噪声电流</strong>，再算电阻热噪声，最后才看暗电流散粒噪声。顺序错了，优化的方向就错了。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">2. <strong>低噪声、中低速应用优先选FET/JFET输入架构</strong>，电流噪声比BJT架构低两个数量级。高速应用（&gt;100 MHz）需权衡GBW与噪声。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. <strong>反馈电阻不是越大越好</strong>。提高R_f可以降低热噪声（√1/R_f），但会牺牲带宽（f_-3dB ≈ 1/2πR_fC_f），并增大电压噪声×电容的增益峰。在带宽和噪声之间取平衡。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">4. <strong>减小输入电容</strong>。光电二极管结电容、PCB杂散电容、运放输入电容全部计入C_in。缩短引线、选择低电容二极管、减少寄生，都能压低高频噪声峰。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">5. <strong>如果光功率足够，让光电流散粒噪声成为主导</strong>。光电流9 μA时的散粒噪声约1.7 pA/√Hz，与TIA噪声相当。此时系统接近"量子噪声限制"，是最理想的工作状态。</p></div>

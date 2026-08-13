@@ -1,0 +1,35 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你见过用透镜成像——但光还可以用"时间"来成像：把飞秒脉冲在时域里拉伸、聚焦、再压缩，像空间透镜操作光束一样。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这不是光学幻觉，是时间透镜（Temporal Lens）——光信号处理里最反直觉的概念之一。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">空间透镜和"时间透镜"的类比</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">先回顾空间透镜的基本原理：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">空间透镜的相位变换（薄透镜近似）（来源：Kolner &amp; Nazarathy, Opt. Lett. 1989）：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">U_out(x,y) = U_in(x,y) · exp[j·k·(x²+y²)/2f]</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">时间透镜的类比：用时间频率调制替代空间坐标调制（来源：Kolner, IEEE J. Quantum Electron. 1994）：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">E_out(t) = E_in(t) · exp[j·π·t²/(T_lens²)]</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">T_lens：时间透镜的焦时间（temporal focal length），单位秒；类比空间焦距 f。时间透镜的f_t = ω₀/(2·φ_max·β₂)（来源：Kolner, 1994）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光的空间傅里叶变换用透镜完成：物体→透镜前焦面→透镜→后焦面（傅里叶平面）。<strong>时间透镜的类比</strong>：时域波形→色散元件→时间频率域→另一个色散元件，输出是时域波形的"傅里叶变换"。这整套系统叫做<strong>时间成像系统（Temporal Imaging System）</strong>。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">怎么实现？用相位调制和色散</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">实现时间透镜需要两个核心元件：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>相位调制器（PM）或频时映射器</strong>：对脉冲施加二次相位 exp(j·α·t²)，等价于时域透镜效应。最常用的是铌酸锂（LiNbO₃）Mach-Zehnder调制器，通过加载射频信号产生时变相位。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>色散元件（光纤或光栅对）</strong>：提供线性时延，类比空间透镜前后的自由空间传播。色散量 Φ₂ = β₂·L（群延迟色散 GDD），决定成像系统的放大率 M。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">时间成像系统的放大率（类比空间放大率 M = f₂/f₁）：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">M = Φ₂,out / Φ₂,in（来源：Kolner, 1994）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">M &gt; 1：时间拉伸（压缩率降低）；M &lt; 1：时间压缩（脉冲变窄）；M = 1：保真傅里叶变换</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">工程应用：压缩脉冲与测量</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">时间透镜最有价值的应用之一：<strong>飞秒脉冲压缩</strong>。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">飞秒激光器直接输出的脉冲通常为~100fs，但很多应用需要更短的脉冲。传统方法用光栅对压缩（CPA技术），但有时间透镜的思路更巧妙：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>光栅对（空间）CPA：</strong>高功率激光器常用，光栅对提供负色散，压缩脉冲。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>时间透镜（时域）方案：</strong>先通过色散将飞秒脉冲拉伸至~ps量级（降低峰值功率避免非线性损伤），再用过的时间透镜相位调制相位，最后用色散压缩。典型参数：输入100fs→拉伸至2ps→时间透镜处理→压缩回30fs。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>频时映射（Frequency-to-Time Mapping，FTTM）</strong>是时间透镜的另一个杀手级应用：将光谱信息映射到时域波形，从而用高速示波器直接测量光谱：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δt = Φ₂ · Δω</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δt：时域宽度变化；Δω：频率变化；Φ₂：GDD量</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">典型系统：光栅→单模光纤（色散Φ₂≈1700ps/nm）→光电探测器，0.1nm光谱分辨率可映射为~170ps时域宽度，用40GSa/s示波器即可测量</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">一个容易踩的坑：时间带宽积</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">时间透镜成像系统同样受<strong>时间带宽积（TBP）</strong>限制。和空间透镜的数值孔径-分辨率权衡类似，时间透镜的"时间带宽积"不能同时兼顾高时间分辨率和大观测窗口：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>时间分辨率</strong>：由时间透镜的调制带宽决定。LiNbO₃调制器通常≤40GHz带宽，对应时间分辨率~25ps。要提高分辨率（更短的时间像素），需要更宽带宽的调制器（成本急剧上升）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>观测窗口</strong>：由输入和输出色散量决定。Φ₂越大，可观测的时间窗口越宽，但分辨率随之下降（放大率M越小，时间"像素"越大）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>实测教训</strong>：用FTTM测量超窄线宽激光器（&lt;100kHz）时，色散光纤长度不够会导致频时映射的动态范围被压缩，测量到的光谱比实际更窄。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">时间透镜的本质是<strong>时域的相位调制 + 色散的时频等价变换</strong>，和空间透镜在数学结构上完全对称。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">时间透镜的工程价值：用时域放大可将ps级脉冲拉伸到ns级观测——等效时间放大倍数M_t=10时，10ps脉冲变成100ps，用普通示波器即可分辨。代价：需要km级色散光纤+高强度相位调制（V_π驱动）。</p></div>

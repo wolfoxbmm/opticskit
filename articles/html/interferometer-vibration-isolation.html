@@ -1,0 +1,26 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">气浮隔振台上摆着迈克尔逊干涉仪，条纹稳得像印刷在屏幕上。空调压缩机启动——没有任何机械振动传到台面，但条纹肉眼可见地漂了半个周期。不是隔振台失效，是空气折射率变了。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">空气不是"空的"</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">空气折射率n_air≈1.00027（标准条件：20°C，1013hPa，50%RH）。看起来接近真空（n=1），但在干涉仪中，这个"1.00027"乘以光程就是可测量的相位：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">双程干涉光路长L=0.5m→单程光程nL≈0.500135m，双程≈1.00027m。与真空光程差≈270μm≈426λ（λ=632.8nm）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">空调吹出的冷气与室温空气有0.1°C温差。空气折射率的温度敏感性：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">dn/dT ≈ −0.92×10⁻⁶/°C（Edlén公式，<em>Metrologia</em>, 1966）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">0.1°C温差→n_air变化−0.092×10⁻⁶。双程光路1m→光程变化0.092μm≈0.15λ。但这是"均匀温变"——实际情况是局部气流，温差梯度在光路的不同位置不相等，等效相位变化远大于均匀温变的估算。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么空调是最大"杀手"</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">空调出风口湍流的温度不均匀性可达0.5-1°C，空间尺度10-50cm。如果干涉仪的一条臂在气流路径上另一条不在，两条臂的折射率差为Δn≈0.92×10⁻⁶/°C×0.5°C≈0.46×10⁻⁶。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">臂长差ΔL=100mm（两臂不等长）→相位差Δφ=(2π/λ)·ΔL·Δn≈0.46弧度≈26°≈0.07λ。这是单次湍流脉冲，而空调以1Hz周期喷出冷气脉冲——干涉条纹以0.07λ/脉冲的幅度来回漂移，频率1Hz。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">声波耦合：无声杀手</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">人耳听不到的次声（&lt;20Hz）和可听声（50Hz-1kHz）也能调制空气折射率。声压1Pa（≈94dB SPL）→空气密度波动Δρ/ρ≈7×10⁻⁶→折射率波动Δn≈2×10⁻⁶。100mm臂长上光程差≈0.2μm≈0.3λ。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">实验室内空调风机+电脑风扇+人员走动，背景噪声很容易达到60-70dB SPL，对应声压0.02-0.06Pa，相位噪声0.005-0.02λ。对于需要0.001λ精度的干涉测量，这已经是不可忽略的噪声源。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">温度"爬升"——你以为稳态了</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">干涉仪开机后内部电子元器件发热→局部空气加热→对流环流建立。热平衡需要的时间远长于电子设备的稳定时间：激光器15分钟稳频、电路5分钟稳流，但光路里的热对流需要2-3小时才能趋于稳定（Downs &amp; Raine, <em>Precision Engineering</em>, 1979）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">前2小时的测量数据，折射率漂移可以贡献0.1-0.5λ的相位漂移。如果在这个阶段就取数据——数据全废。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">结论</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">干涉仪测量精度受限于的不是激光波长的稳定性，而是空气折射率的时空不均匀性。空调0.1°C的温差气团、低声压级的声波、开机后的热对流——每个都把干涉条纹推离原位。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">干涉仪隔振台隔绝了地面振动，但空气本身就是折射率涨落的光学介质。空调一开，冷气团飘过任何一条臂——光程就不是你算的那个光程了。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>诊断建议</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 干涉测量前关空调至少30分钟，确认实验室温度梯度&lt;0.1°C/m</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 加装透明亚克力罩封闭光路，隔离气流，罩内留小孔平衡气压</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 用差分干涉方案（参考臂+测量臂共路径）消除共模折射率波动</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 用Edlén公式实时修正：同时监测温度/气压/湿度→计算实时n_air→修正相位</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 记录开机后的热平衡曲线，数据采集从开机2小时后开始</p></div>

@@ -1,0 +1,83 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">"单光子源"不是每次只发一个光子——它只是承诺"一次最多发一个"，但这个承诺本身，已经颠覆了整个光学的底层逻辑。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">从SPDC的随机概率到量子点的按需触发，确定性单光子源正在改写量子通信和量子计算的规则。本文拆解量子光源的核心参数，告诉你什么时候该选便宜但随机的SPDC，什么时候必须上贵但确定的量子点。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">一、什么叫"量子光源"？——不是光子数少，而是统计方式反经典</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">先纠正一个直觉误区：量子光源≠弱光源。把一束激光衰减到每个脉冲平均只有0.1个光子，那不叫单光子源——因为它的光子数服从泊松分布，偶尔会蹦出2个、3个光子。这种"偶尔多出来"的光子，在量子密钥分发（QKD）中就是安全漏洞。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">真正的量子光源，其标志是<strong>亚泊松统计</strong>：光子数的方差小于平均值。衡量这个的硬指标叫二阶相干度g(2)(0)：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">g(2)(0) = ⟨n(n-1)⟩ / ⟨n⟩²</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">n为光子数。热光g(2)(0)=2，相干光（激光）g(2)(0)=1，单光子源g(2)(0)&lt;0.5（反聚束）（来源：Mandel &amp; Wolf, 1995）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">g(2)(0)越小，说明"同时出现两个光子"的概率越低。g(2)(0)=0意味着完美的单光子发射——永远只发一个，绝不多发。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">另一条判据是<strong>光子反聚束</strong>：在Hanbury Brown-Twiss（HBT）实验中，两个探测器同时click的概率低于随机水平。这是"量子性"在光学层面最直接的证据。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">二、概率性光源：SPDC——便宜、好用，但不可控</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>自发参量下转换（SPDC）</strong>（来源：Mandel &amp; Wolf, Optical Coherence and Quantum Optics, 1995）是目前使用最广泛的量子光源方案。原理很优雅：一束泵浦光打进非线性晶体（如BBO、KTP、PPKTP），偶尔有一个泵浦光子自发分裂成两个低频光子——信号光子和闲置光子。这对光子天然纠缠，而且能量守恒（ωp = ωs + ωi）和动量守恒（相位匹配）同时满足。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但问题在于"自发"两个字：这个过程是概率性的。单次泵浦脉冲产生光子对的概率大约只有10-8量级。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Ppair ≈ 10-8 / 泵浦光子</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SPDC的对产生效率极低，需要高强度泵浦才能获得可观的光子对产率，但高泵浦又会引入多对事件，破坏单光子性（来源：Mandel &amp; Wolf, 1995）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SPDC方案的优点是<strong>预示性</strong>（heralding）：探测到闲置光子，就知道信号光子一定存在。这给远程量子通信提供了"触发信号"。但缺点也很致命：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>不可控</strong>：你不知道这个脉冲会不会产生光子对，只能等。实际触发率通常只有1%~10%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>多对问题</strong>：高泵浦下会出现双对甚至多对事件，g(2)(0)只能压到约0.05~0.1，远达不到"真单光子"的标准</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>光子不可区分性差</strong>：不同时刻产生的光子在谱宽和时间包络上有差异，多光子干涉可见度受限</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">三、确定性光源：量子点——按需触发，g²(0)低至0.001（来源：Somaschi et al., Nat. Photonics 2016）</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>半导体量子点</strong>是确定性单光子源目前最成熟的方案。典型体系是InAs/GaAs自组织量子点：在GaAs衬底上生长InAs，由于晶格失配（~7%），InAs会自发形成纳米级岛状结构——这就是量子点。它的能级结构类似人工原子，激子复合时辐射单个光子。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">关键参数对比：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">参数</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">SPDC预示光源</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">量子点单光子源</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">g(2)(0)</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.05~0.1</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.001~0.05</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">触发方式</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">概率性（被动等待）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">确定性（按需触发）</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">提取效率</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~80%（含收集光学）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">10%~80%（微柱/光子晶体）</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">不可区分性</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~0.90（滤波后）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.96~0.997</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">工作温度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">室温</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">4K（液氦）</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">成本</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">低（光学平台级）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">高（MBE+稀释制冷）</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">注意看g(2)(0)这一行：量子点方案最低可达0.001，比SPDC好了两个数量级。这意味着"同时发两个光子"的概率只有千分之一——这才是真正的单光子行为。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">提取效率是量子点的核心瓶颈。裸量子点向自由空间辐射是4π立体角全方向的，收集效率只有~1%。解决办法是引入微柱腔（micropillar）或光子晶体波导，将辐射定向到特定模式。2024年报道的光子晶体波导方案已实现&gt;98%的β因子（辐射耦合到波导模式的比例），综合提取效率可达80%以上。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">四、反常识揭秘："单光子源"不等于"每次发一个"</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这是很多人对单光子源的最大误解。"单光子源"的准确定义是：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">一次发射事件中，同时出现两个或以上光子的概率趋近于零。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">换句话说：它可能发0个（没触发），但只要发了，就只有1个。这是一个概率性的"单光子保证"，不是"每次必发一个"。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对SPDC预示光源来说，触发率通常只有1%~10%，意味着90%以上的脉冲是空的。对量子点来说，触发率可以做到50%~90%，但仍然不是100%——量子点有"闪烁"（blinking）现象，偶尔会"哑火"。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这个区别在量子计算中尤其重要。线性光学量子计算（LOQC）需要多路单光子同时到达干涉仪，如果某一路哑火，整个计算就废了。这也是为什么量子点确定性光源比SPDC更适合量子计算——触发率高，"全员到齐"的概率指数级提升。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">五、设计指导：SPDC还是量子点？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">选哪个方案，取决于你的应用场景和预算约束：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>量子密钥分发（QKD）</strong>：SPDC够用。QKD对单光子纯度要求是g(2)(0)&lt;0.5，SPDC轻松满足。且SPDC天然产生纠缠光子对，可直接用于纠缠型QKD。成本低、搭建快，是主流选择。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>线性光学量子计算（LOQC）</strong>：必须量子点。多光子干涉需要高不可区分性（&gt;0.95）和高触发率。SPDC的多光子方案（如12光子实验）需要极长采集时间来凑"所有光子同时到达"的巧合事件。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>量子中继节点</strong>：量子点+量子存储是理想组合。量子点提供确定性光子，量子存储提供时间同步。但目前两者之间的接口效率还很低。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>量子传感/成像</strong>：SPDC纠缠光子对是首选。纠缠双光子关联成像（鬼成像）和量子照明的优势恰好来自SPDC的纠缠特性，不需要确定性触发。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">一个工程上的实用建议：如果你在搭建第一套量子光学实验台，从SPDC开始。一个BBO晶体+一束405nm泵浦激光+两个单光子探测器，几万元就能跑HBT实验，亲眼看到反聚束效应。等你理解了"单光子"的真正含义，再决定是否要投入量子点方案。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">量子光源选型：量子密钥分发（QKD）用SPDC即可（g²(0)≈0.05足够，便宜100倍），量子计算必须用量子点（g²(0)&lt;0.01，按需触发）。SPDC的μ=0.1时多光子概率5%，量子点&lt;0.1%——量子纠错对多光子容差极低。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">选光源就像选交通工具——短途通勤骑自行车（SPDC），远程出行必须开车（量子点）。别用自行车上高速，也别开车去楼下买酱油。</p></div>

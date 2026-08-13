@@ -1,0 +1,25 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">轨道角动量（OAM）光束用于光通信复用和量子信息编码时，规格书上可能声称模式纯度&gt;95%、拓扑荷l=2。但在接收端做模式分解，测量到的等效拓扑荷变成l=1.7——这意味着约30%的光功率散布在l≠2的模式上，串扰水平约-5dB，远不足以支撑可靠的信息解调。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">不是螺旋相位板做坏了。是OAM模式的"纯度"定义本身掩盖了三个物理现实。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">模式纯度95%≠串扰-13dB</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">模式纯度通常定义为目标模式（如LG₀,₂）与待测光场的重叠积分模平方：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">η = |∫∫ E_target* · E_actual dxdy|²</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">一个95%纯度的值意味着：5%的功率与目标模式正交——即散布于所有其他正交模式中。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但在光通信中，关心的是相邻模式的串扰比：l=2信号中泄漏到l=1（或l=3）接收通道的功率占比。如果这5%的"非目标"功率均匀分布在十个相邻模式中，每个模式只接收0.5%→串扰约-23dB——完全够用。但如果5%全部集中在l=1模式——串扰就高达-13dB。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">问题在于：实际OAM光束的制造误差通常恰好以相邻模式（l±1）为主要泄漏通道。螺旋相位板的离散台阶误差、孔径衍射、对准偏移——它们产生的波前畸变在角向傅里叶域中最强的投影就在l±1。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么是l=1.7</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">OAM模式的有效拓扑荷可以由角动量期望值计算：⟨Lz⟩ = ℏ·∫∫ l·|a_l|²，其中a_l是l阶OAM模式的复振幅系数。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">当功率在l=2和l=1之间按70:30分布时：⟨Lz⟩ = 2×0.7 + 1×0.3 = 1.7ℏ。对应的有效拓扑荷l_eff = 1.7。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这"丢失"的0.3来自哪里？</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>螺旋相位板（SPP）的台阶误差</strong>：理想SPP产生连续螺旋面exp(i2φ)，实际用多台阶二元光学元件近似——N台阶→衍射效率η= sinc²(1/N)（Swanson &amp; Veldkamp, Optics Letters 1989）。8台阶SPP的l=2衍射效率约95%，但剩余的5%中大部分分布在l=1分量上。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>孔径截断</strong>：OAM光束在发射/接收孔径边缘被截断，截断导致角向频谱展宽，l=2分量向l=1和l=3泄漏（Curtis &amp; Grier, Physical Review Letters 2003）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>大气湍流耦合</strong>：自由空间OAM传输经过大气→折射率起伏→随机相位屏→OAM模式间的耦合。当Fried参数r₀接近光束直径时，单个湍流涡旋就足以将约10-20%的l=2功率散布到l=1和l=3——而湍流积分会使泄漏功率随时间累积，平均l值缓慢漂移（Tyler &amp; Boyd, Optics Letters 2009，湍流条件下OAM串扰的实验测定）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">一个隐含的测量问题</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">"实测l=1.7"中的l，往往不是通过完整OAM谱分解（需要柱透镜相位展平或全息图匹配滤波）得到的——而是通过简化方法估算的：测量光束的相位梯度（如用干涉图条纹数、Shack-Hartmann波前传感器相位重建等）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">简化方法与全谱分解之间的偏差可以达到±0.2-0.5个拓扑荷单位。即：l=2的真实OAM谱中，如果串扰功率大部分在l=1，简化测量给出的有效l可能偏低；如果串扰在l=3，有效l偏高——这取决于哪个邻近模式占主导。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">可操作建议</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">1. <strong>模式分解要做完整</strong>：有效拓扑荷l_eff=1.7不能判断串扰水平。需要完整的OAM功率谱分布。仅报告模式纯度或等效拓扑荷都不够——必须给出|a_l|²随l的分布</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">2. <strong>相邻模式隔离是设计指标</strong>：SPP加工先确认N=16台阶（16台阶→l=2衍射效率&gt;99%），而非N=8</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">3. <strong>截断效应必须纳入预算</strong>：发射/接收孔径尺寸与光束直径的比值&lt;3时，孔径截断串扰即可超过-15dB——在链路预算中当作额外功率损失源预先计入</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">4. <strong>大气链路加自适应光学</strong>：自由空间OAM链路中，自适应光学系统虽不能完全恢复OAM纯度，但可以将波前畸变RMS从~λ/2降到~λ/20→串扰改善10-15dB</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">l=2≠2。OAM光束在制造、传播、测量三个环节中每一个都在"稀释"拓扑荷的整数性——接收端测到1.7才是正常现象。</p></div>

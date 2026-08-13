@@ -1,0 +1,108 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的SPAD规格书写着量子效率60%、填充因子80%、死时间10ns。你算了算：60% × 80% = 48%探测效率，再加上后脉冲补偿，应该能到40%以上。但实测单光子探测概率只有15%——不是探测器坏了，是你的"乘法模型"漏掉了三个隐藏衰减项。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">从光子到"滴答"，中间有几步</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">单光子探测不是"光子来→雪崩→计数"这么直接。完整链是：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光子入射 → 被吸收 → 触发雪崩 → 被淬灭电路记录 → 输出"滴答"</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">每一步都有概率损失。规格书上只写了前两步的乘积（量子效率），后面三步的损耗才是"探测概率"远低于"量子效率"的根因。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">四个隐藏衰减项</span></h2>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">1. 填充因子（Fill Factor）：80%不是100%</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">填充因子 = 光敏区面积 / 像素总面积。CMOS SPAD阵列中，每个像素周围有：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 淬灭晶体管（quenching transistor）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 读出电路（readout circuitry）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 隔离沟槽（trench isolation）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 金属互连层（metal interconnect）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这些非光敏区域占据了像素面积的20%-50%。规格书说"填充因子80%"意味着<strong>20%的光子直接打到死区上</strong>，连被吸收的机会都没有。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">来源：MDPI Sensors 2023, "Modeling for Single-Photon Avalanche Diodes"</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">2. 触发概率（Triggering Probability）：不是每个载流子都触发雪崩</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">量子效率（QE）或光子探测概率（PDP）定义为：光子被吸收后产生电子-空穴对，其中至少一个载流子成功触发雪崩的概率。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但触发概率<strong>不是100%</strong>。它取决于：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 过剩偏压（Excess Bias Voltage）：偏压越高，触发概率越接近1，但暗计数也指数增加</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 载流子产生位置：在耗尽区边缘产生的载流子，需要漂移进入高场区才能触发雪崩，概率较低</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 温度：温度升高 → 晶格散射增加 → 载流子能量损失 → 触发概率下降</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>工程直觉</strong>：PDP/QE（触发概率）在最佳条件下（高偏压、低温）可能接近80%-90%，但典型工作点（如3V过剩偏压、室温）可能只有60%-70%。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">3. 死时间（Dead Time）：10ns内来的光子全丢</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SPAD触发一次雪崩后，淬灭电路将偏压拉到击穿电压以下，进入恢复期。<strong>死时间</strong>就是这段时间——典型值几ns到几十ns。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果光子到达率（count rate）为1 MHz，死时间10ns：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">死时间占比 = 10ns × 1MHz = 1%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">看起来很小？但如果count rate到10 MHz：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">死时间占比 = 10ns × 10MHz = 10%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">更关键的是：后脉冲（afterpulsing）迫使你必须设置<strong>更长的死时间</strong>来抑制。后脉冲概率1% → 死时间可能要设50ns；后脉冲5% → 死时间100ns以上。死时间延长 → 丢失更多真实光子 → 探测概率进一步下降。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">4. 后脉冲（Afterpulsing）：前一个雪崩"假造"后一个计数</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">雪崩过程中，大量载流子被缺陷中心（trap）捕获。这些 trapped carriers 在死时间之后缓慢释放，可能触发新的雪崩——这就是后脉冲。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">后脉冲概率（AP）典型值：0.1% - 5%（取决于工艺和温度）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但后脉冲对探测概率的影响是<strong>双重负面</strong>的：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• <strong>直接损失</strong>：后脉冲计数被误判为真实光子，导致时间标签错误</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• <strong>间接损失</strong>：为了降低后脉冲，必须延长死时间，进一步减少真实光子的探测机会</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">来源：MDPI Sensors 2023; 后脉冲概率单位是百分比，通过IAT（inter-arrival time）直方图测量</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">数据：探测概率的完整预算</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以下是一个典型CMOS SPAD的探测概率预算（λ=550nm，室温，3V过剩偏压，典型值估计）：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">步骤</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">概率/效率</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">累积探测概率</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">损耗来源</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光子入射到像素</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">100%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">100%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">—</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">填充因子</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">80%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">80%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">20%光子打到死区</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光子吸收（QE）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">75%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">60%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">25%光子穿透或反射</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">触发雪崩（PDP）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">70%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">42%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">30%载流子未触发</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">死时间恢复（1MHz计数率，10ns死时间）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">99%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">41.6%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1%时间窗口不可用</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">后脉冲惩罚（AP=2%，死时间延长至50ns）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">95%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;"><strong>39.5%</strong></td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">为抑制后脉冲延长死时间</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光学串扰（crosstalk）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">98%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">38.7%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">邻近像素雪崩串扰</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;"><strong>最终探测概率</strong></td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">—</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;"><strong>~15%-40%</strong></td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">取决于工作条件</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">上表是典型值，实际器件差异很大。但核心规律一致：规格书上的60%量子效率≠最终探测概率。每多一个环节，概率乘一次，15%-40%是正常范围，不是器件故障。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">三个工程应对策略</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">1. <strong>微透镜（Microlens）提升填充因子</strong>：在SPAD阵列上集成微透镜阵列，将死区上的光汇聚到光敏区。有效填充因子可从80%提升到95%以上，探测概率直接提升15-20%。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">2. <strong>优化死时间-后脉冲 tradeoff</strong>：不是死时间越短越好。用后脉冲概率（AP）测量找到"拐点"——AP&lt;1%时对应的最短死时间。通常AP从5%降到1%，死时间从100ns缩短到30ns，探测概率提升显著。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. <strong>降低暗计数率（DCR）</strong>：DCR占用死时间但不携带信息。DCR从10kHz降到1kHz（TEC制冷从室温到-20°C），死时间内的"假触发"减少，有效探测概率提升5-10%。CMOS SPAD的DCR可从数十Hz到数百kHz，温控是最低成本优化手段。</p>
+<blockquote style="border-left:4px solid #CC0000;background:#f8fafc;margin:0;padding:20px;font-size:15px;line-height:1.8;">
+  <strong style="color:#CC0000;font-size:16px;">重点结论</strong> ：SPAD的"量子效率60%"只是光子到载流子的转换效率。最终探测概率还要经过填充因子、触发概率、死时间、后脉冲、串扰五层衰减。规格书不会把这些写在一起，但工程上必须做完整预算。15%的探测概率不是探测器坏了，是物理过程的正常累积。提升方向不是换更好的探测器，是优化工作条件（偏压、温度、死时间）和光学设计（微透镜、抗反射膜）。
+</blockquote></div>

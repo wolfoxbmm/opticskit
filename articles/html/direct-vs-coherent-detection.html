@@ -1,0 +1,59 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的100G长距离系统用了直接检测——预算够、性能要求不高、觉得够用了。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结果领导要求支持80波×200G、距离拉到1000km以上，你发现直接检测根本不是为这个准备的。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么长距离需要相干检测</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>直接检测（Direct Detection）</strong>只检测光强，信号→光电二极管→电压。信息承载在幅度里，<strong>相位和偏振信息全部丢失</strong>。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>相干检测（Coherent Detection）</strong>引入了本振光（LO）参与探测，本振与信号光在探测器内相干混频：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">I ∝ |E_S + E_LO|² = E_LO² + E_S² + 2E_S·E_LO·cos(Δφ)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δφ = φ_S – φ_LO：信号与本振的相位差。检测结果包含幅度和相位信息。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这意味着：<strong>信号的完整电磁场信息（幅度、相位、偏振）全部被保留</strong>，可以通过DSP进行数字补偿（来源：Savory, Opt. Express 2008）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">相干检测的四大优势</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>高灵敏度（3–20dB增益）</strong>：相干检测的散粒噪声以本振功率为基准——本振光功率可以是信号光功率的1000倍以上，等效噪声功率远低于直接检测的RIN-limited噪声基底（来源：Winzer &amp; Essiambre, J. Lightwave Technol. 2006）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>偏振复用（PDM）</strong>：信号可以承载在两个正交偏振态上，等效频谱效率翻倍。相干接收机通过DSP可以实时跟踪偏振态变化（偏振解复用）。直接检测完全没有这个能力。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>高阶调制（QPSK/16QAM/64QAM）</strong>：相位信息承载比特，单符号可以代表2/4/6个比特，频谱效率远高于直接检测的NRZ OOK。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>数字色散补偿</strong>：色散导致的脉冲展宽在电域里通过FIR滤波器精确补偿，无需DCF（色散补偿光纤），避免引入额外损耗和非线性。</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">对比项</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">直接检测</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">相干检测</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">探测信息</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">仅幅度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">幅度+相位+偏振</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">灵敏度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">–20dBm（10Gb/s）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">–30dBm（100Gb/s PM-QPSK）</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">调制格式</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">NRZ-OOK/PAM4</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">QPSK/16QAM/64QAM</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">色散补偿</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">需要DCF（模拟）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">DSP数字补偿</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">典型应用</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">数据中心、接入网</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">长途、洲际、海缆</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">（来源：ITU-T G.698.2；OIF DP-QPSK实现协议）</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">相干检测的代价：复杂度与成本</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>平衡探测器+高速ADC+DSP</strong>是相干接收机的三大件，成本远高于PIN光电二极管。ICR（集成相干接收机）将90°混频器和平衡探测器集成，简化了封装但价格依然较高（来源：100G相干收发机典型功耗数据，OIF 2017）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>本振激光器</strong>是相干系统的额外成本：线宽必须远低于信号光（&lt;100kHz），相位噪声必须足够低，否则本振的相位噪声会直接叠加到接收信号上——本振线宽每差一个数量级，Q因子会损失约1dB。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">相干检测的选择边界：传输距离&gt;80km或速率&gt;40Gbps必须用相干检测（直接检测OSNR代价&gt;6dB）；&lt;40km且≤10Gbps用直接检测性价比更优。相干模块价格是直接检测的3-5倍，功耗高5-10W。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">短距够用的直接检测，长距就是不够用——这不是技术落后，是物理极限。</p></div>

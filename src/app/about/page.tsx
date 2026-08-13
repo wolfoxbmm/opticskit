@@ -67,7 +67,7 @@ export default function AboutPage() {
             OpticsKit  · 让计算回归理性
           </p>
           <p className="text-sm text-[#6B7280] mt-1">
-            关注公众号「<span className="text-[#4B5563]">光学科技资讯</span>」获取更多光学内容
+            关注公众号「<span className="text-[#4B5563]">OpticsKit</span>」获取更多光学内容
           </p>
         </div>
       </main>

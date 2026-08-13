@@ -1,0 +1,31 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">窄带滤光片的出厂测试报告漂亮——中心波长1550.0nm，峰值透过率98%，带宽1.0nm。按MIL-STD-810G做了500小时的85°C/85%RH双85湿热老化，拿出来复测一切正常。装上光学系统运行了两周，重新用光谱仪扫了一遍——中心波长偏到了1553.0nm，峰值透过率掉到了95%。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">出厂可靠性测试通过了，不等于实际系统的环境就是"相同条件"。双85湿热测试和实际装备环境有本质差别。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">膜层吸湿：光学镀膜的头号环境杀手</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">电子束蒸发或离子辅助沉积（IAD）镀制的光学薄膜在微观上不是致密的。膜层内部有纳米级的柱状孔洞结构（void volume），孔隙率取决于沉积工艺：传统电子束蒸发~10-15%，IAD~3-5%，离子束溅射（IBS）&lt;1%（Macleod, <em>Thin-Film Optical Filters</em>, 4th Ed., 2010）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这些柱状孔洞是水蒸气的"毛细管"。环境湿度变化→水分子进入/逸出孔洞→膜层的有效折射率变化（水的折射率n≈1.33，填充折射率n≈1.0的空气孔洞后等效折射率上升）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">单层膜Δn≈0.005-0.01。对于波长膜系（HLHL...），每层的折射率变化都会偏移谐振条件。窄带滤光片通常含50-100层膜——每层累积的Δn叠加后，中心波长偏移量可达1-5nm（Rancourt, <em>Optical Thin Films User Handbook</em>, 1996）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">双85测试的"水分"</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">双85（85°C/85%RH）是电子和光学行业通用的加速寿命测试条件，但它有两个局限：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• <strong>无冷凝 vs 有冷凝</strong>：双85测试通常控制不结露（温箱露点&lt;箱内温度）。但实际装备在昼夜温差大/开机-关机循环时，镜片表面会出现冷凝水膜——液态水渗透力远大于水蒸气</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• <strong>浸泡 vs 扩散</strong>：双85测试中膜层从气态水蒸气吸收水分（扩散主导）。冷凝场景下水直接接触膜层表面——如果外层保护膜有任何微裂纹，液态水会沿裂纹渗透到底层膜</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">双85测试500小时"通过"只代表膜层在气态水蒸气条件下的稳定性，不代表液态冷凝+温度冲击复合条件下也稳定。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">应力释放：膜层在"慢慢放松"</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">镀膜过程中，膜料原子以高动能轰击基底（IAD/IBS）或热蒸发沉积（电子束），膜层内部存在压应力（compressive stress）。在高温环境（85°C）中，膜层会缓慢释放这些残余应力——应力的弛豫时间取决于温度和膜料。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">应力释放的直接后果：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 膜层厚度微变化→光学厚度(n·d)偏离设计值→中心波长偏移</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 热膨胀系数（CTE）不匹配→膜层与基底界面剪切应力→微裂纹</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 多层膜之间的界面应力累积→膜层分层/起泡</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">残余应力释放导致的光谱漂移通常为0.5-2nm（针对窄带滤光片），而且方向几乎总是红移（膜层膨胀释放压应力→光学厚度增加）（Flory et al., <em>Appl. Opt.</em>, 1986）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">"出厂测试OK"→"装系统后偏了"的时间差</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">出厂测试在镀膜后1-3天完成，此时膜层应力还在快速释放期（约占总应力的30-50%在前7天释放完毕）。装上系统后两周做复测——膜层已经完成了大部分应力释放+至少经历了一次温湿度循环+可能的冷凝事件。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光谱偏移=吸湿（+1.0nm）+应力释放（+1.5nm）+温循膨胀（+0.5nm）≈3nm。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">结论</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">膜层不是固体——在微观尺度，它是布满纳米孔洞的海绵结构。水蒸气进出这些孔洞改变有效折射率；残余应力在高温中缓慢释放改变膜层厚度。双85测试只是证明膜层不会"急性失效"，慢性光谱漂移在测试结束后才发生。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">高温高湿全过了，不代表膜层就"稳定"了。纳米孔洞吸水+残余应力释放——出厂后两周光谱偏了3nm，正常。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>诊断建议</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 对窄带滤光片做"光谱跟踪"——出厂/装调/运行1周/1月四个时间点各测一次光谱，建立漂移曲线</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 优先选用IBS溅射镀膜（孔隙率&lt;1% vs 电子束蒸发10-15%），吸湿漂移降低一个数量级</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 滤光片系统装配完成后做一次低温烘烤（60°C/24h，干燥氮气环境）→释放大部分残余应力→降低后续飘移</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 加密封O圈+干燥剂包的光学腔，保持腔内相对湿度&lt;10%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 避免滤光片表面直接暴露于冷凝环境（防雾加热/疏水膜/密封窗口）</p></div>

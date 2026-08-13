@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>波长/频率/光子能量换算 - OpticsKit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg-root:#F3F4F6;--bg-surface:#FFFFFF;--bg-elevated:#F9FAFB;--bg-hover:#F3F4F6;--border-subtle:#E5E7EB;--text-primary:#111827;--text-secondary:#4B5563;--text-tertiary:#6B7280;--text-disabled:#9CA3AF;--accent:#2563EB;--accent-hover:#1D4ED8;--accent-light:#EFF6FF;--shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.06);--radius-sm:8px;--radius-md:12px;--radius-full:9999px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg-root);color:var(--text-primary);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-0.01em;line-height:1.6}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-subtle);border-radius:3px}::selection{background:rgba(34,139,230,0.15);color:var(--text-primary)}
+.app{max-width:860px;margin:0 auto;padding:32px 20px 24px}
+.hd{text-align:center;margin-bottom:24px}
+.hd h1{font-size:22px;font-weight:700;letter-spacing:-0.02em}
+.hd p{font-size:13px;color:var(--text-tertiary);margin-top:4px}
+
+.card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:24px;box-shadow:var(--shadow-sm);margin-bottom:16px}
+.card-title{font-size:14px;font-weight:650;color:var(--text-primary);margin-bottom:16px}
+
+.input-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px}
+.input-grp{display:flex;flex-direction:column;gap:4px}
+.input-grp label{font-size:11px;font-weight:600;color:var(--text-secondary)}
+.input-grp input{font-size:15px;font-weight:600;padding:10px 14px;border:2px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-elevated);color:var(--text-primary);outline:none;font-family:inherit;width:100%;transition:border-color .2s,background .2s;-moz-appearance:textfield}
+.input-grp input::-webkit-inner-spin-button,.input-grp input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.input-grp input:focus{border-color:var(--accent);background:var(--bg-surface)}
+.input-grp select{font-size:12px;padding:6px 10px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-surface);color:var(--text-primary);outline:none;cursor:pointer;font-family:inherit}
+.input-grp .input-unit{display:flex;gap:4px}
+.input-grp .input-unit input{flex:1}
+.input-grp .input-unit select{flex-shrink:0;min-width:60px}
+
+.medium-card{background:var(--bg-elevated);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:10px 14px;margin-top:12px}
+.medium-card .ml{font-size:10px;color:var(--text-disabled);text-transform:uppercase;letter-spacing:0.04em}
+.medium-card .mv{font-size:13px;font-weight:600;color:var(--text-primary);margin-top:2px}
+
+/* Spectrum bar */
+.spectrum-wrap{margin-top:16px;position:relative}
+.spectrum-bar{width:100%;height:32px;border-radius:var(--radius-sm);position:relative;overflow:hidden;border:1px solid var(--border-subtle)}
+.spectrum-marker{position:absolute;top:-6px;bottom:-6px;width:3px;background:var(--accent);border-radius:2px;transition:left .15s;z-index:2;box-shadow:0 0 6px rgba(37,99,235,0.5)}
+.spectrum-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--text-disabled);margin-top:4px;padding:0 4px}
+.spectrum-band{position:absolute;top:0;bottom:0;font-size:8px;color:rgba(255,255,255,0.8);display:flex;align-items:center;justify-content:center;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,0.3);overflow:hidden;white-space:nowrap}
+.spectrum-current{text-align:center;font-size:12px;font-weight:600;color:var(--accent);margin-top:6px}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text-primary);color:#fff;padding:8px 20px;border-radius:var(--radius-md);font-size:12px;z-index:99;display:none;box-shadow:var(--shadow-md);font-family:inherit}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd">
+  <h1>波长/频率/光子能量换算</h1>
+  <p>λ ↔ ν ↔ ν̃ ↔ E 四参数联动 · 电磁波谱定位 · 介质波长补偿</p>
+</div>
+
+<div class="card">
+  <div class="card-title">🌈 光子学四参数</div>
+  <div class="input-row">
+    <div class="input-grp">
+      <label>波长 λ（真空中）</label>
+      <div class="input-unit">
+        <input type="number" id="wl" value="532" step="any" oninput="onInput('wl')">
+        <select id="wlUnit" onchange="onInput('wl')">
+          <option value="1e-9">nm</option>
+          <option value="1e-6">μm</option>
+          <option value="1e-10">Å</option>
+        </select>
+      </div>
+    </div>
+    <div class="input-grp">
+      <label>频率 ν</label>
+      <div class="input-unit">
+        <input type="number" id="freq" step="any" oninput="onInput('freq')">
+        <select id="freqUnit" onchange="onInput('freq')">
+          <option value="1e12">THz</option>
+          <option value="1e9">GHz</option>
+          <option value="1">Hz</option>
+        </select>
+      </div>
+    </div>
+    <div class="input-grp">
+      <label>波数 ν̃</label>
+      <div class="input-unit">
+        <input type="number" id="wn" value="18796.99" step="any" oninput="onInput('wn')">
+        <select id="wnUnit" onchange="onInput('wn')" disabled style="opacity:0.6">
+          <option value="100">cm⁻¹</option>
+        </select>
+      </div>
+    </div>
+    <div class="input-grp">
+      <label>光子能量 E</label>
+      <div class="input-unit">
+        <input type="number" id="energy" value="2.33" step="any" oninput="onInput('energy')">
+        <select id="energyUnit" onchange="onInput('energy')">
+          <option value="1">eV</option>
+          <option value="1.602176634e-19">J</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Medium compensation -->
+  <div class="medium-card" style="margin-top:16px">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div>
+        <div class="ml">介质折射率 n</div>
+        <input type="number" id="refIdx" value="1.0" step="0.0001" min="1" style="font-size:13px;padding:6px 10px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);width:80px;font-family:inherit;outline:none" oninput="recalc()">
+      </div>
+      <div>
+        <div class="ml">介质中波长 λ/n</div>
+        <div class="mv" id="mediumWl">— nm</div>
+      </div>
+      <div>
+        <div class="ml">介质中波数 n·ν̃</div>
+        <div class="mv" id="mediumWn">— cm⁻¹</div>
+      </div>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:var(--text-disabled)">
+      快捷选择：<a href="#" onclick="setRefIdx(1.0);return false" style="color:var(--accent);text-decoration:none">真空 1.0</a> ·
+      <a href="#" onclick="setRefIdx(1.0003);return false" style="color:var(--accent);text-decoration:none">空气 1.0003</a> ·
+      <a href="#" onclick="setRefIdx(1.333);return false" style="color:var(--accent);text-decoration:none">水 1.333</a> ·
+      <a href="#" onclick="setRefIdx(1.5168);return false" style="color:var(--accent);text-decoration:none">BK7 1.5168</a> ·
+      <a href="#" onclick="setRefIdx(3.42);return false" style="color:var(--accent);text-decoration:none">硅 3.42</a>
+    </div>
+  </div>
+</div>
+
+<!-- Spectrum bar -->
+<div class="card">
+  <div class="card-title">📡 电磁波谱定位</div>
+  <div class="spectrum-wrap">
+    <div class="spectrum-bar" id="spectrumBar"></div>
+    <div class="spectrum-marker" id="spectrumMarker" style="left:50%"></div>
+    <div class="spectrum-labels">
+      <span>γ射线</span><span>X射线</span><span>紫外</span><span>可见光</span><span>红外</span><span>太赫兹</span><span>微波</span><span>无线电</span>
+    </div>
+    <div class="spectrum-current" id="spectrumLabel">—</div>
+  </div>
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const C=2.99792458e8;
+const H_EV=4.135667662e-15;
+const H_J=6.62607015e-34;
+const EV_J=1.602176634e-19;
+
+const spectrumBands=[
+  {name:'γ射线',min:0,max:0.01,color:'#1a1a2e'},
+  {name:'X射线',min:0.01,max:10,color:'#16213e'},
+  {name:'紫外',min:10,max:380,color:'#7C3AED'},
+  {name:'可见光',min:380,max:780,color:'linear-gradient(90deg,#7C3AED,#2563EB,#059669,#D97706,#DC2626)'},
+  {name:'近红外',min:780,max:2500,color:'#DC2626'},
+  {name:'中红外',min:2500,max:25000,color:'#991B1B'},
+  {name:'远红外',min:25000,max:1e6,color:'#7F1D1D'},
+  {name:'太赫兹',min:1e6,max:1e7,color:'#374151'},
+  {name:'微波',min:1e7,max:1e9,color:'#4B5563'},
+  {name:'无线电',min:1e9,max:1e12,color:'#6B7280'},
+];
+
+const visibleColors=[
+  {nm:380,hex:'#8B00FF'},{nm:450,hex:'#0000FF'},{nm:485,hex:'#00BFFF'},
+  {nm:500,hex:'#00FF7F'},{nm:550,hex:'#7FFF00'},{nm:580,hex:'#FFFF00'},
+  {nm:600,hex:'#FFA500'},{nm:650,hex:'#FF0000'},{nm:700,hex:'#8B0000'},{nm:780,hex:'#4B0000'},
+];
+
+function $(id){return document.getElementById(id)}
+
+function format(v){
+  if(v===0)return'0';
+  if(!isFinite(v))return'—';
+  const av=Math.abs(v);
+  if(av>=1e12||(av<1e-4&&av>0))return v.toPrecision(6);
+  if(av>=1e6)return v.toExponential(4);
+  if(av>=100)return v.toFixed(1);
+  if(av>=1)return v.toFixed(4);
+  if(av>=0.001)return v.toFixed(6);
+  return v.toPrecision(4);
+}
+
+let lastInput='wl';
+
+function wlFromInput(id){
+  const val=parseFloat($(id)?.value)||0;
+  if(!val)return 0;
+  const unit=parseFloat($(id+'Unit')?.value)||1e-9;
+  return val*unit; // meters
+}
+
+function toNm(m){return m*1e9}
+function toUm(m){return m*1e6}
+function toA(m){return m*1e10}
+
+function calcFreq(wl_m){return C/wl_m}
+function calcWn(wl_m){return 1/(wl_m*100)} // cm⁻¹
+function calcEnergyEV(wl_m){return (H_EV*C)/wl_m}
+function calcEnergyJ(wl_m){return (H_J*C)/wl_m}
+
+function onInput(from){
+  lastInput=from;
+  const wlVal=parseFloat($('wl')?.value)||0;
+  const freqVal=parseFloat($('freq')?.value)||0;
+  const wnVal=parseFloat($('wn')?.value)||0;
+  const energyVal=parseFloat($('energy')?.value)||0;
+
+  let wl_m;
+  switch(from){
+    case 'wl':
+      wl_m=wlFromInput('wl');
+      break;
+    case 'freq':{
+      const freqHz=(freqVal||0)*parseFloat($('freqUnit')?.value||1e12);
+      wl_m=freqHz>0?C/freqHz:0;
+      break;
+    }
+    case 'wn':{
+      const wl_cm=wnVal>0?1/wnVal:0; // cm
+      wl_m=wl_cm/100;
+      break;
+    }
+    case 'energy':{
+      const eV=energyVal*parseFloat($('energyUnit')?.value||1);
+      wl_m=eV>0?H_EV*C/eV:0;
+      break;
+    }
+  }
+  if(!wl_m||wl_m<=0||!isFinite(wl_m))return;
+
+  // Update all fields (except the one being edited)
+  if(from!=='wl'){
+    const wlUnitVal=parseFloat($('wlUnit')?.value||1e-9);
+    $('wl').value=format(wl_m/wlUnitVal);
+  }
+  if(from!=='freq'){
+    const freqUnitVal=parseFloat($('freqUnit')?.value||1e12);
+    $('freq').value=format(C/wl_m/freqUnitVal);
+  }
+  if(from!=='wn'){
+    $('wn').value=format(1/(wl_m*100));
+  }
+  if(from!=='energy'){
+    const energyUnitVal=parseFloat($('energyUnit')?.value||1);
+    $('energy').value=format(H_EV*C/wl_m/energyUnitVal);
+  }
+
+  recalc();
+}
+
+function recalc(){
+  const wl_m=wlFromInput('wl');
+  const n=parseFloat($('refIdx')?.value)||1;
+
+  $('mediumWl').textContent=wl_m>0?format(wl_m/n*1e9)+' nm':'— nm';
+  $('mediumWn').textContent=wl_m>0?format(n/(wl_m*100))+' cm⁻¹':'— cm⁻¹';
+
+  updateSpectrum(toNm(wl_m));
+}
+
+function setRefIdx(n){
+  $('refIdx').value=n;
+  recalc();
+}
+
+// ===== Spectrum =====
+function renderSpectrumBar(){
+  const bar=$('spectrumBar');
+  // Log scale: 0.001nm to 1e6nm → bar width
+  // Use approximate segments
+  const segments=[
+    {label:'γ',w:4,color:'#1a1a2e'},
+    {label:'X',w:6,color:'#16213e'},
+    {label:'UV',w:8,color:'#7C3AED'},
+    {label:'可见',w:16,color:'linear-gradient(90deg,#8B00FF,#0000FF,#00BFFF,#00FF7F,#FFFF00,#FFA500,#FF0000)'},
+    {label:'NIR',w:8,color:'#DC2626'},
+    {label:'MIR',w:7,color:'#991B1B'},
+    {label:'FIR',w:6,color:'#7F1D1D'},
+    {label:'THz',w:5,color:'#374151'},
+    {label:'μW',w:6,color:'#4B5563'},
+    {label:'Radio',w:4,color:'#6B7280'},
+  ];
+  const total=segments.reduce((s,v)=>s+v.w,0);
+  let left=0;
+  bar.innerHTML='';
+  segments.forEach(s=>{
+    const pct=(s.w/total*100).toFixed(2);
+    const div=document.createElement('div');
+    div.className='spectrum-band';
+    div.style.cssText=`left:${left}%;width:${pct}%;background:${s.color};font-size:10px;font-weight:600`;
+    div.textContent=s.label;
+    bar.appendChild(div);
+    left+=parseFloat(pct);
+  });
+}
+
+function updateSpectrum(nm){
+  // Map wavelength to spectrum bar position
+  // Range: 0.001nm to 1e12nm mapped on log
+  const logMin=-3,logMax=12,logNm=Math.log10(Math.max(nm,0.001));
+  let pct=((logNm-logMin)/(logMax-logMin))*100;
+  pct=Math.max(0,Math.min(100,pct));
+
+  $('spectrumMarker').style.left=pct+'%';
+
+  // Label
+  let band='';
+  for(const b of spectrumBands){
+    if(nm>=b.min&&nm<b.max){band=b.name;break}
+  }
+  if(nm>=380&&nm<=780){
+    // Visible: add color name
+    const colorNames=['紫','蓝','青','绿','黄','橙','红','深红'];
+    const bounds=[380,450,485,500,550,580,600,650,700,780];
+    for(let i=0;i<colorNames.length;i++){
+      if(nm>=bounds[i]&&nm<bounds[i+1]){band=colorNames[i]+'光 ('+band+')';break}
+    }
+  }
+  const nmStr=nm>=1000?format(nm/1000)+' μm':format(nm)+' nm';
+  $('spectrumLabel').textContent=nmStr+' — '+band;
+}
+
+// Init
+renderSpectrumBar();
+
+// Initialize with default values
+$('wl').value='532';
+$('freq').value=format(C/(532e-9)/1e12);
+$('wn').value=format(1/(532e-9*100));
+$('energy').value=format(H_EV*C/(532e-9));
+recalc();
+</script>
+</body>
+</html>

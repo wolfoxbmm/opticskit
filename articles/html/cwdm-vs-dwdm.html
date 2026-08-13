@@ -1,0 +1,157 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">为什么一根比头发丝还细的光纤，能同时承载 8000 万路高清视频通话？答案藏在一个反直觉的事实里：光不是"一根线"，而是一个可以切成几十个通道的"光谱高速公路"。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这就是<strong>波分复用（WDM）</strong>——让不同波长的光信号在同一根光纤中同时传输，互不干扰。听起来像魔法，但背后是精确到纳米级的波长工程。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">一、光纤的"带宽家底"：C波段 1530-1565nm（来源：ITU-T G.692）</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">要理解 WDM，首先要看清一根光纤的"可用频段"。光纤在 1550nm 附近有一个损耗最低的窗口，衰减系数仅约<strong>0.2 dB/km</strong>。国际电联 ITU-T 将这一区域定义为<strong>C 波段（Conventional Band）</strong>，波长范围 1530nm 到 1565nm（来源：ITU-T G.692），跨度仅约<strong>35nm</strong>，恰好与EDFA增益带宽（来源：Desurvire, Erbium-Doped Fiber Amplifiers, 1994）匹配。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">别看 35nm 很窄，换算成频率却有惊人的<strong>约 4.4 THz</strong>（1550nm 处 1nm ≈ 124.9 GHz）。而传输一路 100Gbps 信号需要的光谱宽度不过几十 GHz。这意味着，一根光纤的 C 波段理论上可以容纳<strong>几十甚至上百个独立信道</strong>——这才是 WDM 能成立的根本前提。</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">ITU-T 波段</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">波长范围 (nm)</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型用途</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">O-Band</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1260–1360</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">短距接入</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">E-Band</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1360–1460</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">水峰区（损耗大）</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">S-Band</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1460–1530</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">扩展容量</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">C-Band</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1530–1565</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">DWDM 主力战场</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">L-Band</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1565–1625</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">C+L 扩展方案</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">二、WDM 是怎么工作的？四个字：合波→分波</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">WDM 的核心原理简洁而精妙，就三步。合波器插入损耗3-6dB（来源：典型AWG/薄膜WDM规格汇总）：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>独立调制</strong>：N 路电信号分别调制 N 个不同波长的激光器。例如 λ₁=1550.12nm 承载 100Gbps 业务，λ₂=1550.92nm 承载另一路 100Gbps 业务，互不影响。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>合波（MUX）</strong>：通过<strong>波分复用器</strong>将 N 路不同波长的光耦合到同一根光纤中。合波器本质上是一个精密的光学滤波器阵列，每路波长对应一个带通滤波通道。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>分波（DEMUX）</strong>：在接收端，<strong>波分解复用器</strong>逆向操作，将复合光信号按波长分离，各路分别送入对应的接收机完成光电转换。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这里的关键是<strong>波长的正交性</strong>：只要各路激光器的中心波长足够精确、通道间隔足够大，相邻信道之间的串扰就能控制在可接受水平（通常要求 &lt;-25dB）。这就像收音机换台——不同频率的电台共用同一片天空，但只要你调到正确的频率，只会听到一个台。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">三、CWDM vs DWDM：粗分与密集，通道间隔决定一切</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">WDM 分为两大流派，<strong>核心区别就在通道间隔</strong>：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">参数</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">CWDM</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">DWDM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">通道间隔</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">20 nm（来源：ITU-T G.694.2）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.8 nm (100GHz) / 0.4 nm (50GHz)（来源：ITU-T G.694.1）</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">波长范围</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1270–1610 nm（18 个波长）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">C 波段 1530–1565 nm</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">最大通道数</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">18</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">45 (100GHz) / 89 (50GHz)</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">传输距离</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">≤ 80 km（无放大器）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">数千公里（EDFA 放大）</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">成本</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">低（激光器无需温控）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">较高（需精密温控与稳频）</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">典型场景</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">城域网接入、5G 前传</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">骨干网、DCI 互联</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">CWDM 的 20nm 大间隔不是随意定的——它刚好大到可以省掉昂贵的半导体温控（TEC）。CWDM 激光器在 -5°C 到 +70°C 范围内波长漂移约 ±6-7nm，即使漂了也不会串到相邻通道。这就是 CWDM 便宜的根本原因。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">DWDM 则走另一个极端：0.8nm（100GHz 间隔）甚至 0.4nm（50GHz 间隔），必须用 TEC 将激光器温度稳定在<strong>±0.1°C</strong>以内，频率精度要求<strong>±2.5GHz</strong>。代价是成本更高，但换来的是 C 波段内拥挤排列几十甚至上百个通道的能力。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">四、通道数怎么算？一组真实工程的容量账</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以最常用的 C 波段 DWDM 系统为例，来算一笔实际的容量账：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>100GHz 间隔方案</strong>：C 波段 1530-1565nm 共 35nm，每 0.8nm 一个通道 → 35÷0.8 ≈ 44 个可用通道。ITU-T G.694.1 标准中具体定义了 45 个 100GHz 通道（#17-#61）。每通道调制 100Gbps QPSK → 单纤总容量<strong>45 × 100Gbps = 4.5 Tbps</strong>。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>50GHz 间隔方案</strong>：通道密度翻倍，C 波段容纳 89 个通道。每通道调制 200Gbps 16QAM → 单纤总容量<strong>89 × 200Gbps = 17.8 Tbps</strong>。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果扩展至<strong>C+L 波段</strong>（增加 L 波段 1565-1625nm 的 60nm），再叠加 50GHz 密集间隔，通道数可达 160 波以上。2023 年某设备商的商用系统已实现<strong>单纤 96 波 × 800Gbps = 76.8 Tbps</strong>的纪录。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">通道数 ≈ 可用频谱宽度 ÷ 通道间隔</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">C 波段 35nm ÷ 0.8nm (100GHz) ≈ 44 通道；35nm ÷ 0.4nm (50GHz) ≈ 88 通道。实际可用通道数受滤波器滚降和保护间隔影响，略少于此理论值。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">五、反常识：通道不是越密越好</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">很多人以为"通道越密，容量越大，所以 50GHz 一定优于 100GHz"。这个直觉只对了一半。通道间隔缩小带来两个不可忽视的代价：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>第一，线性串扰加剧。</strong>当通道间隔从 100GHz 缩到 50GHz，相邻信道滤波器需要更陡的滚降。但实际滤波器的边带不是理想矩形的，信号频谱边缘会泄漏到相邻通道。在级联多个 ROADM（可重构光分插复用器）的复杂网络中，滤波器的"穿通效应"会使串扰逐级累积，50GHz 方案在第 8-10 级节点后可能出现明显的 OSNR 劣化。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>第二，非线性串扰（交叉相位调制 XPM 和四波混频 FWM）随通道密度增加。</strong>通道越密集，不同波长之间的非线性相互作用越强。特别是在 G.652 标准单模光纤中，色散较小（约 17 ps/nm/km），更容易产生 FWM 效应，在相邻通道上产生新的干扰频率分量。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">工程上的经验法则是：<strong>调制速率越高、通道间隔越窄，非线性代价越显著。</strong>所以 50GHz 间隔通常只用于 10Gbps/100Gbps 的 QPSK 调制，而 400Gbps 以上的高阶 QAM 信号往往需要 75GHz 甚至 100GHz 的通道间隔来避免频谱交叠。</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">通道间隔</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">适用速率</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">主要限制</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">推荐场景</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">200 GHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">400G+ 16QAM</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">频谱效率低</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">超长距干线</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">100 GHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">100G/200G QPSK</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">串扰可控</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">标准配置，最广泛</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">50 GHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">10G/100G QPSK</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">串扰+FWM 加剧</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">高密度城域/DC</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">Flex-Grid</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">混合速率</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">ROADM 复杂</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">弹性光网络</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">六、实战设计指导：CWDM 还是 DWDM？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">作为工程师，面对实际项目时怎么选？以下是几条可直接套用的决策准则：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>看距离</strong>：如果链路 ≤ 80km 且中间无中继站 → CWDM 足够。超过 80km 且需要 EDFA 中继 → 必须上 DWDM，因为 CWDM 的波长范围太宽（覆盖 O/E/S/C/L 五个波段），EDFA 只覆盖 C 和部分 L 波段。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>看容量</strong>：需求 ≤ 18 波 → CWDM。需求 20 波以上 → DWDM。5G 前传场景通常 6-12 波，CWDM 完美覆盖；骨干网核心层直接上 DWDM 80 波起。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>看预算</strong>：CWDM 光模块比 DWDM 便宜约 3-5 倍。如果距离和容量都能满足，CWDM 是性价比最优解。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>看未来扩展</strong>：网络扩容计划明确（如后续要升到 40 波以上）→ 一步到位上 DWDM，避免后期全量替换的巨额成本。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>看光纤资源</strong>：光纤资源极度稀缺（如跨海光缆、城市管道已满）→ DWDM 最大化单纤价值。光纤充裕的新建园区 → CWDM 或甚至可以不上 WDM。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">WDM 是现代光纤通信的"乘法器"——它把光纤从单车道变成了多车道高速公路，让单纤容量从最初的 Mbps 级别跃升到数十 Tbps。CWDM 以低成本覆盖短距场景，DWDM 以高密度支撑长距骨干网络。两者没有绝对的优劣，关键在于距离、容量和预算的三角权衡。理解 WDM 的本质——"用不同波长在不同通道上独立传输"——是深入光通信工程的第一步。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">WDM选型判据：城域网&lt;80km、通道≤18个选CWDM（无放大器，便宜60%）；长途&gt;200km或通道≥40个必须DWDM+EDFA。CWDM的20nm间隔意味着每通道独立波长容差±6.5nm，DWDM的0.8nm间隔要求波长稳定度±0.02nm。</p></div>

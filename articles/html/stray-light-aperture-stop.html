@@ -1,0 +1,106 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光阑能挡杂散光，这是常识。但加了光阑之后图像反而变差了——衍射斑扩大、边缘变暗、分辨率下降，这不是光阑的错，是你没搞清楚"挡什么"和"挡多少"的区别。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">孔径每缩小一半，艾里斑直径翻倍（来源：Born &amp; Wolf, Principles of Optics, 7th ed., 1999）；光阑放错位置，渐晕把成像光束截断一半（来源：Smith, Modern Optical Engineering, 4th ed., 2008）——杂散光降了3 dB，信号降了6 dB（来源：典型光学系统杂散光分析，Smith, 2008），SNR反而更差。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">光阑消杂散光的原理与代价</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光阑（aperture stop）放在光路中，限制通过的光束截面，减少非成像光线到达探测器。这是消除杂散光最简单直接的方法。但光阑同时限制的不仅是杂散光——它也限制了成像光束的孔径角。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">孔径缩小带来的代价，可以用艾里斑半径来量化：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">rAiry = 1.22 λ f / D = 1.22 λ / (2NA)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">r_Airy为艾里斑半径，f为焦距，D为入瞳直径，NA为数值孔径</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光阑直径D减半→NA减半→艾里斑面积增4倍→衍射极限分辨率下降50%。</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">光阑直径</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">NA</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">艾里斑直径(λ=550nm)</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">衍射极限分辨率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">D（全开）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.25</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">2.68 μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.34 μm</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">D/2</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.125</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">5.37 μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">2.68 μm</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">D/4</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.0625</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">10.7 μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">5.37 μm</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">杂散光降了，分辨率也降了——这就是光阑的"不可能三角"：杂散光抑制、分辨率、光通量，三者只能取其二。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">渐晕：光阑放错位置的后果</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光阑放在光路中不同位置，效果完全不同。放在孔径光阑位置（通常是物镜的光阑面），只限制轴向光束口径——这是正确的用法。但如果光阑偏移或放在错误位置，就会产生渐晕（vignetting）：离轴光束被部分截断，视场边缘照度下降。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">渐晕的照度衰减遵循cos⁴定律的修正形式：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">E(θ) = E₀ · cos⁴θ · K(θ)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">E(θ)为视场角θ处的照度，K(θ)为渐晕系数（0~1），无渐晕时K=1</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">30°视场角，即使无渐晕（K=1），照度也只有轴上的cos⁴30° = 0.56倍。加上50%渐晕（K=0.5），边缘照度只剩轴上的28%——图像中心亮、四角暗，信息量严重不均匀。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">更严重的是，渐晕不是均匀衰减——它选择性截断离轴光束的边缘光线，而这些边缘光线恰恰携带了高频空间信息。渐晕相当于给OTF加了低通滤波，边缘视场的分辨率进一步恶化。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">孔径光阑 vs 视场光阑：不是一回事（来源：Smith, 2008）</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">很多工程师混淆了两种光阑的功能：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">特性</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">孔径光阑</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">视场光阑</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">限制对象</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">成像光束口径</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">成像范围大小</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">影响分辨率</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">直接影响（NA）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">不影响</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">影响照度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">∝ NA²</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">边缘截止</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">典型位置</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">物镜光阑面/透镜边缘</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">中间像面/探测器前方</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">消杂散光效果</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">有限（主要消轴向杂散）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">好（挡视场外杂光）</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果你的目标是消杂散光，视场光阑（field stop）远比孔径光阑（aperture stop）有效——它只挡视场外的杂光，不影响成像光束的NA和分辨率。而缩小孔径光阑来消杂散光，代价太大。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">什么情况下光阑反而有用</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光阑不是不能用，而是要分场景：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">①<strong>像差限制型系统</strong>：当系统的像差远大于衍射极限时（低质量物镜），缩小光阑反而改善像质——牺牲衍射分辨率，换来像差分辨率提升。摄影中的"最佳光圈"通常在f/5.6~f/8就是这个原因。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">②<strong>Lyot光阑消杂散光</strong>：在焦面后放一个与艾里斑尺寸匹配的小光阑（Lyot stop），只让中心光束通过，滤掉衍射环上的杂散光。日冕仪就是用这个原理观测太阳日冕的。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">③<strong>空间滤波</strong>：在透镜焦面放针孔，只让零频（基模）通过，滤掉高频噪声。这是激光光束净化的标准方法，针孔直径≈艾里斑直径的1~1.5倍。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">④<strong>远心光路</strong>：光阑放在透镜焦点处，使得主光线平行于光轴，消除透视误差——机器视觉测量系统中必须用远心光路。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">设计指导：消杂散光的正确姿势</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">①<strong>先加视场光阑，再考虑孔径光阑</strong>：视场光阑消杂散光不损分辨率，应该优先使用。孔径光阑只在像差严重时缩小，且一般不超过1~2档。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">②<strong>挡光板+消光纹 &gt; 单一光阑</strong>：在镜筒内壁加工消光螺纹（螺纹深度&gt;螺距），配合挡光板，消杂散光效果远比缩小孔径好，且不影响成像光束。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">③<strong>用Lyot stop替代孔径收缩</strong>：在中间像面或傅里叶面放置与光束匹配的光阑，只挡杂散光不挡信号光。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">④<strong>量化评估</strong>：加光阑前后用MTF和点扩散函数（PSF）对比。如果MTF在高频段下降&gt;20%，说明光阑缩过头了。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">⑤<strong>光阑位置决定一切</strong>：孔径光阑必须放在光瞳面上，渐晕光阑放在中间像面附近。放错了位置，再小的光阑也挡不住杂散光，只会伤害信号。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">结论</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光阑设计量化：缩小孔径光阑→每降1级f-number，艾里斑直径扩大26%（NA=0.5→0.4时从0.67μm扩到0.84μm）。最佳位置在透镜组的共焦面——偏离此位置会产生渐晕，边缘光通量损失可达50%。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">消杂散光的正确路径：优先用视场光阑和消光结构，孔径光阑只在像差限制时谨慎缩小1~2档，用MTF量化评估光阑对分辨率的影响。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光阑不是越小越好——你挡住的不只是杂散光，还有你想要的分辨率。</p></div>

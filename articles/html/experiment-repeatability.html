@@ -1,0 +1,32 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SNR=32dB——实验跑得漂亮。同样的光纤跳线、同样的激光器驱动电流、同样的探测器。第二天原样重跑：SNR=29dB，差了3dB。没动任何参数，只是重新插拔了一次光纤连接器、重新找了一次耦合对准。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光学实验的"恰好重复"是个假象。3dB的SNR波动在工程级光学实验里太常见了。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">连接器插拔：不是"物理接触"就能保证</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">FC/PC光纤连接器的重复插拔损耗波动，厂商标称&lt;0.2dB。但这是在实验室严格清洁条件下的极限值。实际工程环境中，单次插拔的损耗变化可以达到0.3-0.5dB（Bergano et al., <em>Optical Fiber Telecommunications IV-A</em>, 2002）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">三个来源叠加：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 陶瓷插芯端面尘埃——肉眼不可见的2-5μm颗粒就足以让间隙增大，插损跳0.1-0.3dB</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 端面划痕累积——反复插拔会导致APC端面的8°斜面微损伤</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 对中重复性——陶瓷套筒的弹性衰减，法兰每插拔500次后对中精度劣化约0.5μm</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">一天内同一对连接器插拔5次，累计损耗波动就可以超过1dB。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">光源功率漂移：不是恒定功率就能零漂</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">DFB激光器的标称功率稳定性±0.01dB（10分钟）。但你测SNR可能花了2小时——两小时内温度漂移0.5°C，DFB阈值电流变化~0.1mA，输出功率漂移0.1-0.2dB（Coldren et al., <em>Diode Lasers and Photonic Integrated Circuits</em>, 2012）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SLED/ASE宽带光源更不稳定：ASE光源的输出功率对泵浦激光器温度敏感，2小时温漂可导致±0.3dB波动。如果实验中光源功率有0.3dB漂移而你没注意到——SNR直接变。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">测SNR时，信号功率和噪声底都要读。如果两次测量间隔30分钟以上，光源功率漂移可以让信号强度变化0.2-0.5dB，噪声底却不变——SNR的计算结果差出0.2-0.5dB。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">偏振：看不见的变量</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">单模光纤不是保偏光纤。光纤中的残余双折射会把线偏振光变成椭圆偏振光，输出偏振态随应力/温度/振动随机变化。如果下游任何一个器件有偏振相关损耗（PDL ≥0.1dB），输出功率就会产生周期性波动（Poole &amp; Nagel, <em>Optical Fiber Telecommunications III-A</em>, 1997）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">更致命的是：探测器响应度也有偏振依赖性（通常&lt;0.05dB，但在斜入射时可达0.2dB）。偏振态+PDL的随机组合，每次重新连接都可能让信号功率偏离上次测量的值0.1-0.3dB。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">实验重复性差的第一嫌疑：重新插拔光纤后，偏振态变了。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">自由空间耦合：微米级对准的艺术</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">自由空间光路耦合效率与光纤模场直径的对准精度关系极其敏感。SMF-28的模场直径~10.4μm，耦合效率对横向偏移的灵敏度约为0.5dB/μm。重新对准时，五维调整架的回程差（典型0.5-2μm）就能造成0.25-1dB的耦合效率变化（Marcuse, <em>Bell Syst. Tech. J.</em>, 1977）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">加上热漂移：铝合金镜架的线性膨胀系数~23μm/m·°C。镜架到光纤的距离约100mm，温度变化1°C→热膨胀2.3μm→耦合效率波动0.5-1dB。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">暗电流的温漂</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">InGaAs PIN光电探测器的暗电流与温度呈指数关系：温度每升高8-10°C，暗电流翻倍。如果第一天测量时实验室温度22°C，第二天25°C——暗电流增加~30%，噪声底对应的暗电流散粒噪声增加~14%，SNR下降约0.5dB（Forrest, <em>J. Lightwave Technol.</em>, 1988）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">结论</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你看到的3dB SNR波动，"暗藏"着至少6个独立浮动变量：连接器损耗（0.1-0.5dB）+ 光源功率漂移（0.2-0.5dB）+ 偏振态变化（0.1-0.3dB）+ 耦合对准偏差（0.25-1dB）+ 探测器暗电流温漂（0.3-0.5dB）+ 仪器不稳定（0.1-0.2dB）。每个单独来看都是"正常范围"，六个叠加就是2-3dB。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光学实验的"重复"，不是你设相同参数就能复现昨天的数据。光源、光纤、对准、偏振——六个变量每个都在悄悄偏离。重复性的第一课：别追求"完全一样"，而是控制住哪些变量可以浮动。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>诊断建议</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 每次实验记录环境温度、连接器插拔次数、光源预热时间</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• SNR测量前后各测一次光源功率和探测器暗电流，确认漂移范围</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 偏振敏感实验必须在保偏光纤环境下进行，或在PIN前加扰偏器</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 连续测量30分钟，用Allan方差判断数据何时稳定再取值</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 多组重复取中位数±标准差，单个数值不可信</p></div>

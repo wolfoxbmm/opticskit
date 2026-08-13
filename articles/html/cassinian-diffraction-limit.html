@@ -1,0 +1,93 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光学检测中的"卡什纳条件"（Cashner / null-test condition）给出了干涉检测可接受波前误差的理论界限——通常表述为参考波前与被测波前之差小于某个阈值。满足这个条件的系统，理论上应该能测量到衍射极限性能（Strehl比&gt;0.8，或波前RMS&lt;λ/14）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但实际测量中，波前RMS经常比理论预期大λ/20-λ/10，Strehl比不到0.6——就是不"干净"。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">卡什纳条件没错。是它只覆盖了干涉仪光路中的部分误差源——而你的光学检测系统中还藏着四组没有被条件涵盖的误差。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">卡什纳条件只保证什么</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">卡什纳条件在经典光学检测理论中的实质是：用于产生参考波前的补偿器/零位透镜本身的设计残余误差足够小，不会"污染"被测件的波前信息。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">具体而言，如果补偿器设计残差&lt;λ/20（RMS），那么被测系统的波前误差可以被可靠地提取出来——补偿器的误差不是测量瓶颈。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但这只保证了补偿器不引入额外像差。以下四类误差完全在卡什纳条件之外。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">第一类：对准残余误差</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">干涉仪与被测光学系统之间的六自由度对准（倾斜、偏心、离焦、俯仰、偏航）从来不会完美归零。即使对准到肉眼可见的条纹数最少状态，残余的倾斜和离焦也会以低阶像差的形式混入测量结果：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">残余对准偏差</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">引入的像差（典型值）</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">倾斜50μrad</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">彗差~λ/20 RMS</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">偏心20μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">像散~λ/15 RMS</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">离焦5μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">球差~λ/25 RMS</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这些残余像差在干涉仪软件中可以通过多项式拟合移除——但"能移除"≠"不存在"。多项式拟合的阶数选择、孔径掩膜、Zernike截断都会影响"残余"的计算值——干涉仪报告给你的是拟合后的残余，而系统的真实波前包含拟合前的全部成分。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这就是为什么：同一套光学系统，两个操作员对准后测出的波前RMS经常相差λ/30-λ/20。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">第二类：环境效应（真正的隐藏杀手）</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">干涉仪的光程差对温度、气流和振动极为敏感。一个典型的实验室内，以下环境因素每天都在发生：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 空调风口产生的气流温度波动：±0.1°C——在光程1m的干涉仪中，空气折射率变化dn/dT≈-1×10⁻⁶/K→光程变化±0.1μm≈λ/6@633nm</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 桌面的微小振动（即使有气浮隔振台）：残余振动幅度0.1-0.5μm→干涉条纹抖动→200帧取平均仍存在约λ/40-λ/20的残余噪声</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 人体热辐射：检测人员在干涉仪附近站30秒→局部空气加热→光程漂移可达λ/10</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">环境对干涉测量的影响不是加性高斯噪声——是时变系统误差。取平均能抑制一部分，但不能消除（因为扰动不是白噪声）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">第三类：参考面的"真误差"</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">干涉仪参考面（透射球/参考平面）的标称精度通常是λ/20（P-V），这意味着参考面上可能存在λ/20的形貌偏差。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但"λ/20 P-V"是出厂证书上的标称值。参考面在使用过程中要经历装夹变形（通常0.05-0.1λ）、表面污染（指纹/尘埃→局部相位偏移）、老化（镀膜应力释放→曲率半径漂移）——实际参考波前误差常年在λ/10-λ/15 P-V水平。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">而干涉仪软件默认"参考面是完美的"（除非你做了参考面标定并输入校准文件）。未被校准的参考面误差直接累加到被测波前中。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">第四类：探测器/成像链的MTF</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">被测系统的像被干涉仪的成像镜头+CCD捕获。干涉仪的成像镜头本身有MTF衰减和残余像差（尽管经过优化）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对于焦距较长（&gt;500mm）的被测系统，干涉仪成像镜头的有限NA导致系统出瞳成像存在渐晕和畸变→波前在探测器上的空间映射不是均匀的→边缘区域的波前采样点对应着不同的系统光瞳位置→边缘波前误差会被不均匀地加权。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">四类误差叠起来</span></h2>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">误差源</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型RMS贡献</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">理想条件（卡什纳条件满足）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">λ/50</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">对准残余</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">λ/25</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">环境（气流+振动）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">λ/30</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">参考面实际形貌</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">λ/25</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">成像链路</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">λ/40</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;"><strong>实测波前RMS（RSS合成）</strong></td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;"><strong>≈λ/14</strong></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">λ/14恰好是衍射极限（Maréchal criterion, Strehl ratio=0.8）的及格线。你的系统设计可能对应λ/30的水平——但测量系统本身的噪声基底已经接近λ/14了。测到不是衍射极限，不代表系统不是衍射极限——可能是测量系统已经"看"不到λ/30了。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">可操作建议</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">1. <strong>环境先排查</strong>：用干涉仪做时间序列采集（取100帧→不平均→直接写入），检查波前RMS的时间波动幅度。如果波动超过λ/30→环境是瓶颈，先解决气流/振动再谈系统性能</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">2. <strong>参考面必须定期标定</strong>：用绝对标定方法（三平板法/液面参考法）每年至少标定一次参考面，将标定数据载入干涉仪校准文件</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">3. <strong>对准采用多姿态平均</strong>：在5-10个稍有不同的对准状态下分别测量，做平均和标准偏差分析——标准偏差本身就是对准残余的定量估计</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">4. <strong>报告真实测量噪声基底</strong>：给出"系统波前RMS=X±Y"，其中Y是重复测量的标准差。只给一个X没有意义——因为没人知道X中混了多少测量系统自身的误差</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">卡什纳条件保证了补偿器不会成为测量瓶颈。在它之外，对准、环境、参考面和探测器这四个"非瓶颈"，联合起来可以吃掉你λ/20以上的精度裕量。</p></div>

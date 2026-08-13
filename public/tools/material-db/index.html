@@ -262,21 +262,30 @@ async function selectMaterial(mat) {
   catch(e) { if (e.name === 'AbortError') return; try { const resp = await fetch('data/org_' + dataFile, { signal }); mat._datasets = await resp.json(); } catch(e2) { if (e2.name === 'AbortError') return; mat._datasets = []; } }
   
   // Auto-select best dataset: prefer visible-range + formula1
+  // For semiconductors (Si, Ge, GaAs etc): prefer datasets covering telecom band (1.3-1.55 μm)
   if (mat._datasets && mat._datasets.length > 1) {
     let bestIdx = 0;
     let bestScore = -1;
+    const isSemiconductor = (mat.category === 'semiconductor' || mat.category === 'crystal');
     for (let i = 0; i < mat._datasets.length; i++) {
       const ds = mat._datasets[i];
       let score = 0;
       // Prefer data that covers visible (0.4-0.7 μm)
       if (ds.wl_min && ds.wl_min <= 0.5 && ds.wl_max && ds.wl_max >= 0.7) score += 10;
+      // For semiconductors: prefer datasets covering telecom band
+      if (isSemiconductor && ds.wl_min && ds.wl_max && ds.wl_min <= 1.3 && ds.wl_max >= 1.55) score += 8;
       // Prefer formula over tabulated (more compact)
       if (ds.type && ds.type.startsWith('formula')) score += 5;
-      // Prefer data with both n and k
+      // Prefer data with both n and k (full nk datasets)
       if (ds.type && ds.type.includes('nk')) score += 2;
+      // Slight preference for tabulated_k over none
+      if (ds.type === 'tabulated_nk') score += 1;
       // Penalize very narrow wavelength ranges
       if (ds.wl_min && ds.wl_max && (ds.wl_max - ds.wl_min) < 0.3) score -= 3;
-      if (score > bestScore) { bestScore = score; bestIdx = i; }
+      // Tiebreak: prefer wider wavelength range
+      if (score > bestScore || (score === bestScore && ds.wl_max - ds.wl_min > (mat._datasets[bestIdx].wl_max||0) - (mat._datasets[bestIdx].wl_min||0))) {
+        bestScore = score; bestIdx = i;
+      }
     }
     currentDatasetIdx = bestIdx;
   }

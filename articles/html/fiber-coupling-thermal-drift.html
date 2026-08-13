@@ -1,0 +1,34 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">透镜光纤耦合系统调了2小时，耦合效率做到85%——说明书上说这已经接近理论极限了。第二天早上开机，效率掉到55%。没碰任何调整架，只是实验室空调夜间切换到节能模式，温度从23°C降到了18°C。5°C的温差，耦合效率蒸发了30%。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">不是你调得不好，是热膨胀在悄悄拆你的台。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">5°C能让支撑结构移动多少？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">铝合金（6061-T6）的线性热膨胀系数（CTE）约23μm/m·°C。耦合系统里的几个膨胀路径：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 光纤夹具到透镜的距离≈100mm，5°C→热收缩11.5μm</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 透镜座到探测器距离≈80mm，5°C→热收缩9.2μm</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 透镜本身的曲率半径和厚度也随温度变化（BK7玻璃CTE约7.1μm/m·°C，但折射率温度系数dn/dT≈+1.5×10⁻⁶/°C对焦距的影响更大）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">合计来看，5°C温差导致有效焦平面偏移约15-25μm。光纤模场直径10.4μm（SMF-28，1550nm），偏移20μm对应的耦合效率损失约3.5dB（50%），与观察到30%下降的趋势吻合（Marcuse, <em>Bell Syst. Tech. J.</em>, 1977; 理论：η=exp(-Δx²/w₀²)）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">横向偏移最致命</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">单模光纤与自由空间光束的耦合效率对横向偏移的敏感度按高斯函数衰减：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">η = exp(-d²/w₀²)，d=偏移量，w₀=模场半径（~5.2μm）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">偏移5μm→效率降至exp(-1)≈37%。这就是为什么耦合对准是"微米级精度"的活——公差带也就±2μm。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">纵向偏移（离焦）的容忍度稍大，瑞利长度zR=πw₀²/λ≈55μm。偏离55μm→模场面积翻倍→效率降至50%。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">热膨胀同时产生横向和纵向偏移：铝件横向膨胀（100mm件×23μm/m·°C/°C×5°C=11.5μm）和纵向偏移（80mm×9.2μm=9.2μm）。横向11.5μm造成约损失85%的效率（exp(-11.5²/5.2²)≈exp(-4.9)≈0.007→但实际耦合前透镜会先聚焦，等效束腰已扩大，故实际影响没那么极端，但5-10μm量级仍造成显著损失）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">材料搭配是隐藏的杀手</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果支撑结构用了两种不同材料——比如铝镜架+钢底板——那么它们的CTE差会导致热变形（双金属效应）：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 铝CTE: 23μm/m·°C</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 304不锈钢CTE: 17μm/m·°C</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 差值: 6μm/m·°C</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">100mm长度的铝/钢异材组合，5°C温差→差动膨胀6×0.1×5=3μm。这个数值本身不大，但差动膨胀会叠加到平移台的机械间隙和回程差上，角度偏移比线性偏移更难补偿。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">不是温度梯度，是绝对温度</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">很多工程师认为"恒温"就够了——环境温度设定值稳定就行。但耦合效率漂移的根本原因不是温度梯度（dT/dt），而是绝对温度偏离初始调谐温度（ΔT）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你调耦合时在23°C，所有机械结构处于"23°C平衡状态"。温度降到18°C后，每个零件都按自己的CTE收缩，光路每一个光学间距都变了。即使温度重新回到23°C，滞后效应（应力释放不完全、螺纹间隙）导致不可能100%恢复到原位置。热滞后的典型残余偏移1-3μm（Rao &amp; Dutta, <em>J. Lightwave Technol.</em>, 1992）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">结论</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光纤耦合效率对微米级的位移极其敏感。常见铝合金支撑结构每°C膨胀~2.3μm/100mm，5°C的空调波动就能让耦合点移动10μm以上——远超过单模光纤的±2μm公差带。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你调好的85%耦合效率是"23°C版本"的最优解。温度变5°C，光路就变成另一个光路了。不是热膨胀存不存在的问题，是你的公差设计能不能吞下这个膨胀量。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>诊断建议</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 在透镜座和光纤夹具之间加装温度传感器，记录每次测量的环境温度</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 用Invar（CTE~1.3μm/m·°C，仅铝的1/18）替代关键支撑件</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 设计对称热路径：热源→两个光路分支的材料/长度对称→膨胀量互相抵消</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 被动补偿：铝件膨胀时，用不同CTE材料做反方向补偿</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 加装主动温控：TEC控温±0.1°C级别的光纤夹具底座</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 用自由空间耦合→光纤尾纤一体封装（尾纤式准直器），出厂后不存在重调问题</p></div>

@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import ChromaticityCanvas, { type PointInfo } from "./chromaticity-canvas";
+import ChromaticityCanvas, { type PointInfo, type BatchPoint } from "./chromaticity-canvas";
+import BatchPanel from "./batch-panel";
 import { trackPageView, trackExport, trackInteract } from "@/lib/analytics";
 import { spectrumToXYZ, xyzToChromaticity, deltaE76 } from "@/lib/colorimetry";
 
@@ -29,6 +30,8 @@ function ChromaticityContent() {
   const [pt1, setPt1] = useState<PointInfo | null>(null);
   const [pt2, setPt2] = useState<PointInfo | null>(null);
   const [deltaE, setDeltaE] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<"single" | "batch">("single");
+  const [batchPoints, setBatchPoints] = useState<BatchPoint[]>([]);
 
   useEffect(() => { trackPageView("chromaticity"); }, []);
 
@@ -50,7 +53,9 @@ function ChromaticityContent() {
 
   const handleLocate = useCallback((x: number, y: number, info: PointInfo | null) => {
     setShowHint(false);
-    setLocateX(x); setLocateY(y); setPointInfo(info);
+    setLocateX(x); setLocateY(y);
+    // 点击图外(info=null)时不更新/清空已有信息，避免“点了没反应”
+    if (info) setPointInfo(info);
     if (info) {
       setInputX(info.x.toFixed(4)); setInputY(info.y.toFixed(4));
       trackInteract("chromaticity", "canvas-click");
@@ -114,6 +119,7 @@ function ChromaticityContent() {
         onLocate={handleLocate}
         point1={pt1}
         point2={pt2}
+        batchPoints={batchPoints}
       />
       {showHint && (
         <div onClick={() => setShowHint(false)} style={{ position: "absolute", top: 80, left: "calc(50% - 200px)", width: 360, background: "rgba(0,191,255,0.12)", border: "1px solid rgba(0,191,255,0.3)", borderRadius: 10, padding: "10px 16px", fontSize: 13, color: "#00bfff", textAlign: "center", cursor: "pointer", zIndex: 20, backdropFilter: "blur(8px)" }}>
@@ -127,6 +133,16 @@ function ChromaticityContent() {
           <p style={{ fontSize: 11, color: "#666", margin: "2px 0 0 0" }}>CIE 1931 / 1976 uv - colour-science (BSD-3)</p>
         </div>
 
+        {/* Tab 切换 */}
+        <div style={{ display: "flex", gap: 3, background: "#0d0d0d", border: "1px solid #1f1f1f", borderRadius: 8, padding: 3 }}>
+          <button onClick={() => setActiveTab("single")} style={{ flex: 1, padding: "7px 0", fontSize: 13, border: "none", borderRadius: 6, cursor: "pointer", fontFamily: "inherit", background: activeTab === "single" ? "#00bfff" : "transparent", color: activeTab === "single" ? "#000" : "#999", fontWeight: activeTab === "single" ? 600 : 400 }}>单点分析</button>
+          <button onClick={() => setActiveTab("batch")} style={{ flex: 1, padding: "7px 0", fontSize: 13, border: "none", borderRadius: 6, cursor: "pointer", fontFamily: "inherit", background: activeTab === "batch" ? "#00bfff" : "transparent", color: activeTab === "batch" ? "#000" : "#999", fontWeight: activeTab === "batch" ? 600 : 400 }}>批量分析</button>
+        </div>
+
+        {activeTab === "batch" ? (
+          <BatchPanel batchPoints={batchPoints} setBatchPoints={setBatchPoints} />
+        ) : (
+        <>
         <div style={sectionCard}>
           <div style={sectionTitle}>色度图切换</div>
           <div style={{ display: "flex", gap: 3 }}>
@@ -174,6 +190,9 @@ function ChromaticityContent() {
         {pointInfo && (
           <div style={sectionCard}>
             <div style={sectionTitle}>选中点信息</div>
+            {pointInfo.outsideLocus && (
+              <div style={{ fontSize: 11, color: "#ffb020", background: "rgba(255,176,32,0.1)", border: "1px solid rgba(255,176,32,0.3)", borderRadius: 6, padding: "6px 10px", marginBottom: 8 }}>⚠ 该点在 CIE 色度图可见光谱轨迹之外（非真实可见光颜色）</div>
+            )}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px 16px", fontSize: 13 }}>
               <span style={{ color: "#888" }}>x, y</span><span style={valStyle}>{pointInfo.x.toFixed(4)}, {pointInfo.y.toFixed(4)}</span>
               <span style={{ color: "#888" }}>u', v'</span><span style={valStyle}>{pointInfo.up.toFixed(4)}, {pointInfo.vp.toFixed(4)}</span>
@@ -217,6 +236,8 @@ function ChromaticityContent() {
           <button onClick={handleExportPNG} style={{ width: "100%", padding: 9, background: "#1a3a2a", border: "1px solid #2a5a3a", color: "#00e676", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>导出 PNG</button>
         </div>
         <p style={{ fontSize: 10, color: "#555", textAlign: "center" }}>OpticsKit - colour-science (BSD-3) - CIE 15:2018</p>
+        </>
+        )}
       </div>
     </div>
   );

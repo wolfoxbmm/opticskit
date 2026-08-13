@@ -1,0 +1,516 @@
+'use client';
+
+import { useState, useEffect, useCallback, useRef } from 'react';
+
+type Tab = 'publish' | 'dashboard' | 'community';
+
+const TAG_LABELS: Record<string, string> = {
+  suggestion: '💡 功能建议',
+  bug: '🐛 Bug 报告',
+  discussion: '💬 技术讨论',
+};
+
+// ==================== 登录页 ====================
+function LoginPage({ onLogin }: { onLogin: (pwd: string) => void }) {
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const handleSubmit = async () => {
+    if (!password) return;
+    setLoading(true); setError('');
+    const res = await fetch('/api/community/admin', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+    if (res.ok) onLogin(password); else setError('密码错误');
+    setLoading(false);
+  };
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 w-96 max-w-full mx-4">
+        <div className="text-center mb-6"><span className="text-4xl">🔐</span><h2 className="text-xl font-bold text-gray-900 mt-3">OpticsKit 管理后台</h2><p className="text-sm text-gray-500 mt-1">请输入管理密码</p></div>
+        <input type="password" autoFocus value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSubmit()} placeholder="管理密码" className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all" />
+        {error && <p className="text-red-500 text-xs mt-2">{error}</p>}
+        <button onClick={handleSubmit} disabled={loading || !password} className="w-full mt-4 py-3 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 transition-all">{loading ? '验证中...' : '登录'}</button>
+      </div>
+    </div>
+  );
+}
+
+// ==================== Tab 导航 ====================
+const TABS: { key: Tab; label: string; icon: string }[] = [
+  { key: 'dashboard', label: '数据看板', icon: '📊' },
+  { key: 'publish', label: '文章发布', icon: '📝' },
+  { key: 'community', label: '留言管理', icon: '💬' },
+];
+
+function TabNav({ active, onChange }: { active: Tab; onChange: (t: Tab) => void }) {
+  return (
+    <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+      {TABS.map(t => (
+        <button key={t.key} onClick={() => onChange(t.key)} className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${active === t.key ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+          <span>{t.icon}</span><span className="hidden sm:inline">{t.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ==================== 趋势图（双指标：PV 柱状 + UV 折线叠加） ====================
+function TrendChart({ data, height = 180 }: { data: { date: string; pv: number; uv: number }[]; height?: number }) {
+  if (!data.length) return <div className="text-center text-gray-400 text-xs py-8">暂无数据</div>;
+  const maxPV = Math.max(...data.map(d => d.pv), 1);
+  const maxUV = Math.max(...data.map(d => d.uv), 1);
+  const chartH = height - 24;
+  const barW = 20;
+  const totalW = 660;
+  const gap = Math.max(4, Math.floor((totalW - barW * data.length) / (data.length + 1)));
+  const yTicks = [0, maxPV];
+
+  // Build UV polyline points with a separate Y scale
+  const uvPoints = data.map((d, i) => {
+    const x = gap + i * (barW + gap) + barW / 2;
+    const y = chartH - (d.uv / maxUV) * chartH;
+    return `${x},${y}`;
+  }).join(' ');
+
+  return (
+    <div className="flex" style={{ height }}>
+      <div className="flex flex-col justify-between pr-2 w-10 shrink-0" style={{ height: chartH, paddingBottom: 0 }}>
+        {yTicks.reverse().map(v => (
+          <span key={v} className="text-[9px] text-gray-400 text-right leading-none">{v}</span>
+        ))}
+      </div>
+      <div className="flex-1 relative" style={{ height: chartH }}>
+        {[0.25, 0.5, 0.75, 1].map(ratio => (
+          <div key={ratio} className="absolute left-0 right-0 border-t border-gray-100" style={{ bottom: `${ratio * chartH}px` }} />
+        ))}
+        {/* UV line overlay */}
+        <svg className="absolute inset-0 overflow-visible pointer-events-none" width="100%" height={chartH}>
+          <polyline points={uvPoints} fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          {data.map((d, i) => {
+            const cx = gap + i * (barW + gap) + barW / 2;
+            const cy = chartH - (d.uv / maxUV) * chartH;
+            return <circle key={i} cx={cx} cy={cy} r="3" fill="#10b981" stroke="white" strokeWidth="1" />;
+          })}
+        </svg>
+        {/* PV bars */}
+        <div className="flex items-end absolute inset-0" style={{ paddingLeft: gap, paddingRight: gap, gap }}>
+          {data.map((d, i) => {
+            const barH = Math.max(3, (d.pv / maxPV) * chartH);
+            return (
+              <div key={i} className="flex flex-col items-center group relative" style={{ width: barW, flexShrink: 0 }}>
+                <div className="w-full bg-blue-500 rounded-t hover:bg-blue-600 transition-colors cursor-pointer" style={{ height: barH }} />
+                <div className="absolute bottom-full mb-1 px-2 py-1 bg-gray-800 text-white text-[10px] rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+                  {d.date.slice(5)} · PV {d.pv} · UV {d.uv}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ==================== 变化率标签 ====================
+function ChangeBadge({ current, previous, label }: { current: number; previous: number; label: string }) {
+  if (!previous) return null;
+  const diff = current - previous;
+  const pct = previous > 0 ? Math.round((diff / previous) * 100) : 0;
+  const isUp = diff >= 0;
+  if (diff === 0) return <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-gray-50 text-gray-400">→ 持平</span>;
+  return (
+    <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${isUp ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+      {isUp ? '↑' : '↓'} {Math.abs(pct)}%
+    </span>
+  );
+}
+
+// ==================== 数据看板 ====================
+function DashboardTab() {
+  const [stats, setStats] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [range, setRange] = useState('7');
+  const fetchStats = useCallback(async () => {
+    setLoading(true);
+    try { const r = await fetch('/api/admin/stats?range=' + range); setStats(await r.json()); } catch {}
+    setLoading(false);
+  }, [range]);
+  useEffect(() => { fetchStats(); }, [fetchStats]);
+  useEffect(() => { const t = setInterval(fetchStats, 60000); return () => clearInterval(t); }, [fetchStats]);
+
+  if (!stats) return <div className="text-center py-12 text-gray-400">加载中...</div>;
+
+  const deviceTotal = (stats.devices?.mobile || 0) + (stats.devices?.desktop || 0);
+
+  return (
+    <div className="space-y-5">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-bold text-gray-900">📊 数据看板</h3>
+          <p className="text-xs text-gray-400 mt-0.5">
+            每 60 秒自动刷新 · {stats.articlesCount} 篇文章 · {stats.toolsCount} 个工具 · {stats.communityPosts} 条留言 · 🚀 {stats.lastDeploy}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <select value={range} onChange={e => setRange(e.target.value)} className="px-2 py-1.5 rounded-lg border border-gray-200 text-xs outline-none bg-white">
+            <option value="1">今天</option><option value="7">7天</option><option value="30">30天</option><option value="9999">全部</option>
+          </select>
+          <button onClick={fetchStats} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs hover:bg-gray-50">{loading ? '⏳' : '🔄 刷新'}</button>
+        </div>
+      </div>
+
+      {/* Key metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard
+          label="今日 PV" value={stats?.today?.pv?.toLocaleString?.() || '0'} sub="今日" icon="📈" color="blue"
+          badge={<ChangeBadge current={stats?.today?.pv || 0} previous={stats?.yesterday?.pv || 0} label="PV" />}
+        />
+        <StatCard
+          label="今日 UV" value={stats?.today?.uv?.toLocaleString?.() || '0'} sub="今日" icon="👥" color="green"
+          badge={<ChangeBadge current={stats?.today?.uv || 0} previous={stats?.yesterday?.uv || 0} label="UV" />}
+        />
+        <StatCard
+          label="累计 PV" value={stats?.pv?.pv?.toLocaleString?.() || '0'} sub="全部" icon="👁️" color="indigo"
+          badge={stats?.bounceRate !== undefined ? <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-orange-50 text-orange-600">跳出 {stats.bounceRate}%</span> : null}
+        />
+        <StatCard
+          label="累计 UV" value={stats?.pv?.uv?.toLocaleString?.() || '0'} sub="全部" icon="👤" color="teal"
+          badge={deviceTotal > 0 ? <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-purple-50 text-purple-600">🖥️ {((stats.devices?.desktop || 0) / deviceTotal * 100).toFixed(0)}% 桌面</span> : null}
+        />
+      </div>
+
+      {/* Trend chart */}
+      {stats?.dailyTrend?.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-100 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="font-semibold text-sm text-gray-800">📅 PV / UV 趋势</h4>
+            <div className="flex items-center gap-4 text-[10px]">
+              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-blue-500 inline-block" /> PV</span>
+              <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-sm bg-emerald-500 inline-block" /> UV</span>
+              <span className="text-gray-400">峰值 {Math.max(...stats.dailyTrend.map((d: any) => d.pv))} PV / {Math.max(...stats.dailyTrend.map((d: any) => d.uv))} UV</span>
+            </div>
+          </div>
+          <TrendChart data={stats.dailyTrend} height={180} />
+          <div className="flex justify-between mt-2 text-[10px] text-gray-400">
+            <span>{stats.dailyTrend[0]?.date?.slice(5)}</span>
+            <span>{stats.dailyTrend[stats.dailyTrend.length - 1]?.date?.slice(5)}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Sources + Devices */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="bg-white rounded-xl border border-gray-100 p-5">
+          <h4 className="font-semibold text-sm text-gray-800 mb-3">📡 流量来源（{range === '9999' ? '全部' : range + '天'}）</h4>
+          {stats?.sources?.length > 0 ? (
+            <div className="space-y-3">
+              {stats.sources.map((s: any) => {
+                const maxPV = stats.sources[0]?.pv || 1;
+                return (
+                  <div key={s.source} className="flex items-center gap-2">
+                    <span className="w-24 text-xs text-gray-500 shrink-0 truncate">{s.label}</span>
+                    <div className="flex-1 h-2.5 rounded-full bg-gray-100 relative overflow-hidden">
+                      <div className="h-2.5 rounded-full bg-gradient-to-r from-blue-400 to-blue-600" style={{ width: Math.round((s.pv / maxPV) * 100) + '%' }} />
+                    </div>
+                    <span className="text-[10px] text-gray-400 w-28 text-right shrink-0">PV {s.pv} · UV {s.uv}</span>
+                  </div>
+                );
+              })}
+            </div>
+          ) : <p className="text-gray-400 text-xs">暂无来源数据</p>}
+        </div>
+
+        <div className="bg-white rounded-xl border border-gray-100 p-5">
+          <h4 className="font-semibold text-sm text-gray-800 mb-3">📱 设备占比（{range === '9999' ? '全部' : range + '天'}）</h4>
+          {deviceTotal > 0 ? (
+            <div className="space-y-5">
+              <div>
+                <div className="flex justify-between text-xs mb-2"><span>🖥️ 桌面端</span><span className="text-gray-500 font-medium">{stats.devices?.desktop || 0} ({(stats.devices?.desktop / deviceTotal * 100).toFixed(0)}%)</span></div>
+                <div className="h-3 rounded-full bg-gray-100"><div className="h-3 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-600 transition-all" style={{ width: (stats.devices?.desktop / deviceTotal * 100) + '%' }} /></div>
+              </div>
+              <div>
+                <div className="flex justify-between text-xs mb-2"><span>📱 移动端</span><span className="text-gray-500 font-medium">{stats.devices?.mobile || 0} ({(stats.devices?.mobile / deviceTotal * 100).toFixed(0)}%)</span></div>
+                <div className="h-3 rounded-full bg-gray-100"><div className="h-3 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 transition-all" style={{ width: (stats.devices?.mobile / deviceTotal * 100) + '%' }} /></div>
+              </div>
+            </div>
+          ) : <p className="text-gray-400 text-xs">暂无设备数据</p>}
+        </div>
+      </div>
+
+      {/* Tool ranking */}
+      {stats?.toolRanking?.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100"><h4 className="font-semibold text-sm text-gray-800">🔧 工具使用排行</h4></div>
+          <div className="overflow-x-auto"><table className="w-full text-sm">
+            <thead><tr className="border-b border-gray-50"><th className="text-left px-5 py-2.5 text-[11px] font-medium text-gray-400 uppercase">#</th><th className="text-left px-5 py-2.5 text-[11px] font-medium text-gray-400 uppercase">工具</th><th className="text-right px-5 py-2.5 text-[11px] font-medium text-gray-400 uppercase">PV</th><th className="text-right px-5 py-2.5 text-[11px] font-medium text-gray-400 uppercase">UV</th><th className="text-left px-5 py-2.5 text-[11px] font-medium text-gray-400 uppercase">热度</th></tr></thead>
+            <tbody>{stats.toolRanking.map((t: any, i: number) => {
+              const maxPV = stats.toolRanking[0]?.pv || 1;
+              return (<tr key={t.tool} className="border-b border-gray-50 hover:bg-gray-50/50"><td className="px-5 py-3 text-gray-400 text-xs">{i + 1}</td><td className="px-5 py-3"><a href={t.url} target="_blank" className="text-xs font-medium text-blue-600 hover:text-blue-800 no-underline">{t.tool}</a></td><td className="px-5 py-3 text-right font-semibold text-gray-700">{t.pv.toLocaleString?.()}</td><td className="px-5 py-3 text-right text-gray-400">{t.uv.toLocaleString?.()}</td><td className="px-5 py-3 w-36"><div className="h-2 rounded-full bg-gray-100"><div className="h-2 rounded-full bg-gradient-to-r from-orange-400 to-orange-500" style={{ width: Math.round((t.pv / maxPV) * 100) + '%' }} /></div></td></tr>);
+            })}</tbody>
+          </table></div>
+        </div>
+      )}
+
+      {/* Page ranking */}
+      {stats?.pvPages?.length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100"><h4 className="font-semibold text-sm text-gray-800">📈 全部页面排行</h4></div>
+          <div className="overflow-x-auto"><table className="w-full text-sm">
+            <thead><tr className="border-b border-gray-50"><th className="text-left px-5 py-2.5 text-[11px] font-medium text-gray-400 uppercase">#</th><th className="text-left px-5 py-2.5 text-[11px] font-medium text-gray-400 uppercase">页面</th><th className="text-right px-5 py-2.5 text-[11px] font-medium text-gray-400 uppercase">PV</th><th className="text-right px-5 py-2.5 text-[11px] font-medium text-gray-400 uppercase">UV</th><th className="text-left px-5 py-2.5 text-[11px] font-medium text-gray-400 uppercase">占比</th></tr></thead>
+            <tbody>{stats.pvPages.slice(0, 20).map((p: any, i: number) => {
+              const totalPV = stats.pvPages.reduce((s: number, x: any) => s + x.pv, 0);
+              const pct = totalPV > 0 ? ((p.pv / totalPV) * 100).toFixed(1) : '0';
+              const maxPV = stats.pvPages[0]?.pv || 1;
+              return (<tr key={p.path} className="border-b border-gray-50 hover:bg-gray-50/50"><td className="px-5 py-3 text-gray-400 text-xs">{i + 1}</td><td className="px-5 py-3">
+                <a href={p.path} target="_blank" className="text-xs font-medium text-gray-600 hover:text-blue-600 no-underline">{p.path === '/' ? '🏠 首页' : p.path}</a>
+              </td><td className="px-5 py-3 text-right font-semibold text-gray-700">{p.pv.toLocaleString?.()}</td><td className="px-5 py-3 text-right text-gray-400">{p.uv.toLocaleString?.()}</td><td className="px-5 py-3 w-36"><div className="flex items-center gap-2"><div className="h-2 rounded-full bg-gray-100 flex-1"><div className="h-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-600" style={{ width: Math.round((p.pv / maxPV) * 100) + '%' }} /></div><span className="text-[10px] text-gray-400 w-10 text-right">{pct}%</span></div></td></tr>);
+            })}</tbody>
+          </table></div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatCard({ label, value, sub, icon, color, badge }: { label: string; value: string | number; sub: string; icon: string; color: string; badge?: React.ReactNode }) {
+  const cm: Record<string, string> = { blue: 'bg-blue-50 text-blue-600', green: 'bg-green-50 text-green-600', purple: 'bg-purple-50 text-purple-600', orange: 'bg-orange-50 text-orange-600', indigo: 'bg-indigo-50 text-indigo-600', teal: 'bg-teal-50 text-teal-600' };
+  return (
+    <div className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-sm transition-shadow">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-sm ${cm[color] || 'bg-gray-50'}`}>{icon}</div>
+          <span className="text-[10px] text-gray-400">{sub}</span>
+        </div>
+        {badge}
+      </div>
+      <p className="text-2xl font-bold text-gray-900">{value}</p>
+      <p className="text-[11px] text-gray-500 mt-0.5">{label}</p>
+    </div>
+  );
+}
+
+// ==================== 文章发布 ====================
+function PublishTab() {
+  const [articles, setArticles] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState('');
+  const [form, setForm] = useState({ slug: '', title: '', summary: '', date: '', htmlFile: '' });
+  const [dragOver, setDragOver] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fetchArticles = useCallback(async () => { const r = await fetch('/api/admin/articles'); setArticles((await r.json()).articles || []); }, []);
+  useEffect(() => { fetchArticles(); }, [fetchArticles]);
+  const onDrag = (e: React.DragEvent) => { e.preventDefault(); setDragOver(e.type === 'dragover'); };
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault(); setDragOver(false);
+    const f = e.dataTransfer.files[0];
+    if (f?.name.endsWith('.html')) { setUploadedFile(f); setStatus(''); setForm(p => ({ ...p, slug: p.slug || f.name.replace(/\.html?$/i,'').toLowerCase().replace(/[^a-z0-9-]/g,'-'), htmlFile: f.name })); }
+    else setStatus('❌ 请拖入 .html 文件');
+  };
+  const doPublish = async () => {
+    if (!uploadedFile && !form.htmlFile) { setStatus('❌ 请拖入 HTML 文件'); return; }
+    if (!form.slug || !form.title) { setStatus('❌ slug/标题 必填'); return; }
+    if (!/^[a-z0-9-]+$/.test(form.slug)) { setStatus('❌ slug 只能小写字母数字连字符'); return; }
+    setLoading(true); setStatus('⏳ 发布中...');
+    try {
+      let res; let data;
+      if (uploadedFile) {
+        const fd = new FormData(); fd.append('file', uploadedFile); fd.append('slug', form.slug); fd.append('title', form.title); fd.append('summary', form.summary); fd.append('date', form.date || new Date().toISOString().slice(0, 10));
+        res = await fetch('/api/admin/publish', { method: 'POST', body: fd }); data = await res.json();
+      } else {
+        res = await fetch('/api/admin/publish', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) }); data = await res.json();
+      }
+      if (data.success) { setStatus('✅ 发布成功！\n' + (data.steps || []).join('\n')); setForm({ slug:'', title:'', summary:'', date:'', htmlFile:'' }); setUploadedFile(null); fetchArticles(); }
+      else setStatus('❌ ' + data.error + (data.hint ? '\n' + data.hint : ''));
+    } catch (e: any) { setStatus('❌ ' + e.message); }
+    setLoading(false);
+  };
+  return (
+    <div>
+      <h3 className="text-lg font-bold text-gray-900 mb-4">📝 文章发布</h3>
+      <div className="bg-white rounded-xl border border-gray-100 p-6 mb-6">
+        <h4 className="font-semibold text-sm text-gray-700 mb-4">发布新文章</h4>
+        <div onDragOver={onDrag} onDragLeave={onDrag} onDrop={onDrop} onClick={() => fileInputRef.current?.click()} className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all ${dragOver ? 'border-blue-400 bg-blue-50' : uploadedFile ? 'border-green-300 bg-green-50' : 'border-gray-200 hover:border-gray-300 bg-gray-50/50'}`}>
+          {uploadedFile ? (
+            <div className="flex flex-col items-center gap-2"><span className="text-3xl">📄</span><p className="text-sm font-medium text-gray-700">{uploadedFile.name}</p><p className="text-xs text-gray-400">{(uploadedFile.size / 1024).toFixed(1)} KB</p><button onClick={e => { e.stopPropagation(); setUploadedFile(null); }} className="text-xs text-red-400 hover:text-red-600">移除</button></div>
+          ) : (<div className="flex flex-col items-center gap-2"><span className="text-3xl">📤</span><p className="text-sm text-gray-500">拖拽 HTML 文件到此处</p><p className="text-xs text-gray-400">或点击选择文件</p></div>)}
+          <input ref={fileInputRef} type="file" accept=".html,.htm" onChange={e => { const f = e.target.files?.[0]; if (f) { setUploadedFile(f); setForm(p => ({ ...p, slug: p.slug || f.name.replace(/\.html?$/i,'').toLowerCase().replace(/[^a-z0-9-]/g,'-'), htmlFile: f.name })); }}} className="hidden" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <div><label className="block text-xs font-medium text-gray-500 mb-1">Slug *</label><input value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g,'') })} placeholder="spectrum-resolution" className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm font-mono outline-none focus:border-blue-400" /></div>
+          <div><label className="block text-xs font-medium text-gray-500 mb-1">中文标题 *</label><input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} placeholder="文章标题" className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm outline-none focus:border-blue-400" /></div>
+          <div><label className="block text-xs font-medium text-gray-500 mb-1">日期</label><input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm outline-none focus:border-blue-400" /></div>
+        </div>
+        <div className="mt-4"><label className="block text-xs font-medium text-gray-500 mb-1">摘要</label><textarea value={form.summary} onChange={e => setForm({ ...form, summary: e.target.value })} rows={2} className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm outline-none focus:border-blue-400 resize-none" /></div>
+        {status && <div className={`mt-4 text-sm p-3 rounded-lg whitespace-pre-wrap ${status.startsWith('✅') ? 'bg-green-50 text-green-700' : status.startsWith('❌') ? 'bg-red-50 text-red-700' : status.startsWith('⏳') ? 'bg-blue-50 text-blue-700' : 'bg-gray-50 text-gray-600'}`}>{status}</div>}
+        <button onClick={doPublish} disabled={loading} className="mt-4 px-6 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 disabled:opacity-50">{loading ? '发布中...' : '🚀 一键发布'}</button>
+        <p className="text-xs text-gray-400 mt-3">拖入 HTML → 填表单 → 点发布。自动去 footer → 更新索引 → 重建 → 重启</p>
+      </div>
+      <div className="bg-white rounded-xl border border-gray-100 p-6">
+        <h4 className="font-semibold text-sm text-gray-700 mb-4">已发布文章 ({articles.length})</h4>
+        <div className="space-y-2 max-h-80 overflow-y-auto">
+          {articles.map((a: any, i: number) => (<div key={i} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 text-sm"><a href={`/articles/${a.slug}`} target="_blank" className="text-gray-700 hover:text-blue-600 truncate flex-1 no-underline">{a.title}</a><span className="text-gray-400 text-xs ml-2">{a.date}</span></div>))}
+          {articles.length === 0 && <p className="text-gray-400 text-sm">暂无文章</p>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ==================== 留言管理 ====================
+function CommunityTab() {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [repliesMap, setRepliesMap] = useState<Record<string, any[]>>({});
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  const fetchPosts = useCallback(async () => {
+    const r = await fetch('/api/community?sort=new&limit=100');
+    const d = await r.json();
+    const list = d.posts || [];
+    setPosts(list);
+    setExpanded(new Set(list.filter((p: any) => p.replies_count > 0).map((p: any) => p.id)));
+    const map: Record<string, any[]> = {};
+    await Promise.all(list.filter((p: any) => p.replies_count > 0).map(async (p: any) => {
+      const rr = await fetch('/api/community/replies?post_id=' + p.id);
+      const rd = await rr.json();
+      map[p.id] = rd.replies || [];
+    }));
+    setRepliesMap(map);
+  }, []);
+
+  useEffect(() => { fetchPosts(); }, [fetchPosts]);
+
+  const toggleExpand = async (id: string) => {
+    const next = new Set(expanded);
+    if (next.has(id)) { next.delete(id); } else {
+      next.add(id);
+      if (!repliesMap[id]) {
+        const r = await fetch('/api/community/replies?post_id=' + id);
+        const d = await r.json();
+        setRepliesMap(prev => ({ ...prev, [id]: d.replies || [] }));
+      }
+    }
+    setExpanded(next);
+  };
+
+  const handlePin = async (id: string) => { await fetch('/api/community?id=' + id, { method: 'PATCH' }); fetchPosts(); };
+  const handleDelete = async (id: string) => { if (!confirm('确定删除？')) return; await fetch('/api/community?id=' + id, { method: 'DELETE' }); fetchPosts(); };
+  const handleReply = async (postId: string, content: string) => {
+    if (!content.trim()) return;
+    await fetch('/api/community/replies', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ post_id: postId, content, is_official: true }) });
+    const r = await fetch('/api/community/replies?post_id=' + postId);
+    const d = await r.json();
+    setRepliesMap(prev => ({ ...prev, [postId]: d.replies || [] }));
+    setExpanded(prev => new Set(prev).add(postId));
+    fetchPosts();
+  };
+  const handleDeleteReply = async (postId: string, replyId: string) => {
+    if (!confirm('确定删除这条回复？')) return;
+    await fetch('/api/community/replies?id=' + replyId, { method: 'DELETE' });
+    setRepliesMap(prev => ({ ...prev, [postId]: (prev[postId] || []).filter(r => r.id !== replyId) }));
+    fetchPosts();
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-bold text-gray-900">💬 留言管理</h3>
+        <div className="flex items-center gap-3"><span className="text-xs text-gray-400">共 {posts.length} 条</span><button onClick={fetchPosts} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs hover:bg-gray-50">🔄 刷新</button></div>
+      </div>
+      <div className="space-y-3">
+        {posts.map(post => {
+          const postReplies = repliesMap[post.id] || [];
+          const isExpanded = expanded.has(post.id);
+          return (
+            <div key={post.id} className={`bg-white rounded-xl border ${post.is_pinned ? 'border-blue-300 ring-1 ring-blue-100' : 'border-gray-100'}`}>
+              <div className="p-4">
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <span className="text-sm">{post.avatar}</span><strong className="text-xs text-gray-600">{post.author_name}</strong>
+                  {post.is_official && <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-600 text-white">官方</span>}
+                  {post.is_pinned && <span className="text-[10px] text-blue-600">📌 置顶</span>}
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500">{TAG_LABELS[post.tag] || post.tag}</span>
+                  <span className="text-[10px] text-gray-400 ml-auto">{post.created_at?.slice(0, 16).replace('T', ' ')}</span>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed mb-3">{post.content}</p>
+                <div className="flex items-center gap-3 mb-2 text-[11px] text-gray-400">
+                  <span>👍 {post.votes_count}</span>
+                  <button onClick={() => toggleExpand(post.id)} className="flex items-center gap-1 hover:text-blue-500 transition-colors">
+                    <span>💬 {post.replies_count} 回复</span>
+                    <span className="text-[10px]">{isExpanded ? '▾' : '▸'}</span>
+                  </button>
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button onClick={() => handlePin(post.id)} className={`px-3 py-1.5 rounded-lg border text-[11px] ${post.is_pinned ? 'border-blue-200 bg-blue-50 text-blue-600' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}`}>{post.is_pinned ? '取消置顶' : '📌 置顶'}</button>
+                  <button onClick={() => handleDelete(post.id)} className="px-3 py-1.5 rounded-lg border border-gray-200 text-[11px] text-red-500 hover:bg-red-50">🗑 删除</button>
+                  <ReplyInput onSubmit={(content: string) => handleReply(post.id, content)} />
+                </div>
+              </div>
+
+              {isExpanded && postReplies.length > 0 && (
+                <div className="border-t border-gray-100 bg-gray-50/50 rounded-b-xl">
+                  {postReplies.map((reply: any) => (
+                    <div key={reply.id} className="px-4 py-3 border-b border-gray-100 last:border-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs">{reply.avatar}</span>
+                        <strong className="text-[11px] text-gray-500">{reply.author_name}</strong>
+                        {reply.is_official && <span className="text-[9px] px-1 py-0.5 rounded bg-blue-600 text-white">官方</span>}
+                        <span className="text-[10px] text-gray-400 ml-auto">{reply.created_at?.slice(0, 16).replace('T', ' ')}</span>
+                        <button onClick={() => handleDeleteReply(post.id, reply.id)} className="text-[9px] text-red-400 hover:text-red-600 ml-1">删除</button>
+                      </div>
+                      <p className="text-xs text-gray-600 leading-relaxed pl-1">{reply.content}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {isExpanded && postReplies.length === 0 && (
+                <div className="border-t border-gray-100 bg-gray-50/50 rounded-b-xl px-4 py-3 text-xs text-gray-400">暂无回复</div>
+              )}
+            </div>
+          );
+        })}
+        {posts.length === 0 && <p className="text-center text-gray-400 py-12">暂无留言</p>}
+      </div>
+    </div>
+  );
+}
+
+function ReplyInput({ onSubmit }: { onSubmit: (content: string) => void }) {
+  const [text, setText] = useState('');
+  const handle = () => { onSubmit(text); setText(''); };
+  return (
+    <div className="flex gap-2 flex-1 min-w-0">
+      <input value={text} onChange={e => setText(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') handle(); }} placeholder="官方回复..." className="flex-1 min-w-0 px-3 py-1.5 rounded-lg border border-gray-200 text-xs outline-none focus:border-blue-400" />
+      <button onClick={handle} className="px-4 py-1.5 rounded-lg bg-blue-600 text-white text-[11px] font-semibold hover:bg-blue-700 whitespace-nowrap">回复</button>
+    </div>
+  );
+}
+
+// ==================== 主页面 ====================
+export default function AdminPage() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>('dashboard');
+  useEffect(() => { fetch('/api/admin/check').then(r => r.json()).then(d => { if (d.loggedIn) setLoggedIn(true); }).catch(() => {}); }, []);
+  if (!loggedIn) return <LoginPage onLogin={() => setLoggedIn(true)} />;
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-lg font-bold text-gray-900">🔐 OpticsKit</span>
+            <span className="text-xs text-gray-400 hidden sm:inline">管理后台</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <TabNav active={activeTab} onChange={setActiveTab} />
+            <button onClick={async () => { await fetch('/api/admin/logout', { method: 'POST' }); setLoggedIn(false); }} className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-500 hover:bg-gray-50 whitespace-nowrap">退出</button>
+          </div>
+        </div>
+      </header>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
+        {activeTab === 'dashboard' && <DashboardTab />}
+        {activeTab === 'publish' && <PublishTab />}
+        {activeTab === 'community' && <CommunityTab />}
+      </main>
+    </div>
+  );
+}

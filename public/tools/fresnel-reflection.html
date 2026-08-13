@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>菲涅尔反射计算器 - OpticsKit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" crossorigin="anonymous"></script>
+<style>
+:root{--bg-root:#F3F4F6;--bg-surface:#FFFFFF;--bg-elevated:#F9FAFB;--bg-hover:#F3F4F6;--border-subtle:#E5E7EB;--text-primary:#111827;--text-secondary:#4B5563;--text-tertiary:#6B7280;--text-disabled:#9CA3AF;--accent:#2563EB;--accent-hover:#1D4ED8;--accent-light:#EFF6FF;--shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.06);--radius-sm:8px;--radius-md:12px;--radius-full:9999px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg-root);color:var(--text-primary);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-0.01em;line-height:1.6}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-subtle);border-radius:3px}::selection{background:rgba(34,139,230,0.15);color:var(--text-primary)}
+.app{max-width:1100px;margin:0 auto;padding:16px 12px}
+.hd{text-align:center;margin-bottom:10px}
+.hd h1{font-size:18px;font-weight:700;letter-spacing:-0.02em}
+.hd p{font-size:11px;color:var(--text-tertiary);margin-top:1px}
+
+.main-layout{display:flex;gap:10px;align-items:stretch}
+.col-params{width:210px;flex-shrink:0;display:flex;flex-direction:column;gap:6px}
+.col-chart{flex:1;min-width:0}
+
+.card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:10px;box-shadow:var(--shadow-sm)}
+
+.param-grp{margin-bottom:5px}
+.param-grp label{font-size:10px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:1px}
+.param-grp input,.param-grp select{font-size:12px;padding:6px 8px;border:1px solid var(--border-subtle);border-radius:6px;background:var(--bg-elevated);color:var(--text-primary);outline:none;font-family:inherit;width:100%;transition:border-color .2s}
+.param-grp input:focus,.param-grp select:focus{border-color:var(--accent);background:var(--bg-surface)}
+
+.material-row{display:flex;align-items:center;gap:4px;margin-bottom:4px}
+.material-row .dir{font-size:10px;color:var(--text-disabled);width:14px;text-align:center;flex-shrink:0}
+.material-chips{display:flex;flex-wrap:wrap;gap:2px;flex:1}
+.material-chip{font-size:9px;padding:3px 7px;border:1px solid var(--border-subtle);border-radius:var(--radius-full);background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;transition:all .15s;font-family:inherit;line-height:1.4;white-space:nowrap}
+.material-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.material-chip.active{border-color:var(--accent);color:var(--accent);background:var(--accent-light);font-weight:600}
+.material-chip.c2{order:10} /* n₂ chips after n₁ */
+
+.btn{font-size:12px;font-weight:600;padding:6px 12px;border:none;border-radius:var(--radius-full);cursor:pointer;transition:all .2s;font-family:inherit;width:100%}
+.btn-p{background:var(--accent);color:#fff}
+.btn-p:hover{background:var(--accent-hover)}
+
+.presets{display:flex;flex-wrap:wrap;gap:2px;margin-top:4px}
+.preset{font-size:9px;padding:3px 8px;border:1px solid var(--border-subtle);border-radius:var(--radius-full);background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;transition:all .15s;font-family:inherit;line-height:1.3}
+.preset:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+
+.chart-wrap{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:12px;box-shadow:var(--shadow-sm)}
+.chart-box{width:100%;height:460px}
+
+.r-item{border-bottom:1px solid var(--bg-hover);padding:5px 0}
+.r-item .rl{font-size:9px;color:var(--text-disabled);text-transform:uppercase;letter-spacing:0.02em}
+.r-item .rv{font-size:13px;font-weight:700;color:var(--text-primary);margin-top:1px}
+.r-item .ru{font-size:9px;color:var(--text-tertiary)}
+
+.angle-input{display:flex;gap:4px;margin-top:4px}
+.angle-input input{font-size:11px;padding:4px 8px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-elevated);font-family:inherit;width:70px;outline:none}
+.angle-input input:focus{border-color:var(--accent)}
+
+@media(max-width:800px){.main-layout{flex-direction:column}.col-params,.col-results{width:100%}.chart-box{height:360px}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd">
+  <h1>菲涅尔反射计算器</h1>
+  <p>s/p 偏振反射率 · 布儒斯特角 · 全反射临界角 · 材料库联动</p>
+</div>
+
+<div class="main-layout">
+  <div class="col-params">
+    <div class="card">
+      <div class="material-row">
+        <span class="dir">n₁</span>
+        <div class="material-chips" id="mat1Chips"></div>
+      </div>
+      <div class="param-grp">
+        <label>或自定义 n₁</label>
+        <input type="number" id="n1" value="1.0" step="0.0001" min="1" oninput="debounceCalc()">
+      </div>
+      <div class="material-row">
+        <span class="dir">n₂</span>
+        <div class="material-chips" id="mat2Chips"></div>
+      </div>
+      <div class="param-grp">
+        <label>或自定义 n₂</label>
+        <input type="number" id="n2" value="1.5168" step="0.0001" min="1" oninput="debounceCalc()">
+      </div>
+      <button class="btn btn-p" onclick="calculate()">计算</button>
+      <div class="presets">
+        <button class="preset" onclick="setPair(1,1.5168)">空气→玻璃</button>
+        <button class="preset" onclick="setPair(1,1.333)">空气→水</button>
+        <button class="preset" onclick="setPair(1.5168,1)">玻璃→空气</button>
+        <button class="preset" onclick="setPair(1,2.4)">空气→ZnSe</button>
+        <button class="preset" onclick="setPair(1,3.42)">空气→硅</button>
+      </div>
+    </div>
+
+    <div class="card" id="resultsCard"></div>
+
+    <div class="card">
+      <div style="display:flex;gap:8px;margin-bottom:6px">
+        <div style="flex:1"><label style="font-size:10px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:2px">入射角 θ</label><input type="number" id="theta" value="45" step="0.1" min="0" max="90" oninput="updateAngle()" style="width:100%;font-size:12px;padding:6px 8px;border:1px solid var(--border-subtle);border-radius:6px;background:var(--bg-elevated);font-family:inherit;outline:none"></div>
+        <div style="text-align:right;line-height:1.3">
+          <div style="font-size:9px;color:var(--text-disabled)">s-pol</div><div style="font-size:13px;font-weight:700" id="rs">—</div>
+          <div style="font-size:9px;color:var(--text-disabled);margin-top:2px">p-pol</div><div style="font-size:13px;font-weight:700;color:#DC2626" id="rp">—</div>
+        </div>
+        <div style="text-align:right;line-height:1.3">
+          <div style="font-size:9px;color:var(--text-disabled)">平均</div><div style="font-size:13px;font-weight:700;color:var(--text-secondary)" id="ravg">—</div>
+          <div style="font-size:9px;color:var(--text-disabled);margin-top:2px">T_avg</div><div style="font-size:13px;font-weight:700;color:#059669" id="tavg">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-chart">
+    <div class="chart-wrap">
+      <div class="chart-box" id="chart"><div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-disabled);font-size:13px">加载图表中…</div></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+let chart;
+let g={n1:1,n2:1.5168,thetaB:0,thetaC:0,R0:0};
+let currentTheta=45;
+
+function $(id){return document.getElementById(id)}
+
+function fmt(v,d){d=d||4;if(v===0)return'0';const av=Math.abs(v);if(av>=1e6||(av<0.0001&&av>0))return v.toExponential(d);return v.toFixed(d)}
+function pct(v){return fmt(v*100,2)}
+
+let calcTimer;
+
+// 材料库数据
+var materials=[
+  {v:1.0,label:'真空/空气'},
+  {v:1.333,label:'水'},
+  {v:1.38,label:'MgF₂'},
+  {v:1.45,label:'SiO₂'},
+  {v:1.5168,label:'BK7'},
+  {v:1.77,label:'蓝宝石'},
+  {v:2.4,label:'ZnSe'},
+  {v:3.42,label:'硅 Si'},
+  {v:4.0,label:'锗 Ge'}
+];
+
+function initMatChips(which){
+  var cnt=$('mat'+which+'Chips');
+  cnt.innerHTML='';
+  materials.forEach(function(m){
+    var chip=document.createElement('span');
+    chip.className='material-chip';
+    chip.textContent=m.label;
+    chip.title=m.label+' (n='+m.v+')';
+    chip.onclick=function(){
+      var inp=$(which===1?'n1':'n2');
+      inp.value=m.v;
+      cnt.querySelectorAll('.material-chip').forEach(function(c){c.classList.remove('active')});
+      chip.classList.add('active');
+      calculate();
+    };
+    cnt.appendChild(chip);
+  });
+}
+
+function setChipActive(containerId,v){
+  var cnt=$(containerId);
+  var chips=cnt.querySelectorAll('.material-chip');
+  chips.forEach(function(c){c.classList.remove('active')});
+  for(var i=0;i<materials.length;i++){
+    if(Math.abs(materials[i].v-v)<0.02){if(chips[i])chips[i].classList.add('active');break;}
+  }
+}
+
+function debounceCalc(){clearTimeout(calcTimer);calcTimer=setTimeout(calculate,300)}
+
+function criticalAngle(n1,n2){
+  if(n1<=n2)return null;
+  return Math.asin(n2/n1)*180/Math.PI;
+}
+
+function normalReflectance(n1,n2){
+  var r=(n1-n2)/(n1+n2);
+  return r*r;
+}
+
+function setPair(n1,n2){
+  $('n1').value=n1;$('n2').value=n2;
+  // 同步材料下拉
+  setChipActive('mat1Chips',n1);
+  setChipActive('mat2Chips',n2);
+  // 重置角度：n1<=n2 用 1°；n1>n2（全反射）用临界角+5°
+  var tc=criticalAngle(n1,n2);
+  var ang=tc!==null?Math.min(tc+5,89):1;
+  $('theta').value=ang;
+  calculate();
+}
+
+// ===== Fresnel equations =====
+function fresnelRs(thetaDeg,n1,n2){
+  var t=thetaDeg*Math.PI/180;
+  var sint=Math.sin(t);
+  var cost=Math.cos(t);
+  var n=n2/n1;
+  var sint2=sint/n;
+  if(sint2>=1)return 1; // TIR
+  var cost2=Math.sqrt(1-sint2*sint2);
+  var rs=(n1*cost-n2*cost2)/(n1*cost+n2*cost2);
+  return rs*rs;
+}
+
+function fresnelRp(thetaDeg,n1,n2){
+  var t=thetaDeg*Math.PI/180;
+  var sint=Math.sin(t);
+  var cost=Math.cos(t);
+  var n=n2/n1;
+  var sint2=sint/n;
+  if(sint2>=1)return 1;
+  var cost2=Math.sqrt(1-sint2*sint2);
+  var rp=(n2*cost-n1*cost2)/(n2*cost+n1*cost2);
+  return rp*rp;
+}
+
+function brewsterAngle(n1,n2){
+  return Math.atan(n2/n1)*180/Math.PI;
+}
+
+function calculate(){
+  var n1=parseFloat($('n1')?.value)||1;
+  var n2=parseFloat($('n2')?.value)||1.5168;
+  if(n1<=0||n2<=0)return;
+
+  var thetaB=brewsterAngle(n1,n2);
+  var thetaC=criticalAngle(n1,n2);
+  var R0=normalReflectance(n1,n2);
+  g={n1,n2,thetaB,thetaC,R0};
+
+  $('resultsCard').innerHTML=`
+    <div style="font-size:11px;font-weight:650;margin-bottom:10px;color:var(--text-secondary)">📊 关键参数</div>
+    <div class="r-item"><div class="rl">布儒斯特角 θ_B</div><div class="rv">${fmt(thetaB,2)}°</div><div class="ru">p-pol R=0</div></div>
+    ${thetaC!==null?`<div class="r-item"><div class="rl">全反射临界角 θ_c</div><div class="rv">${fmt(thetaC,2)}°</div><div class="ru">n₁→n₂</div></div>`:'<div class="r-item"><div class="rl">全反射</div><div class="rv">不发生</div><div class="ru">n₁ ≤ n₂</div></div>'}
+    <div class="r-item"><div class="rl">正入射反射率 R₀</div><div class="rv">${pct(R0)}%</div><div class="ru">θ=0°</div></div>
+    <div class="r-item"><div class="rl">掠入射</div><div class="rv">100%</div><div class="ru">θ→90°</div></div>
+  `;
+
+  renderChart();
+  updateAngle();
+}
+
+function renderChart(){
+  var dom=$('chart');
+  var ph=dom.querySelector('div');
+  if(ph)ph.style.display='none';
+  if(chart)chart.dispose();
+  chart=echarts.init(dom);
+
+  var{n1,n2,thetaB,thetaC,R0}=g;
+  var N=180,angles=[],rsData=[],rpData=[],ravgData=[];
+  for(var i=0;i<=N;i++){
+    var deg=90*i/N;
+    angles.push(deg);
+    var rs=fresnelRs(deg,n1,n2);
+    var rp=fresnelRp(deg,n1,n2);
+    rsData.push([deg,rs*100]);
+    rpData.push([deg,rp*100]);
+    ravgData.push([deg,(rs+rp)/2*100]);
+  }
+
+  // Mark lines — stagger labels when angles close
+  var markLines=[];
+  var closeGap=thetaC!==null&&Math.abs(thetaC-thetaB)<12;
+  if(thetaC!==null){
+    markLines.push({name:'临界角',xAxis:thetaC,lineStyle:{color:'#DC2626',type:'dashed',width:1.5},
+      label:{show:true,position:'end',distance:closeGap?15:0,formatter:'θc='+fmt(thetaC,1)+'°',fontSize:10,color:'#DC2626'}});
+  }
+  markLines.push({name:'布儒斯特',xAxis:thetaB,lineStyle:{color:'#059669',type:'dashed',width:1.5},
+    label:{show:true,position:'end',distance:0,formatter:'θB='+fmt(thetaB,1)+'°',fontSize:10,color:'#059669'}});
+
+  chart.setOption({
+    tooltip:{trigger:'axis',formatter:function(p){var s='<b>θ='+fmt(p[0].data[0],1)+'°</b><br/>';p.forEach(function(x){s+=x.marker+x.seriesName+': '+fmt(x.data[1],3)+'%<br/>'});return s}},
+    legend:{top:2,textStyle:{fontSize:10,color:'#6B7280'}},
+    grid:{left:55,right:20,top:50,bottom:50},
+    xAxis:{type:'value',name:'入射角 (°)',nameLocation:'center',nameGap:28,nameTextStyle:{fontSize:11,color:'#6B7280'},axisLabel:{fontSize:9,color:'#9CA3AF'},axisLine:{lineStyle:{color:'#E5E7EB'}},axisTick:{show:false},splitLine:{show:false},min:0,max:90},
+    yAxis:{type:'value',name:'反射率 (%)',axisLabel:{fontSize:9,color:'#9CA3AF'},nameTextStyle:{fontSize:11,color:'#6B7280'},splitLine:{lineStyle:{color:'#F3F4F6'}},min:0,max:100},
+    series:[
+      {name:'s偏振',type:'line',data:rsData,smooth:true,symbol:'none',lineStyle:{color:'#2563EB',width:2.5},z:10},
+      {name:'p偏振',type:'line',data:rpData,smooth:true,symbol:'none',lineStyle:{color:'#DC2626',width:2.5},z:10},
+      {name:'非偏振平均',type:'line',data:ravgData,smooth:true,symbol:'none',lineStyle:{color:'#9CA3AF',width:1.5,type:'dashed'},z:5},
+      {name:'标注',type:'line',data:[],z:1,
+        markLine:{silent:true,symbol:'none',data:markLines}},
+      {name:'当前角度',type:'scatter',symbolSize:0,z:20,data:[],
+        markLine:{silent:true,symbol:'none',lineStyle:{color:'#F59E0B',type:'dotted',width:1.2},label:{formatter:'θ='+fmt(currentTheta,1)+'°',fontSize:10,color:'#F59E0B'},data:[{xAxis:currentTheta}]}},
+    ],
+    graphic:[],
+  },true);
+
+  // Update current angle marker position
+  updateAngleMarker();
+}
+
+function updateAngleMarker(){
+  if(!chart)return;
+  chart.setOption({
+    series:[{id:'angle',data:[],markLine:{data:[{xAxis:currentTheta,label:{formatter:'θ='+fmt(currentTheta,1)+'°',fontSize:10,color:'#F59E0B'}}]}}]
+  });
+}
+
+function updateAngle(){
+  currentTheta=parseFloat($('theta')?.value)||0;
+  if(!g.n1)return;
+  var rs=fresnelRs(currentTheta,g.n1,g.n2)*100;
+  var rp=fresnelRp(currentTheta,g.n1,g.n2)*100;
+  $('rs').textContent=fmt(rs,2)+'%';
+  $('rp').textContent=fmt(rp,2)+'%';
+  $('ravg').textContent=fmt((rs+rp)/2,2)+'%';
+  $('tavg').textContent=fmt(100-(rs+rp)/2,2)+'%';
+  updateAngleMarker();
+}
+
+window.addEventListener('resize',function(){chart&&chart.resize()});
+// 初始化材料 chip 按钮
+initMatChips(1);
+initMatChips(2);
+// 初始化为空气→玻璃（n1=1, n2=1.5168）
+setPair(1,1.5168);
+</script>
+</body>
+</html>

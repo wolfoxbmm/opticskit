@@ -1,0 +1,68 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">G.654.E光纤规格书上写衰减系数≤0.17dB/km（ITU-T G.654.E 标准限值），有些厂商标称达到了0.15dB/km。但在已铺设的光缆链路上做端到端OTDR测试，总衰减折算下来常常是0.17-0.19dB/km——甚至更高。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">不是光纤本身不合格。是光纤测试和链路测试之间，差着一个"成缆-施工-接头"的完整工程链条。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">光纤出厂衰减是怎么测的</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光纤制造商的衰减标称值，是在光纤盘绕（未成缆）状态下用截断法（cutback method, IEC 60793-1-40）测得的：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 光纤以松弛状态盘绕在大半径线轴上（弯曲半径&gt;150mm，弯曲损耗可忽略）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 截断法消除了接头损耗的贡献</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 测试在23±5°C恒温环境下进行</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这个数字真实反映了光纤材料（纯硅芯+掺氟包层）的本征衰减：Rayleigh散射+红外吸收+OH⁻吸收峰残余。G.654.E纯硅芯设计将1550nm衰减推到了物理极限附近——0.15-0.16dB/km是当前制造工艺可达到的最优值。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">从光纤到光缆：第一笔"附加费"</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光纤出厂→缆化（松套管+填充油膏+加强件+外护套）→成缆衰减增加。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">成缆过程中光纤被装入松套管，在护套挤出的高温（200°C+）和拉伸张力下产生微弯。微弯导致基模向高阶模/辐射模耦合→额外损耗。成缆后衰减通常比裸纤高0.005-0.02dB/km（ITU-T L.10光缆安装建议中详细讨论了微弯损耗的物理来源）。这个增量可控，但仍使0.15dB/km纤→成缆后可能到了0.16-0.17dB/km。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">接头和连接器：最容易被忽略的一笔</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">一条实际链路从不只有光纤。每个熔接点和连接器都在吃掉光功率：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 标准单模光纤熔接损耗：0.02-0.05dB/个（IEC 61300-3-4标准测试方法）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 活动连接器（FC/APC, SC/APC）：0.10-0.30dB/个（含对接损耗+端面反射）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 考虑一条80km链路：如果中间有3个熔接点+2个连接器→接头总损耗0.06-0.75dB</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但OTDR测量的"全程平均衰减"会把接头损耗均摊到每公里中：0.75dB/80km≈0.009dB/km。加上成缆增量0.01dB/km→标称0.15→链路折算→0.17dB/km。恰好接近"为什么总是0.17"这个常见的工程困惑。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">OTDR测量的隐藏误差</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">OTDR本身对链路衰减的测量也存在系统误差：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">1. <strong>后向散射系数差异</strong>：OTDR通过后向散射功率推演衰减，如果链路中有不同批次的光纤段（后向散射系数不同），OTDR会在熔接点产生"增益器"或"损耗器"伪影——影响全程衰减的推算精度（IEC 61746 OTDR 校准标准）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">2. <strong>双向平均的必要性</strong>：单方向OTDR受后向散射捕获率差异影响，OTDR损耗读数与true损耗可能相差±0.05-0.10dB。双向平均后这个误差显著减小——但很多现场测试只做了单向</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">3. <strong>死区和分辨率限制</strong>：相邻事件（如两个熔接点&lt;50m间距）在OTDR迹线上可能被合并→一个损耗值包含了两个点的总损耗→局部偏低估、全程偏差</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">实际案例换算</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以一个典型的80km G.654.E干线为例：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">损耗来源</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">数值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光纤本征衰减（出厂测试标准条件）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.150 dB/km</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">成缆微弯增量</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">+0.010 dB/km</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">3个熔接点（每个0.04dB均摊）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">+0.002 dB/km</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">2个连接器（每个0.20dB均摊）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">+0.005 dB/km</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">OTDR单向测量伪差（保守估计）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">+0.005 dB/km</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;"><strong>链路实测折算</strong></td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;"><strong>≈0.172 dB/km</strong></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">标称0.15和实测0.17之间的0.02dB/km差距，看似微不足道，但在80km链路上即1.6dB的总损耗差异——对系统功率预算而言是实实在在的裕量消耗。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">可操作建议</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">1. <strong>成缆后重测</strong>：如果链路预算紧张，使用成缆后的衰减测试值（而非裸纤出厂值）做功率预算</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">2. <strong>OTDR双向平均</strong>：现场测试至少做双向OTDR取平均，消除后向散射系数不匹配引入的单向偏差</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-20px;">3. <strong>接头纳入预算</strong>：链路设计阶段就把连接器和熔接点损耗当作"离散插入损耗"单独预算，不要假设它们被均摊到dB/km中自然消失了</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-20px;">4. <strong>区分测试方法和条件</strong>：出货检验证书上的截断法测量值与现场OTDR测量值不可直接比较——两个测试的原理和纳入的损耗成分不同</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">标称0.15dB/km是光纤在实验室盘上的"裸跑"成绩。把它放到光缆里、穿过熔接点、经过测量仪器的推演后，0.17是真实世界的常态。</p></div>

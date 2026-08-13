@@ -72,7 +72,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
         <div className="mt-8 p-5 bg-white rounded-xl border border-[#E5E7EB] text-center">
           <p className="text-[13px] text-[#6B7280]">
-            关注公众号 <span className="text-[#4B5563] font-semibold">光学科技资讯</span>，获取更多光学技术干货
+            关注公众号 <span className="text-[#4B5563] font-semibold">OpticsKit</span>，获取更多光学技术干货
           </p>
         </div>
       </div>

@@ -1,0 +1,47 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的100G DWDM系统调完OSNR余量明明有6dB，结果传到80km就崩了——换光缆、换模块、换EDFA，故障依旧。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">问题不在线性损耗，在光纤里的"碰撞"——非线性效应在悄悄偷走你的距离。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">光纤非线性从哪里来</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光纤是低损耗线性介质——这是教科书说的。但在高功率密度下，<strong>光纤的折射率不再恒定</strong>，而是随光强变化：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">n = n₀ + n₂ · I</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">n₂ ≈ 2.6×10⁻²⁰ m²/W（silica光纤）；I：光强（W/m²）（来源：Agrawal, Nonlinear Fiber Optics, 6th ed., 2019）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这个非线性折射率会产生四大效应：<strong>SPM（自相位调制）</strong>让脉冲自啁啾、<strong>XPM（交叉相位调制）</strong>让多波长互相串扰、<strong>FWM（四波混频）</strong>产生幽灵信道、<strong>SRS/SBS</strong>把功率转移走（来源：Agrawal, 2019）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">SPM/XPM：功率越大死得越快</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">非线性相移 Φ_NL = γ·P·L_eff（来源：Agrawal, 2019）。随着距离积累，SPM产生的相位噪声直接转化为<strong>星座图旋转</strong>——QPSK信号的两个点开始模糊，BER飙升（来源：ITU-T G.652）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>XPM是WDM系统的噩梦</strong>：相邻信道的功率波动通过XPM注入目标信道的相位里，等效于增加了相位噪声。信道间隔越小、功率越高，XPM越严重。</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">效应</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">触发条件</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">工程后果</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">SPM</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">单信道&gt;3dBm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">脉冲展宽、相位噪声</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">XPM</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">WDM间隔&lt;100GHz，&gt;0dBm/ch</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">信道串扰、OSNR劣化</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">FWM</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">零色散点附近&gt;0dBm/ch</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">互调产物、幽灵信道</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么OSNR够但传不远</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>传统功率预算只看线性OSNR，非线性损伤是独立累积的。</strong>两条链路衰减相同（都是40dB）、EDFA相同，但非线性损伤取决于入纤总功率和链路长度——EDFA噪声系数再好，也压不住非线性噪声。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>降低单信道入纤功率</strong>：这是最有效的方法。功率谱密度（PSD）控制比信道总功率控制更精确。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>合理设计色散分布</strong>：正负色散交替配置（+D/-D）可以抑制SPM与色散的耦合。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>DSP补偿</strong>：相干接收DSP里可以加入非线性补偿算法（Kramers-Kronig或MLSE），在高功率系统中提升~2–3dB非线性余量。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>光纤非线性评估公式：Φ_NL = γ·P·L_eff，当Φ_NL&gt;0.1rad时必须考虑非线性影响。经验判据：入纤功率&gt;0dBm/ch（WDM）或&gt;10dBm（单波）时，&gt;80km传输必须做非线性预算。</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">每次看到"功率余量充足"时，先问一句：非线性余量呢？</p></div>

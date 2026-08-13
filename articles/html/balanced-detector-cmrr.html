@@ -1,0 +1,81 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的平衡光电探测器规格书写的是CMRR&gt;35dB（理论上可以压低10dB噪声），但实际接进系统测出来的等效噪声改善只有22dB。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你怀疑是产品虚标——其实是你的<strong>光路和电路设计</strong>有问题。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">CMRR的定义与理论预期</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">CMRR（共模抑制比）衡量的是平衡探测器抑制两路信号中相同成分的能力。理论上，CMRR越高，平衡探测的噪声抑制效果越好。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">CMRR = 20 · log₁₀(V_common / V_diff)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">CMRR定义：V_common为共模电压，V_diff为差模电压（来源：Horowitz &amp; Hill, The Art of Electronics, 3rd ed., 2015）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">理论SNR改善计算：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">CMRR值</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">理论ΔSNR改善</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">实际通常只能达到</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">30dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">≈30dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">15-25dB</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">20dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">≈20dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">10-15dB</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">40dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">≈40dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">20-30dB</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以上理论值基于CMRR定义推导（来源：Horowitz &amp; Hill, 2015）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>为什么实际总是偏低？</strong>因为规格书上的CMRR是裸探测器在标准测试条件下测的，而实际系统的光路和电路会引入额外的共模噪声。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">CMRR实测偏低的四大原因</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>光路不平衡（最常见）</strong>：两路光功率差&gt;1%就会产生残余强度噪声（来源：Hodgson, Optical Interferometry, 2021）。光纤系统的偏振态变化会导致两路功率出现不等，这是光纤系统CMRR下降的第一杀手。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>探测器响应度不匹配</strong>：两路探测器的响应度差异ΔR/R约为1-5%（来源：InGaAs双探测器典型参数，各厂家数据表汇总），这种不匹配会直接转化为差模信号。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>电子学CMRR限制</strong>：放大器本身的CMRR通常为60-80dB@低频（来源：Analog Devices, Op Amp Applications Handbook, 2005），但在高频段会急剧下降。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>互阻抗放大器输入偏置电流差异</strong>：差分放大器两路输入的偏置电流不一致会产生额外的失调电压。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">实测案例：厂家35dB vs 系统22dB</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">某商用平衡光电探测器（InGaAs，带宽2GHz）：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">测试条件</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">实测CMRR</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">SNR改善</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">裸探测器（自由空间光）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">35dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~30dB</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光纤输入系统</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">22dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~18dB</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">+偏振控制+功率均衡</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">30dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~25dB</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>结论</strong>：同一台探测器，从裸测到光纤系统，CMRR下降了13dB！经过偏振控制和功率均衡优化后，又恢复了8dB。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">提升CMRR的实用方法</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>光路平衡是第一位</strong>：使用偏振控制器+光功率均衡器，确保两路光功率差异&lt;1%。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>选购时确认测试条件</strong>：问清楚厂家是用裸探测器测的还是光纤输入系统测的。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>使用宽带均衡器</strong>：对于宽频带应用，在差分放大器前加入宽带均衡网络。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">裸测CMRR=35dB的探测器，接进光纤系统后通常只剩20-25dB——光路不平衡是第一杀手，两路功率差&gt;1%就会吃掉10dB的CMRR。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">平衡探测器的CMRR，50%由探测器决定，50%由你的光路决定。</p></div>

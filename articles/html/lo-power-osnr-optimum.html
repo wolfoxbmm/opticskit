@@ -1,0 +1,77 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的相干接收机里，本振激光器功率加到15dBm之后，测出来的OSNR反而比10dBm时更差了。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以为是本振激光器坏了——其实是热噪声饱和了跨阻放大器。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">本振功率与SNR的初期关系</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">在相干探测中，本振光（LO）与信号光在探测器表面混频，输出中频信号。本振功率对信噪比的影响在初期是积极的：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SNR ∝ P_LO（线性增加阶段）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">本振功率越高，混频后的中频信号功率越大，相较于探测器本身的噪声（散粒噪声、热噪声）优势越明显（来源：Olsson, Lightwave Systems with Optical Amplifiers, 2003）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但这个线性关系不会持续——当本振功率超过某个临界点后，继续增加反而会损害系统性能。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">本振功率过高时的三个限制因素</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>探测器饱和</strong>：PIN光电二极管或TIA进入非线性区，混频效率下降，等效增益降低</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>热噪声增加</strong>：本振光本身在探测器电阻中产生热噪声，功率过高时光学热噪声贡献增大</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>偏振依赖增益（PDG）恶化</strong>：本振功率越强，探测器对信号偏振态的不平衡响应越显著，两个偏振通道的增益差异加大</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">最优本振功率经验值</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">不同探测器类型的最优本振功率差异很大，以下是经验值范围：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">探测器类型</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">最优本振功率 P_LO_opt</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">关键限制因素</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">硅基PIN探测器</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0 to +5 dBm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">TIA饱和功率</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">InGaAs平衡探测器</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">+5 to +10 dBm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">平衡结构抵消部分热噪声</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">铌酸锂调制器系统</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">+10 to +15 dBm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">调制器饱和功率限制</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">（来源：Agrawal, Fiber-Optic Communication Systems, 5th ed., 2021）</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">100G DP-QPSK系统实测数据</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以典型100G DP-QPSK相干系统为例，本振功率扫描实测结果如下：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">本振功率 P_LO</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">实测 OSNR</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">状态</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0 dBm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">15 dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">SNR偏低，噪声主导</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">+10 dBm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">20 dB（最优）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">最优工作点</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">+17 dBm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">18 dB（下降）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">饱和开始，噪声增加</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">P_LO = +10dBm 时 OSNR 最优（20dB）（来源：100G DP-QPSK典型实测数据，IEEE J. Lightwave Technol. 2017），继续加到 +17dBm 后反而降到 18dB。继续增加甚至可能引发更严重的热噪声饱和。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">本振功率没有通用最优值——InGaAs平衡探测器通常最优+5~+10dBm，硅PIN约0~+5dBm，但你的系统必须实测P_LO扫描曲线确定拐点。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">本振功率不是越高越好，找到拐点才是关键。</p></div>

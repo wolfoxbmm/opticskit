@@ -1,0 +1,33 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">M²分析仪屏幕上显示M²=1.05——几乎完美的基模高斯光束。但当你换了另一个品牌的M²仪或用了不同的测量方法，数值跳到了1.5。差了43%但光束本身没变——问题出在测量方式上。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">M²不是激光器的固有属性，它是测量方法+数据处理+判断标准的产物。三个环节任何一个出了偏差，1.1变成1.5完全可能。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">M²测量不是"读个数值"那么简单</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">ISO 11146标准规定了M²的测量方法：用透镜聚焦光束，在束腰前后至少5个位置测量光束直径（每个位置沿x和y两个正交方向），取束腰两侧各至少3个位置共≥10个测量点，用双曲线拟合出束腰直径和远场发散角。M²=(π·w₀·θ)/(4λ)。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">问题出在"光束直径"的定义上。ISO 11146给出三种可接受的方法：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• D4σ（二阶矩法）：光束直径=4倍标准差，对光束的整个横向分布积分</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 86%能量法（刀口法）：光束直径=包络86%总功率的宽度</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 1/e²法：光束直径=强度降至峰值1/e²的宽度</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对于纯高斯光束，三种方法给出的直径完全相同。但实际激光永远不是完美高斯分布——一定有高阶模残留、旁瓣、非对称性。对于有细微非高斯性的光束，D4σ法会把旁瓣能量计入直径→测出的束腰偏大→M²算出来比刀口法偏高。Sieghman（<em>Proc. SPIE</em>, 1990）指出，D4σ法对光束边缘噪声极其敏感，旁瓣能量占0.1%就能让M²从1.0升到1.1。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">束腰位置找对了吗？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">M²测量的最核心假设是你能精确找到束腰。如果光束不是正好垂直于CCD平面，或者机械平移台的步进精度不够→每个测量位置的"光束直径"都对应错误的光程→双曲线拟合的结果是错误束腰位置→M²偏大或偏小。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">一个束腰定位误差仅瑞利长度的10%，M²的误差可达5-10%（Wright et al., <em>Appl. Opt.</em>, 1992）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">仪器间偏差：同一束光，不同仪器不同结果</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">多个独立比对研究展示了M²仪的仪器间偏差。Barchiesi（<em>Proc. SPIE</em>, 1997）对7台市售M²分析仪用同一束He-Ne激光做对比，M²测量值从1.03到1.32——偏差高达28%。主要差异来源：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• CCD像素尺寸校准精度</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 背景减除算法（残留背景光影响D4σ计算）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 暗电流和读出噪声不同的处理方法</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">什么导致你的M²比标称值高？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">如果你的M²测量总是比激光器规格书高，原因几乎可以确定：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 用了D4σ法（对旁瓣敏感）→ 比刀口法系统偏高</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 光束还没充分准直就进入了测量区 → 束腰两侧数据不对称</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 环境散射光进入CCD → D4σ会把它计算进光束宽度</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• CCD饱和 → 光斑中心被截顶，直径被误判</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">结论</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">标称M²=1.05是激光器出厂时在严格排除了测量伪影的最优条件下的参考值。实测M²=1.5不等于激光器坏了——更可能是因为你的测量方法、仪器或数据处理与出厂条件不同。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">M²不是固定标量，是你测量方式和仪器的产物。标称1.1、实测1.5——不是激光器"变差"了，是你测的方法对旁瓣更敏感。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>诊断建议</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 先确认用的是哪种光束直径定义（D4σ/刀口/1/e²），与规格书的测试方法一致</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 检查CCD是否饱和——任何像素超过满阱容量的90%，数据无效</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 做背景减除：遮住光束测一张暗场，确保环境光&lt;信号峰值的0.1%</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 多测5个以上位置，确认双曲线拟合的R²&gt;0.99</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 如果有条件，用刀口法和D4σ法各测一次，差值&lt;10%才可信</p></div>

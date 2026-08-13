@@ -1,0 +1,60 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">论文里QKD系统宣称密钥率1 Mbps，实验室实测为什么只有10 kbps？差了100倍，问题出在哪？</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">不是你的设备坏了，而是"理论密钥率"和"实际密钥率"之间隔了好几层工程损耗，每一层都可能让你的密钥率砍半。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么理论值和实际值差了10倍~1000倍？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">QKD论文里常见的"密钥率"通常指的是<strong>理想条件下的香农极限</strong>——假设探测器100%效率、无暗计数、完美光源、无系统损耗。实际部署时，每一项都打折扣。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>理论密钥率公式（简化）：</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">R = η · μ · f · (1 - H(QBER))（来源：Bennett &amp; Brassard, Proc. IEEE Int. Conf. Computers, 1984；Scarani et al., Rev. Mod. Phys. 2009）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">R：密钥率，η：系统效率（含探测器效率×光纤透过率），μ：光源强度，f：重复频率</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">QBER：量子比特误码率，H()：二进制熵函数。QBER越低，H(QBER)越小，可提取密钥越多</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">六大工程损耗：你的密钥率去哪了？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>探测器死时间（Dead Time）</strong>：单光子探测器（APD/InGaAs SPAD）每探测到一个光子后，需要"恢复"数百纳秒到数微秒才能响应下一个光子（来源：Cova et al., J. Mod. Opt. 2004）。以1 MHz重复频率、200 ns死时间为例：最大有效探测率 ≈ 1/(200ns) = 5 MHz，但实际密钥提取还受量子效率（~20%）和暗计数折损。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>错误纠正开销（Cascade / LDPC）</strong>：QKD协议的量子信道存在QBER，需要通过经典信道传输纠错数据。纠错协议本身有编码开销：香农极限为1 - H(QBER)，但实际Cascade协议开销约为1.5~2倍，LDPC协议约为1.1~1.5倍（来源：Brassard &amp; Salvail, CRYPTO 1993；Elkouss et al., IEEE Trans. Inf. Theory 2015）（QBER&lt;5%时）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>有限码长统计偏差（Finite-key Effect）</strong>：实际系统无法无限长时间生成密钥。有限码长导致参数估计（QBER、暗计数率）存在统计偏差，安全密钥率需要乘以一个<strong>有限码长安全系数 ε_key（来源：Tomamichel &amp; Leverrier, J. Math. Phys. 2017）</strong>。在短码长（&lt;10⁸脉冲）时，这个系数可以小于0.5。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>弱脉冲光源 vs 单光子源</strong>：大多数实用QKD系统用"弱相干脉冲（WCP）"代替真正的单光子源。WCP中多光子脉冲比例随平均光子数 μ 增大：P(n≥2) ≈ μ²/2（μ&lt;&lt;1时）。μ太小（0.1）：多光子事件极少，密钥率低；μ太大（0.5）：分束攻击漏洞，安全性下降。工程最优μ≈0.2~0.5（来源：Lo et al., J. Cryptology 2005）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>距离衰减（光纤损耗）</strong>：光纤每公里约0.2dB损耗（1550nm）（来源：ITU-T G.652），100km光纤总损耗40dB，即只有0.01%的光子到达接收端。实际系统密钥率通常随距离指数衰减：R ∝ 10^(-αL/10)。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>参数估计与隐私放大</strong>：协议后处理需要"隐私放大"（Privacy Amplification）——将部分密钥哈希压缩以抹除窃听者可能获取的信息量。压缩比例取决于QBER和信道透率，通常<strong>实际可用密钥仅为原始同步比特数的30%~60%</strong>。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">实测对比：论文数据 vs 商业系统</span></h2>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">QKD系统场景</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">理论密钥率（理想）</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">实际密钥率（工程）</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">差距倍数</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">实验室 50km BB84</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~10 Mbps</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~1 Mbps</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~10×</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">城域网络 100km</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~1 Mbps</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~10 kbps</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~100×</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">长距离 200km（中继）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~100 kbps</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt; 1 kbps</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~100×</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">如何评估你的QKD系统是否"正常"？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">拿到一个QKD系统，评估实际密钥率是否合理的快速方法：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">经验公式：实际密钥率估算</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">R_actual ≈ μ · η · f · (1 - H(QBER)) · η_EC · η_PA · η_FK</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">η_EC：纠错效率（0.5~1.0），理想=1.0</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">η_PA：隐私放大效率（0.5~1.0），QBER=3%时≈0.9</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">η_FK：有限码长系数（&lt;0.5 for N&lt;10⁸），长码长时≈1.0</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>预警信号：</strong>实测密钥率 &lt; 理论值×5% → 检查探测器暗计数或QBER是否超标；实测密钥率 &lt; 理论值×1% → 检查系统同步是否正常，光源是否正常触发。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">QKD密钥率差距的根本原因在于：<strong>论文1Mbps是探测器100%效率+无暗计数+完美光源的香农极限——你的系统有六大损耗层叠：探测器死时间砍30%、纠错开销砍30%、有限码长砍50%、距离衰减砍99%……每层打折后，1Mbps变10kbps是物理规律不是设备问题</strong>。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">选QKD设备时，不要只看厂家报的密钥率——问清楚：测试距离是多少？QBER是多少？测量时长是多少？拿到的才是真实数据。</p></div>

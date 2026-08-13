@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>薄膜干涉模拟 - Thin Film Interference</title>
+<title>薄膜干涉模拟 · 多层膜 - Thin Film Interference</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -19,7 +19,7 @@
     display: flex;
     gap: 32px;
     padding: 40px;
-    max-width: 1240px;
+    max-width: 1340px;
     width: 100%;
   }
 
@@ -28,7 +28,7 @@
     background: #13131a;
     border-radius: 16px;
     padding: 28px;
-    width: 360px;
+    width: 400px;
     flex-shrink: 0;
     border: 1px solid #1e1e2a;
     overflow-y: auto;
@@ -48,178 +48,7 @@
     margin-bottom: 20px;
   }
 
-  .param-group {
-    margin-bottom: 18px;
-  }
-  .param-group label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    color: #aaa;
-    margin-bottom: 6px;
-  }
-  .param-group label .val {
-    color: #4fc3f7;
-    font-weight: 600;
-    font-size: 12px;
-    background: rgba(79,195,247,0.1);
-    padding: 2px 8px;
-    border-radius: 4px;
-  }
-  .param-group input[type="range"] {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background: #1e1e2a;
-    outline: none;
-    cursor: pointer;
-  }
-  .param-group input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: #4fc3f7;
-    border: 2px solid #0a0a0f;
-    cursor: pointer;
-    box-shadow: 0 0 8px rgba(79,195,247,0.4);
-  }
-
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: #666;
-    margin-bottom: 3px;
-  }
-  .info-row .highlight {
-    color: #ff8a65;
-    font-weight: 500;
-  }
-  .info-row .highlight-blue {
-    color: #4fc3f7;
-    font-weight: 500;
-  }
-  .info-row .highlight-green {
-    color: #81c784;
-    font-weight: 500;
-  }
-
-  .divider {
-    border: none;
-    border-top: 1px solid #1e1e2a;
-    margin: 16px 0;
-  }
-
-  .section-title {
-    font-size: 11px;
-    color: #555;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .preset-btn {
-    width: 100%;
-    padding: 8px 12px;
-    margin-bottom: 6px;
-    border: 1px solid #1e1e2a;
-    border-radius: 8px;
-    background: #13131a;
-    color: #aaa;
-    font-size: 11px;
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.2s;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .preset-btn:hover {
-    background: #1a1a24;
-    color: #fff;
-    border-color: #4fc3f7;
-  }
-  .preset-btn.active {
-    background: rgba(79,195,247,0.1);
-    border-color: #4fc3f7;
-    color: #4fc3f7;
-  }
-  .preset-btn .preset-desc {
-    font-size: 10px;
-    color: #555;
-    margin-top: 2px;
-  }
-
-  /* Preset dropdown */
-  .preset-select-wrapper {
-    position: relative;
-    width: 100%;
-  }
-  .preset-select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #1e1e2a;
-    border-radius: 8px;
-    background: #0a0a0f;
-    color: #e0e0e0;
-    font-size: 12px;
-    font-family: inherit;
-    cursor: pointer;
-    outline: none;
-    appearance: none;
-    -webkit-appearance: none;
-    transition: border-color 0.2s;
-  }
-  .preset-select:hover {
-    border-color: #4fc3f7;
-  }
-  .preset-select:focus {
-    border-color: #4fc3f7;
-    box-shadow: 0 0 0 2px rgba(79,195,247,0.15);
-  }
-  .preset-select option {
-    background: #13131a;
-    color: #e0e0e0;
-    padding: 8px;
-  }
-  .preset-select-wrapper::after {
-    content: '▾';
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
-    font-size: 10px;
-    pointer-events: none;
-  }
-
-  /* Explanation box */
-  .explain-box {
-    background: rgba(255,138,101,0.06);
-    border: 1px solid rgba(255,138,101,0.15);
-    border-radius: 10px;
-    padding: 14px 16px;
-    margin-top: 12px;
-  }
-  .explain-box .explain-title {
-    font-size: 11px;
-    font-weight: 600;
-    color: #ff8a65;
-    margin-bottom: 6px;
-  }
-  .explain-box .explain-text {
-    font-size: 11px;
-    color: #999;
-    line-height: 1.6;
-  }
-  .explain-box .explain-highlight {
-    color: #ffcc80;
-    font-weight: 500;
-  }
-
+  /* Mode toggle */
   .mode-toggle {
     display: flex;
     gap: 4px;
@@ -244,6 +73,233 @@
     color: #fff;
   }
 
+  /* Layer list header */
+  .layer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .layer-header .section-title {
+    font-size: 11px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+  .btn-sm {
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid #1e1e2a;
+    background: #0a0a0f;
+    color: #4fc3f7;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-sm:hover {
+    background: #1a1a24;
+    border-color: #4fc3f7;
+  }
+
+  /* Layer card */
+  .layer-card {
+    background: #0a0a0f;
+    border: 1px solid #1e1e2a;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    position: relative;
+    transition: border-color 0.2s;
+  }
+  .layer-card:hover {
+    border-color: #2a2a3a;
+  }
+  .layer-card .layer-num {
+    font-size: 10px;
+    color: #4fc3f7;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .layer-card .layer-num .btn-del {
+    font-size: 9px;
+    color: #666;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+  }
+  .layer-card .layer-num .btn-del:hover {
+    color: #ff6b6b;
+  }
+  .layer-card .param-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .layer-card .param-row label {
+    font-size: 10px;
+    color: #666;
+    white-space: nowrap;
+    min-width: 22px;
+  }
+  .layer-card .param-row .val {
+    font-size: 10px;
+    color: #4fc3f7;
+    font-weight: 600;
+    min-width: 38px;
+    text-align: right;
+    background: rgba(79,195,247,0.08);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .layer-card input[type="range"] {
+    -webkit-appearance: none;
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: #1e1e2a;
+    outline: none;
+    cursor: pointer;
+  }
+  .layer-card input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #4fc3f7;
+    border: 2px solid #0a0a0f;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(79,195,247,0.4);
+  }
+
+  /* Substrate */
+  .substrate-section {
+    margin-top: 10px;
+    margin-bottom: 14px;
+    background: #0a0a0f;
+    border: 1px solid #252530;
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  .substrate-section .sub-label {
+    font-size: 10px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  .substrate-section .param-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .substrate-section .param-row label {
+    font-size: 10px;
+    color: #666;
+    white-space: nowrap;
+    min-width: 22px;
+  }
+  .substrate-section .param-row .val {
+    font-size: 10px;
+    color: #ff8a65;
+    font-weight: 600;
+    min-width: 38px;
+    text-align: right;
+    background: rgba(255,138,101,0.08);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .substrate-section input[type="range"] {
+    -webkit-appearance: none;
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: #1e1e2a;
+    outline: none;
+    cursor: pointer;
+  }
+  .substrate-section input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #ff8a65;
+    border: 2px solid #0a0a0f;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(255,138,101,0.4);
+  }
+
+  /* Info rows */
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #555;
+    margin-bottom: 3px;
+  }
+  .info-row .highlight {
+    color: #ff8a65;
+    font-weight: 500;
+  }
+  .info-row .highlight-blue {
+    color: #4fc3f7;
+    font-weight: 500;
+  }
+  .info-row .highlight-green {
+    color: #81c784;
+    font-weight: 500;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #1e1e2a;
+    margin: 14px 0;
+  }
+
+  .section-title {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Preset dropdown */
+  .preset-select-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  .preset-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #1e1e2a;
+    border-radius: 8px;
+    background: #0a0a0f;
+    color: #e0e0e0;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color 0.2s;
+  }
+  .preset-select:hover { border-color: #4fc3f7; }
+  .preset-select:focus { border-color: #4fc3f7; box-shadow: 0 0 0 2px rgba(79,195,247,0.15); }
+  .preset-select option { background: #13131a; color: #e0e0e0; padding: 8px; }
+  .preset-select-wrapper::after {
+    content: '▾';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    font-size: 10px;
+    pointer-events: none;
+  }
+
   /* ---- Chart Area ---- */
   .chart-area {
     flex: 1;
@@ -253,6 +309,7 @@
     padding: 24px;
     display: flex;
     flex-direction: column;
+    min-width: 0;
   }
   .chart-area h3 {
     font-size: 16px;
@@ -278,6 +335,7 @@
     margin-top: 10px;
     font-size: 10px;
     color: #888;
+    flex-wrap: wrap;
   }
   .legend span {
     display: flex;
@@ -289,86 +347,74 @@
     height: 10px;
     border-radius: 2px;
   }
-
-  /* QWOT marker on chart style (handled in canvas) */
 </style>
 </head>
 <body>
 
 <div class="container">
   <!-- Controls -->
-  <div class="controls">
-    <h2>薄膜干涉 v2.1</h2>
-    <p class="subtitle">Thin Film Interference · 正入射 TMM</p>
+  <div class="controls" id="controlsPanel">
+    <h2>薄膜干涉</h2>
+    <p class="subtitle">Thin Film Interference · 传输矩阵法 (TMM)</p>
 
     <div class="mode-toggle">
       <button class="mode-btn active" data-mode="spectrum">反射光谱</button>
       <button class="mode-btn" data-mode="thickness">厚度扫描</button>
     </div>
 
-    <div class="param-group">
-      <label>薄膜折射率 n₁ <span class="val" id="n1Val">1.38</span></label>
-      <input type="range" id="n1" min="1.2" max="3.5" step="0.01" value="1.38">
+    <!-- Dynamic layer list -->
+    <div class="layer-header">
+      <span class="section-title">膜层结构</span>
+      <button class="btn-sm" id="btnAddLayer">+ 添加膜层</button>
     </div>
+    <div id="layerList"></div>
 
-    <div class="param-group">
-      <label>薄膜厚度 d <span class="val" id="dVal">100 nm</span></label>
-      <input type="range" id="thickness" min="10" max="800" step="1" value="100">
-    </div>
-
-    <div class="param-group">
-      <label>基底折射率 n₂ <span class="val" id="n2Val">1.52</span></label>
-      <input type="range" id="n2" min="1.3" max="5.0" step="0.01" value="1.52">
-    </div>
-
-    <div class="info-row">
-      <span>λ/4 光学厚度 @ 550nm</span>
-      <span class="highlight-blue" id="quarterWave">99.6 nm</span>
-    </div>
-    <div class="info-row">
-      <span>裸基底反射率 @ 550nm</span>
-      <span class="highlight-green" id="bareR">4.26%</span>
-    </div>
-    <div class="info-row">
-      <span>最小反射率 @ <span id="minRLambda" class="highlight">550 nm</span></span>
-      <span class="highlight" id="minRVal">1.26%</span>
-    </div>
-
-    <!-- Explanation box: why R ≠ 0 -->
-    <div class="explain-box" id="explainBox">
-      <div class="explain-title">💡 为什么反射率降不到零？</div>
-      <div class="explain-text" id="explainText">
-        完美增透需要 <span class="explain-highlight">n₁ = √(n₀ × n₂)</span>。<br>
-        当前 n₁=<b id="explainN1">1.38</b>，理想值 = √(1.0×1.52) = <b id="explainIdeal">1.23</b>。<br>
-        偏差 12%，真实材料无法完美匹配，所以 R<sub>min</sub> > 0。
+    <!-- Substrate -->
+    <div class="substrate-section">
+      <div class="sub-label">🪨 基底 (Substrate)</div>
+      <div class="param-row">
+        <label>n<sub>sub</sub></label>
+        <input type="range" id="nSub" min="1.0" max="5.0" step="0.01" value="1.52">
+        <span class="val" id="nSubVal" data-kind="nSub" data-min="1.0" data-max="5.0" data-step="0.01" data-decimals="2" style="cursor:pointer" title="点击输入精确数值">1.52</span>
       </div>
     </div>
+
+    <!-- Thickness scan layer selector -->
+    <div id="thicknessScanLayer" style="display:none; margin-bottom:14px;">
+      <div class="section-title" style="margin-bottom:6px;">扫描目标</div>
+      <select id="scanLayerSelect" class="preset-select" style="font-size:11px;"></select>
+    </div>
+
+    <!-- Info -->
+    <div class="info-row">
+      <span>裸基底 R @ 550nm</span>
+      <span class="highlight-green" id="bareR">4.26%</span>
+    </div>
+    <div class="info-row" id="infoMinR" style="display:none">
+      <span>最小 R @ <span id="minRLambda" class="highlight">550 nm</span></span>
+      <span class="highlight" id="minRVal">—</span>
+    </div>
+    <div id="explainArea"></div>
 
     <hr class="divider">
 
     <p class="section-title">预设场景</p>
     <div class="preset-select-wrapper">
       <select class="preset-select" id="presetSelect">
-        <optgroup label="—— 教学经典 ——">
-          <option value="mgh2">MgF₂ 单层增透 / BK7 — 经典单层增透膜</option>
-          <option value="tio2">TiO₂ / BK7 — 高折射率膜的反射增强效应 ⚠</option>
-          <option value="soap">肥皂泡（水膜/空气）— 日常干涉现象</option>
-          <option value="oil">油膜 / 水面 — 折射率接近时干涉消失</option>
+        <optgroup label="—— 经典单层 ——">
+          <option value="mgh2">MgF₂ 单层增透 / BK7</option>
+          <option value="arIdeal">理想增透膜 n₁=√(n₀n₂)</option>
+          <option value="soap">肥皂泡（水膜/空气）</option>
         </optgroup>
-        <optgroup label="—— 光学器件 ——">
-          <option value="camera">相机镜头 MgF₂ — 为什么镜头是紫色的</option>
-          <option value="si3n4">Si₃N₄ 增透 / Si — 完美折射率匹配 R→0</option>
-          <option value="germanium">ZnS / Ge 基底 — 红外光学高折射率</option>
+        <optgroup label="—— 多层膜 ——">
+          <option value="ar2layer">双层增透膜 (MgF₂/ZrO₂)</option>
+          <option value="hr3layer">3层高反膜 (LH)</option>
+          <option value="filter5">5层宽光谱增透膜 (HLHLH)</option>
+          <option value="vcoat">"V" 型增透膜 (2层)</option>
         </optgroup>
-        <optgroup label="—— 理论极限 ——">
-          <option value="arMulti">理想增透膜 — n₁=√(n₀n₂) 理论极限</option>
-          <option value="nearzero">近零反射 — n₁=n₂ 消膜效应</option>
-        </optgroup>
-        <optgroup label="—— 更多材料 ——">
-          <option value="al2o3">Al₂O₃ / 玻璃 — 蓝宝石膜（中等折射率）</option>
-          <option value="ta2o5">Ta₂O₅ / SiO₂ — 高折射率氧化物（增反）⚠</option>
-          <option value="sio2_glass">SiO₂ / 玻璃 — 最常用低折射率增透膜</option>
-          <option value="zns_si">ZnS / Si — 红外探测器增透窗口</option>
+        <optgroup label="—— 高折射率 ——">
+          <option value="tio2">TiO₂ / BK7（单层高反）</option>
+          <option value="zns_ge">ZnS / Ge（红外基底）</option>
         </optgroup>
       </select>
     </div>
@@ -382,61 +428,256 @@
     <div class="legend" id="legendBar">
       <span><span class="dot" style="background:#4fc3f7"></span> 当前膜系</span>
       <span><span class="dot" style="background:#333"></span> 裸基底（无膜）</span>
-      <span style="margin-left:auto;color:#ff8a65">◆ 最小反射率点</span>
-      <span style="color:#81c784;margin-left:12px">┆ λ/4 参考线</span>
     </div>
   </div>
 </div>
 
 <script>
-// ============ Physics Engine ============
+// ============ Physics Engine: Transfer Matrix Method ============
 
 /**
- * Single-layer thin film reflectance at normal incidence.
- * Airy formula: R = (r01² + r12² + 2·r01·r12·cos(2δ)) / (1 + r01²·r12² + 2·r01·r12·cos(2δ))
+ * Compute complex reflectance amplitude r for a multilayer stack at normal incidence.
+ * layers: [{ n, d }] from air to substrate. nSub: substrate refractive index.
+ * Returns { R, r_complex } where R = |r|².
  */
-function reflectance(lambda, n1, d, n2) {
-  const n0 = 1.0;
-  const r01 = (n0 - n1) / (n0 + n1);
-  const r12 = (n1 - n2) / (n1 + n2);
-  const delta = (2 * Math.PI * n1 * d) / lambda;
-  const cos2d = Math.cos(2 * delta);
-  const num = r01*r01 + r12*r12 + 2*r01*r12*cos2d;
-  const den = 1 + r01*r01*r12*r12 + 2*r01*r12*cos2d;
-  return num / den;
+function tmmReflectance(lambda, layers, nSub) {
+  const n0 = 1.0; // air
+  // Start with identity matrix
+  let M11 = 1, M12 = 0, M21 = 0, M22 = 1;
+
+  for (const layer of layers) {
+    const n = layer.n;
+    const d = layer.d;
+    const delta = (2 * Math.PI * n * d) / lambda;
+    const cosD = Math.cos(delta);
+    const sinD = Math.sin(delta);
+    // Characteristic matrix for this layer
+    const m11 = cosD;
+    const m12 = sinD / n;
+    const m21 = n * sinD;
+    const m22 = cosD;
+    // Multiply M = M * layerMatrix
+    const a11 = M11 * m11 + M12 * m21;
+    const a12 = M11 * m12 + M12 * m22;
+    const a21 = M21 * m11 + M22 * m21;
+    const a22 = M21 * m12 + M22 * m22;
+    M11 = a11; M12 = a12; M21 = a21; M22 = a22;
+  }
+
+  // Reflection amplitude
+  const denom = M11 * nSub + M12 * n0 * nSub + M21 + M22 * n0;
+  if (Math.abs(denom) < 1e-12) return { R: 1, r: { re: 0, im: 0 } };
+  const r_re = (M11 * nSub + M12 * n0 * nSub - M21 - M22 * n0) / denom;
+  const r_im = 0; // real for lossless dielectrics at normal incidence
+  const R = r_re * r_re;
+  return { R, r: { re: r_re, im: r_im } };
 }
 
-function reflectanceBare(lambda, n2) {
+function reflectanceBare(lambda, nSub) {
   const n0 = 1.0;
-  const r = (n0 - n2) / (n0 + n2);
+  const r = (n0 - nSub) / (n0 + nSub);
   return r * r;
 }
 
-function findMinR(n1, d, n2, λStart, λEnd, step) {
+function findMinR(layers, nSub, λStart, λEnd, step) {
   λStart = λStart || 380;
   λEnd = λEnd || 780;
   step = step || 1;
   let bestLambda = λStart, bestR = Infinity;
   for (let λ = λStart; λ <= λEnd; λ += step) {
-    const R = reflectance(λ, n1, d, n2);
+    const { R } = tmmReflectance(λ, layers, nSub);
     if (R < bestR) { bestR = R; bestLambda = λ; }
   }
   return { lambda: bestLambda, R: bestR };
+}
+
+// ============ Layer State Management ============
+let layers = [
+  { n: 1.38, d: 100 },
+];
+let layerCounter = 1;
+
+function getLayerInputs() {
+  const result = [];
+  document.querySelectorAll('.layer-card').forEach(card => {
+    const nSlider = card.querySelector('.layer-n-slider');
+    const dSlider = card.querySelector('.layer-d-slider');
+    result.push({
+      n: parseFloat(nSlider.value),
+      d: parseInt(dSlider.value),
+    });
+  });
+  return result;
+}
+
+function buildLayerCard(idx, n, d) {
+  const div = document.createElement('div');
+  div.className = 'layer-card';
+  div.innerHTML = `
+    <div class="layer-num">
+      <span>📐 第 ${idx + 1} 层 (L${idx + 1})</span>
+      ${layers.length > 1 ? `<button class="btn-del" data-idx="${idx}">✕ 删除</button>` : ''}
+    </div>
+    <div class="param-row">
+      <label>n</label>
+      <input type="range" class="layer-n-slider" data-idx="${idx}" min="1.2" max="4.0" step="0.01" value="${n}">
+      <span class="val layer-n-val" data-idx="${idx}" data-kind="n" data-min="1.2" data-max="4.0" data-step="0.01" data-decimals="2">${n.toFixed(2)}</span>
+    </div>
+    <div class="param-row" style="margin-top:6px">
+      <label>d</label>
+      <input type="range" class="layer-d-slider" data-idx="${idx}" min="5" max="1500" step="1" value="${d}">
+      <span class="val layer-d-val" data-idx="${idx}" data-kind="d" data-min="5" data-max="1500" data-step="1" data-decimals="0" data-unit=" nm">${d} nm</span>
+    </div>
+  `;
+  return div;
+}
+
+// Click-to-edit helper for val spans
+function bindSpanClick(span) {
+  span.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const idx = parseInt(this.dataset.idx);
+    const kind = this.dataset.kind;
+    const min = parseFloat(this.dataset.min);
+    const max = parseFloat(this.dataset.max);
+    const step = parseFloat(this.dataset.step);
+    const decimals = parseInt(this.dataset.decimals);
+    const unit = this.dataset.unit || '';
+    const currentVal = kind === 'n' ? layers[idx].n : layers[idx].d;
+
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = min;
+    input.max = max;
+    input.step = step;
+    input.value = currentVal;
+    Object.assign(input.style, {
+      width: '62px', height: '22px', padding: '1px 4px',
+      border: '1px solid #4fc3f7', borderRadius: '4px',
+      background: '#0a0a0f', color: '#4fc3f7',
+      fontSize: '10px', fontWeight: '600', textAlign: 'right',
+      outline: 'none', fontFamily: 'inherit'
+    });
+
+    this.replaceWith(input);
+    input.focus();
+    input.select();
+
+    const commit = () => {
+      let v = parseFloat(input.value);
+      if (isNaN(v)) v = currentVal;
+      v = Math.min(max, Math.max(min, v));
+      if (kind === 'd') v = Math.round(v);
+
+      const formatted = kind === 'n' ? v.toFixed(decimals) : v + unit;
+      const span2 = document.createElement('span');
+      span2.className = 'val ' + (kind === 'n' ? 'layer-n-val' : 'layer-d-val');
+      Object.assign(span2.dataset, { idx, kind, min, max, step, decimals });
+      if (unit) span2.dataset.unit = unit;
+      span2.textContent = formatted;
+      span2.style.cursor = 'pointer';
+      span2.title = '点击输入精确数值';
+      bindSpanClick(span2);
+
+      input.replaceWith(span2);
+
+      if (kind === 'n') layers[idx].n = v;
+      else layers[idx].d = v;
+
+      const card = span2.closest('.layer-card');
+      const slider = card.querySelector(kind === 'n' ? '.layer-n-slider' : '.layer-d-slider');
+      slider.value = v;
+
+      updateAll();
+    };
+
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', function(ev) {
+      if (ev.key === 'Enter') { ev.preventDefault(); commit(); }
+      if (ev.key === 'Escape') { input.value = currentVal; commit(); }
+    });
+  });
+}
+
+function rebuildLayerUI() {
+  const container = document.getElementById('layerList');
+  container.innerHTML = '';
+  layers.forEach((l, i) => {
+    container.appendChild(buildLayerCard(i, l.n, l.d));
+  });
+
+  // Bind slider events
+  container.querySelectorAll('.layer-n-slider').forEach(s => {
+    s.addEventListener('input', () => {
+      const i = parseInt(s.dataset.idx);
+      layers[i].n = parseFloat(s.value);
+      const card = s.closest('.layer-card');
+      card.querySelector('.layer-n-val').textContent = layers[i].n.toFixed(2);
+      updateAll();
+    });
+  });
+  container.querySelectorAll('.layer-d-slider').forEach(s => {
+    s.addEventListener('input', () => {
+      const i = parseInt(s.dataset.idx);
+      layers[i].d = parseInt(s.value);
+      const card = s.closest('.layer-card');
+      card.querySelector('.layer-d-val').textContent = layers[i].d + ' nm';
+      updateAll();
+    });
+  });
+
+  // Bind click-to-edit on val spans
+  container.querySelectorAll('.layer-n-val, .layer-d-val').forEach(span => {
+    span.style.cursor = 'pointer';
+    span.title = '点击输入精确数值';
+    bindSpanClick(span);
+  });
+  container.querySelectorAll('.btn-del').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.idx);
+      layers.splice(idx, 1);
+      rebuildLayerUI();
+      updateAll();
+    });
+  });
+
+  // Update thickness scan layer selector
+  updateScanLayerSelect();
+}
+
+document.getElementById('btnAddLayer').addEventListener('click', () => {
+  layers.push({ n: 2.0, d: 70 });
+  rebuildLayerUI();
+  updateAll();
+});
+
+function updateScanLayerSelect() {
+  const sel = document.getElementById('scanLayerSelect');
+  sel.innerHTML = '';
+  layers.forEach((l, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `第 ${i + 1} 层 (n=${l.n.toFixed(2)}, d=${l.d}nm)`;
+    sel.appendChild(opt);
+  });
 }
 
 // ============ Chart Rendering ============
 const canvas = document.getElementById('chart');
 const ctx = canvas.getContext('2d');
 let W, H, padLeft, padRight, padTop, padBottom;
-let currentMode = 'spectrum'; // 'spectrum' | 'thickness'
+let currentMode = 'spectrum';
 
 function resize() {
   const rect = canvas.parentElement.getBoundingClientRect();
   const dpr = window.devicePixelRatio || 1;
-  canvas.width = (rect.width - 48) * dpr;
-  canvas.height = (Math.max(rect.height - 155, 250)) * dpr;
-  canvas.style.width = (rect.width - 48) + 'px';
-  canvas.style.height = Math.max(rect.height - 155, 250) + 'px';
+  const w = rect.width - 48;
+  const h = Math.max(rect.height - 155, 250);
+  if (w <= 0 || h <= 0) return; // skip if layout not ready
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
   W = canvas.width; H = canvas.height;
   padLeft = 64 * dpr; padRight = 30 * dpr;
   padTop = 30 * dpr; padBottom = 48 * dpr;
@@ -446,11 +687,10 @@ function resize() {
 function xForLambda(lambda) {
   return padLeft + ((lambda - 380) / 400) * (W - padLeft - padRight);
 }
-
 function xForThickness(d) {
-  return padLeft + ((d - 10) / 790) * (W - padLeft - padRight);
+  const dMin = 5, dMax = 1500;
+  return padLeft + ((d - dMin) / (dMax - dMin)) * (W - padLeft - padRight);
 }
-
 function yForR(R) {
   const Rmax = 0.40;
   return padTop + (1 - R / Rmax) * (H - padTop - padBottom);
@@ -486,7 +726,7 @@ function wavelengthToColor(wavelength) {
 }
 
 // ============ Spectrum Mode Render ============
-function renderSpectrum(dpr, n1, d, n2) {
+function renderSpectrum(dpr, layers, nSub) {
   const Rmax = 0.40;
 
   // Spectrum bar
@@ -509,8 +749,6 @@ function renderSpectrum(dpr, n1, d, n2) {
   // Zero line
   ctx.beginPath(); ctx.moveTo(padLeft, yForR(0)); ctx.lineTo(W - padRight, yForR(0));
   ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 0.5; ctx.stroke();
-  ctx.fillStyle = '#444'; ctx.textAlign = 'right';
-  ctx.fillText('0%', padLeft - 8*dpr, yForR(0) + 3*dpr);
 
   // Vertical grid
   const bands = [380, 450, 495, 570, 590, 620, 750];
@@ -533,15 +771,15 @@ function renderSpectrum(dpr, n1, d, n2) {
   ctx.setLineDash([4*dpr, 4*dpr]);
   let first = true;
   for (let λ = 380; λ <= 780; λ += 1) {
-    const x = xForLambda(λ), y = yForR(reflectanceBare(λ, n2));
+    const x = xForLambda(λ), y = yForR(reflectanceBare(λ, nSub));
     if (first) { ctx.moveTo(x, y); first = false; } else { ctx.lineTo(x, y); }
   }
   ctx.stroke(); ctx.setLineDash([]);
 
-  // Film curve
+  // Multilayer curve
   const curveData = [];
   for (let λ = 380; λ <= 780; λ += 1) {
-    const R = reflectance(λ, n1, d, n2);
+    const { R } = tmmReflectance(λ, layers, nSub);
     curveData.push({ λ, R, x: xForLambda(λ), y: yForR(Math.min(R, Rmax)) });
   }
   // Fill
@@ -563,50 +801,28 @@ function renderSpectrum(dpr, n1, d, n2) {
   }
   ctx.stroke();
 
-  // --- QWOT reference line ---
-  const qwotLambda = 550;
-  const qwotXDpr = xForLambda(qwotLambda);
-  ctx.beginPath();
-  ctx.moveTo(qwotXDpr, padTop);
-  ctx.lineTo(qwotXDpr, H - padBottom);
-  ctx.strokeStyle = 'rgba(129,199,132,0.35)';
-  ctx.lineWidth = 1; ctx.setLineDash([3*dpr, 5*dpr]); ctx.stroke(); ctx.setLineDash([]);
-  // QWOT label at top
-  const bareR550 = reflectanceBare(qwotLambda, n2);
-  const filmR550 = reflectance(qwotLambda, n1, d, n2);
-  const yBare = yForR(bareR550);
-  const yFilm = yForR(Math.min(filmR550, Rmax));
-  // Connect bare→film with vertical line & circle markers
-  ctx.beginPath(); ctx.moveTo(qwotXDpr, yBare); ctx.lineTo(qwotXDpr, yFilm);
-  ctx.strokeStyle = 'rgba(129,199,132,0.6)'; ctx.lineWidth = 1.5; ctx.setLineDash([]); ctx.stroke();
-  // Bare marker
-  ctx.beginPath(); ctx.arc(qwotXDpr, yBare, 4*dpr, 0, Math.PI*2); ctx.fillStyle = '#555'; ctx.fill();
-  // Film marker
-  ctx.beginPath(); ctx.arc(qwotXDpr, yFilm, 4*dpr, 0, Math.PI*2); ctx.fillStyle = '#81c784'; ctx.fill();
-  // Labels
-  ctx.font = `${10*dpr}px Inter, sans-serif`; ctx.textAlign = 'left';
-  ctx.fillStyle = '#81c784';
-  ctx.fillText(`R₀=${(bareR550*100).toFixed(1)}% → R=${(filmR550*100).toFixed(1)}%`, qwotXDpr + 8*dpr, yBare + (yFilm-yBare)/2 + 3*dpr);
-
-  // --- Minimum reflectance marker (diamond) ---
-  const minR = findMinR(n1, d, n2);
-  const minX = xForLambda(minR.lambda);
-  const minY = yForR(Math.min(minR.R, Rmax));
-  ctx.beginPath();
-  ctx.moveTo(minX, minY - 8*dpr); ctx.lineTo(minX + 6*dpr, minY);
-  ctx.lineTo(minX, minY + 8*dpr); ctx.lineTo(minX - 6*dpr, minY);
-  ctx.closePath();
-  ctx.fillStyle = '#ff8a65'; ctx.fill();
-  ctx.strokeStyle = '#ff8a65'; ctx.lineWidth = 1.5; ctx.stroke();
-  // Label
-  const labelX = minX + 10*dpr; const labelY = minY - 12*dpr;
-  ctx.fillStyle = '#ff8a65'; ctx.font = `${11*dpr}px Inter, sans-serif`; ctx.textAlign = 'left';
-  ctx.fillText(`λ=${minR.lambda}nm, R=${(minR.R*100).toFixed(2)}%`, labelX, labelY);
+  // Minimum reflectance marker
+  const minR = findMinR(layers, nSub);
+  if (minR.R < Infinity && minR.R < Rmax) {
+    const minX = xForLambda(minR.lambda);
+    const minY = yForR(Math.min(minR.R, Rmax));
+    ctx.beginPath();
+    ctx.moveTo(minX, minY - 8*dpr); ctx.lineTo(minX + 6*dpr, minY);
+    ctx.lineTo(minX, minY + 8*dpr); ctx.lineTo(minX - 6*dpr, minY);
+    ctx.closePath();
+    ctx.fillStyle = '#ff8a65'; ctx.fill();
+    ctx.strokeStyle = '#ff8a65'; ctx.lineWidth = 1.5; ctx.stroke();
+    const labelX = minX + 10*dpr; const labelY = minY - 12*dpr;
+    ctx.fillStyle = '#ff8a65'; ctx.font = `${11*dpr}px Inter, sans-serif`; ctx.textAlign = 'left';
+    ctx.fillText(`λ=${minR.lambda}nm, R=${(minR.R*100).toFixed(2)}%`, labelX, labelY);
+  }
 }
 
 // ============ Thickness Scan Mode ============
-function renderThicknessScan(dpr, n1, dCurrent, n2) {
+function renderThicknessScan(dpr, layers, nSub, scanLayerIdx) {
+  const targetLambda = 550;
   const Rmax = 0.40;
+  const dMin = 5, dMax = 1500;
 
   // Horizontal grid
   ctx.strokeStyle = '#1a1a24'; ctx.lineWidth = 1; ctx.font = `${10*dpr}px Inter, sans-serif`;
@@ -618,7 +834,7 @@ function renderThicknessScan(dpr, n1, dCurrent, n2) {
   }
 
   // Vertical grid
-  for (let dTick = 50; dTick <= 800; dTick += 50) {
+  for (let dTick = 100; dTick <= dMax; dTick += 100) {
     const x = xForThickness(dTick);
     ctx.beginPath(); ctx.moveTo(x, padTop); ctx.lineTo(x, H - padBottom);
     ctx.strokeStyle = '#151520'; ctx.stroke();
@@ -632,11 +848,14 @@ function renderThicknessScan(dpr, n1, dCurrent, n2) {
   ctx.save(); ctx.translate(14*dpr, H / 2); ctx.rotate(-Math.PI/2);
   ctx.fillText('反射率 @550nm R', 0, 0); ctx.restore();
 
-  // R(d) @ 550nm curve
-  const targetLambda = 550;
+  // R(d) curve — vary the selected layer, keep others fixed
   const curveData = [];
-  for (let _d = 10; _d <= 800; _d += 1) {
-    const R = reflectance(targetLambda, n1, _d, n2);
+  for (let _d = dMin; _d <= dMax; _d += 1) {
+    const testLayers = layers.map((l, i) => ({
+      n: l.n,
+      d: i === scanLayerIdx ? _d : l.d,
+    }));
+    const { R } = tmmReflectance(targetLambda, testLayers, nSub);
     curveData.push({ d: _d, R, x: xForThickness(_d), y: yForR(Math.min(R, Rmax)) });
   }
 
@@ -661,7 +880,7 @@ function renderThicknessScan(dpr, n1, dCurrent, n2) {
   ctx.stroke();
 
   // Bare substrate reference line
-  const bareR = reflectanceBare(targetLambda, n2);
+  const bareR = reflectanceBare(targetLambda, nSub);
   const yBare = yForR(bareR);
   ctx.beginPath(); ctx.moveTo(padLeft, yBare); ctx.lineTo(W - padRight, yBare);
   ctx.strokeStyle = '#333'; ctx.lineWidth = 1.5; ctx.setLineDash([4*dpr, 4*dpr]); ctx.stroke(); ctx.setLineDash([]);
@@ -669,151 +888,198 @@ function renderThicknessScan(dpr, n1, dCurrent, n2) {
   ctx.fillText(`裸基底 R=${(bareR*100).toFixed(2)}%`, W - padRight - 130*dpr, yBare - 6*dpr);
 
   // Current thickness marker
-  const xCur = xForThickness(dCurrent);
-  const Rcur = reflectance(targetLambda, n1, dCurrent, n2);
+  const curD = layers[scanLayerIdx].d;
+  const xCur = xForThickness(curD);
+  const { R: Rcur } = tmmReflectance(targetLambda, layers, nSub);
   const yCur = yForR(Math.min(Rcur, Rmax));
   ctx.beginPath(); ctx.moveTo(xCur, padTop); ctx.lineTo(xCur, H - padBottom);
   ctx.strokeStyle = 'rgba(255,138,101,0.4)'; ctx.lineWidth = 1; ctx.setLineDash([3*dpr, 3*dpr]); ctx.stroke(); ctx.setLineDash([]);
   ctx.beginPath(); ctx.arc(xCur, yCur, 5*dpr, 0, Math.PI*2); ctx.fillStyle = '#ff8a65'; ctx.fill();
   ctx.font = `${11*dpr}px Inter, sans-serif`; ctx.fillStyle = '#ff8a65'; ctx.textAlign = 'left';
-  ctx.fillText(`d=${dCurrent}nm, R=${(Rcur*100).toFixed(2)}%`, xCur + 8*dpr, yCur + 4*dpr);
+  ctx.fillText(`d=${curD}nm, R=${(Rcur*100).toFixed(2)}%`, xCur + 8*dpr, yCur + 4*dpr);
 
   // Period annotation
-  const period = targetLambda / (2 * n1);
+  const nScan = layers[scanLayerIdx].n;
+  const period = targetLambda / (2 * nScan);
   ctx.fillStyle = '#555'; ctx.textAlign = 'left'; ctx.font = `${10*dpr}px Inter, sans-serif`;
-  ctx.fillText(`周期 = λ/(2n₁) = ${period.toFixed(1)} nm`, padLeft + 10*dpr, padTop + 16*dpr);
-
-  // Current R at target
-  const qwotPhys = targetLambda / (4 * n1);
-  const xQwot = xForThickness(qwotPhys);
-  ctx.beginPath(); ctx.moveTo(xQwot, padTop); ctx.lineTo(xQwot, H - padBottom);
-  ctx.strokeStyle = 'rgba(129,199,132,0.35)'; ctx.lineWidth = 1; ctx.setLineDash([3*dpr, 5*dpr]); ctx.stroke(); ctx.setLineDash([]);
-  ctx.fillStyle = '#81c784'; ctx.textAlign = 'left'; ctx.font = `${10*dpr}px Inter, sans-serif`;
-  ctx.fillText(`λ/4 = ${qwotPhys.toFixed(1)}nm`, xQwot + 4*dpr, padTop + 30*dpr);
+  ctx.fillText(`周期 = λ/(2n) = ${period.toFixed(1)} nm`, padLeft + 10*dpr, padTop + 16*dpr);
 }
 
 // ============ Main render ============
 function render() {
   const dpr = window.devicePixelRatio || 1;
-  const n1 = parseFloat(document.getElementById('n1').value);
-  const d = parseInt(document.getElementById('thickness').value);
-  const n2 = parseFloat(document.getElementById('n2').value);
+  const nSub = parseFloat(document.getElementById('nSub').value);
 
   ctx.clearRect(0, 0, W, H);
 
   if (currentMode === 'spectrum') {
-    renderSpectrum(dpr, n1, d, n2);
+    renderSpectrum(dpr, layers, nSub);
   } else {
-    renderThicknessScan(dpr, n1, d, n2);
+    const scanIdx = parseInt(document.getElementById('scanLayerSelect').value) || 0;
+    renderThicknessScan(dpr, layers, nSub, scanIdx);
   }
 }
 
-// ============ Explanation box ============
-function updateExplainBox() {
-  const n1 = parseFloat(document.getElementById('n1').value);
-  const n2 = parseFloat(document.getElementById('n2').value);
-  const n0 = 1.0;
-  const idealN1 = Math.sqrt(n0 * n2);
+// ============ UI Update ============
+function updateAll() {
+  const nSub = parseFloat(document.getElementById('nSub').value);
+  document.getElementById('nSubVal').textContent = nSub.toFixed(2);
 
-  // Only update text content of existing elements, never recreate them
-  const elExplainN1 = document.getElementById('explainN1');
-  const elExplainIdeal = document.getElementById('explainIdeal');
-  
-  if (elExplainN1) elExplainN1.textContent = n1.toFixed(2);
-  if (elExplainIdeal) elExplainIdeal.textContent = idealN1.toFixed(2);
-
-  const diffPct = Math.abs((n1 - idealN1) / idealN1 * 100);
-  const explainText = document.getElementById('explainText');
-  if (!explainText) return;
-  
-  if (diffPct < 5) {
-    explainText.innerHTML =
-      `完美增透需要 <span class="explain-highlight">n₁ = √(n₀ × n₂)</span>。<br>
-       当前 n₁=<b>${n1.toFixed(2)}</b>，理想值 = √(${n0.toFixed(1)}×${n2.toFixed(2)}) = <b>${idealN1.toFixed(2)}</b>。<br>
-       <span class="explain-highlight">✓ 折射率匹配很好！</span> 反射率接近零。`;
-  } else {
-    explainText.innerHTML =
-      `完美增透需要 <span class="explain-highlight">n₁ = √(n₀ × n₂)</span>。<br>
-       当前 n₁=<b>${n1.toFixed(2)}</b>，理想值 = √(${n0.toFixed(1)}×${n2.toFixed(2)}) = <b>${idealN1.toFixed(2)}</b>。<br>
-       偏差 ${diffPct.toFixed(0)}%，真实材料无法完美匹配，所以 R<sub>min</sub> > 0。`;
-  }
-}
-
-// ============ UI Bindings ============
-function updateUI() {
-  const n1 = parseFloat(document.getElementById('n1').value);
-  const d = parseInt(document.getElementById('thickness').value);
-  const n2 = parseFloat(document.getElementById('n2').value);
-
-  document.getElementById('n1Val').textContent = n1.toFixed(2);
-  document.getElementById('dVal').textContent = d + ' nm';
-  document.getElementById('n2Val').textContent = n2.toFixed(2);
-
-  const qwot = 550 / (4 * n1);
-  document.getElementById('quarterWave').textContent = qwot.toFixed(1) + ' nm';
-
-  const bareR = reflectanceBare(550, n2);
+  const bareR = reflectanceBare(550, nSub);
   document.getElementById('bareR').textContent = (bareR * 100).toFixed(2) + '%';
 
-  const minR = findMinR(n1, d, n2);
-  document.getElementById('minRLambda').textContent = minR.lambda + ' nm';
-  document.getElementById('minRVal').textContent = (minR.R * 100).toFixed(2) + '%';
+  // Min R info
+  const minR = findMinR(layers, nSub);
+  if (minR.R < Infinity) {
+    document.getElementById('infoMinR').style.display = '';
+    document.getElementById('minRLambda').textContent = minR.lambda + ' nm';
+    document.getElementById('minRVal').textContent = (minR.R * 100).toFixed(2) + '%';
+  } else {
+    document.getElementById('infoMinR').style.display = 'none';
+  }
 
-  updateExplainBox();
+  // Explain area for single-layer
+  const explainArea = document.getElementById('explainArea');
+  if (layers.length === 1) {
+    const n1 = layers[0].n;
+    const idealN1 = Math.sqrt(1.0 * nSub);
+    const diffPct = Math.abs((n1 - idealN1) / idealN1 * 100);
+    let title, body;
+    if (nSub < 1.01) {
+      // Air backing — symmetric medium, ideal n₁ also = 1.0, but physical films always n > 1
+      title = '💡 对称膜系：肥皂泡干涉';
+      body = `空气-水膜-空气结构，两侧介质相同 (n₀=n₂=1.0)。<br>
+        膜的折射率 n₁=${n1.toFixed(2)} 高于空气，产生界面反射。<br>
+        <span style="color:#ffcc80;font-weight:500;">R 随波长周期性振荡</span>，膜厚为 λ/4 整数倍时 R 最小。`;
+    } else if (diffPct < 5) {
+      title = '💡 为什么反射率降不到零？';
+      body = `完美增透需要 <span style="color:#ffcc80;font-weight:500;">n₁ = √(n₀ × n₂)</span>。<br>
+        当前 n₁=<b>${n1.toFixed(2)}</b>，理想值 = √(1.0×${nSub.toFixed(2)}) = <b>${idealN1.toFixed(2)}</b>。<br>
+        <span style="color:#ffcc80;font-weight:500;">✓ 折射率匹配很好！</span> 反射率接近零。`;
+    } else {
+      title = '💡 为什么反射率降不到零？';
+      body = `完美增透需要 <span style="color:#ffcc80;font-weight:500;">n₁ = √(n₀ × n₂)</span>。<br>
+        当前 n₁=<b>${n1.toFixed(2)}</b>，理想值 = √(1.0×${nSub.toFixed(2)}) = <b>${idealN1.toFixed(2)}</b>。<br>
+        偏差 ${diffPct.toFixed(0)}%，真实材料无法完美匹配。`;
+    }
+    explainArea.innerHTML = `<div class="explain-box" style="background:rgba(255,138,101,0.06);border:1px solid rgba(255,138,101,0.15);border-radius:10px;padding:14px 16px;margin-top:12px;">
+      <div class="explain-title" style="font-size:11px;font-weight:600;color:#ff8a65;margin-bottom:6px;">${title}</div>
+      <div style="font-size:11px;color:#999;line-height:1.6;">${body}
+      </div>
+    </div>`;
+  } else {
+    explainArea.innerHTML = `<div style="font-size:10px;color:#444;margin-top:10px;line-height:1.6;">
+      ${layers.length} 层膜 · 传输矩阵法 (TMM)<br>
+      各层参数可独立调节，实时计算总反射率
+    </div>`;
+  }
+
   render();
 }
 
+// ============ Presets ============
 const presets = {
-  mgh2:       { n1: 1.38, d: 100, n2: 1.52, desc: 'MgF₂ / BK7 单层增透' },
-  tio2:       { n1: 2.30, d: 60,  n2: 1.52, desc: 'TiO₂ / BK7（高折射率对比）' },
-  soap:       { n1: 1.33, d: 320, n2: 1.00, desc: '肥皂泡（水膜/空气）' },
-  oil:        { n1: 1.47, d: 200, n2: 1.33, desc: '油膜/水面（折射率相近）' },
-  camera:     { n1: 1.38, d: 120, n2: 1.52, desc: '相机镜头 MgF₂（绿光消反→紫色反光）' },
-  si3n4:      { n1: 2.00, d: 69,  n2: 3.50, desc: 'Si₃N₄ / Si（完美匹配 R→0）' },
-  germanium:  { n1: 2.20, d: 63,  n2: 4.00, desc: 'ZnS / Ge（红外基底高R）' },
-  arMulti:    { n1: 1.23, d: 112, n2: 1.52, desc: '理想增透（n₁=√1.52≈1.23）' },
-  nearzero:   { n1: 1.52, d: 100, n2: 1.52, desc: 'n₁=n₂ 膜层消失（R=裸基底）' },
-  al2o3:      { n1: 1.76, d: 78,  n2: 1.52, desc: 'Al₂O₃（蓝宝石）/ 玻璃' },
-  ta2o5:      { n1: 2.10, d: 65,  n2: 1.46, desc: 'Ta₂O₅ / SiO₂' },
-  sio2_glass: { n1: 1.46, d: 94,  n2: 1.52, desc: 'SiO₂ / 玻璃（低折射率膜）' },
-  zns_si:     { n1: 2.35, d: 59,  n2: 3.42, desc: 'ZnS / Si（中波红外）' },
+  mgh2:       { layers: [{ n: 1.38, d: 100 }], nSub: 1.52, desc: 'MgF₂ / BK7 单层增透' },
+  arIdeal:    { layers: [{ n: 1.23, d: 112 }], nSub: 1.52, desc: '理想增透 n₁=√1.52≈1.23' },
+  soap:       { layers: [{ n: 1.33, d: 320 }], nSub: 1.00, desc: '肥皂泡（水膜/空气）' },
+  tio2:       { layers: [{ n: 2.30, d: 60 }], nSub: 1.52, desc: 'TiO₂ / BK7' },
+  zns_ge:     { layers: [{ n: 2.35, d: 59 }], nSub: 4.00, desc: 'ZnS / Ge 红外' },
+  ar2layer:   { layers: [{ n: 1.38, d: 100 }, { n: 2.10, d: 65 }], nSub: 1.52, desc: 'MgF₂/ZrO₂ 双层增透' },
+  vcoat:      { layers: [{ n: 1.38, d: 135 }, { n: 2.10, d: 35 }], nSub: 1.52, desc: '"V" 型窄带增透' },
+  hr3layer:   { layers: [{ n: 2.30, d: 60 }, { n: 1.46, d: 94 }, { n: 2.30, d: 60 }], nSub: 1.52, desc: '3层 LH 高反膜' },
+  filter5:    {
+    layers: [
+      { n: 2.30, d: 60 }, { n: 1.46, d: 94 },
+      { n: 2.30, d: 120 }, { n: 1.46, d: 94 },
+      { n: 2.30, d: 60 }
+    ],
+    nSub: 1.52,
+    desc: '5层宽光谱增透膜 (HLHLH) (HLHLH)'
+  },
 };
 
-// Preset dropdown
 document.getElementById('presetSelect').addEventListener('change', function() {
   const key = this.value;
   const p = presets[key];
   if (!p) return;
-  document.getElementById('n1').value = p.n1;
-  document.getElementById('thickness').value = p.d;
-  document.getElementById('n2').value = p.n2;
-  updateUI();
+  layers = p.layers.map(l => ({ n: l.n, d: l.d }));
+  document.getElementById('nSub').value = p.nSub;
+  rebuildLayerUI();
+  updateAll();
 });
 
-// Mode toggle
+// ============ Mode Toggle ============
 document.querySelectorAll('.mode-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const mode = btn.dataset.mode;
     currentMode = mode;
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    document.getElementById('thicknessScanLayer').style.display = mode === 'thickness' ? '' : 'none';
     if (mode === 'spectrum') {
       document.getElementById('chartTitle').textContent = '反射率 vs 波长';
       document.getElementById('chartSubtitle').textContent = '380 – 780 nm 可见光波段';
     } else {
       document.getElementById('chartTitle').textContent = '反射率 @550nm vs 膜厚';
-      document.getElementById('chartSubtitle').textContent = '看反射率如何随膜厚周期性变化';
+      document.getElementById('chartSubtitle').textContent = '选择扫描目标层，看反射率随膜厚周期性变化';
     }
     render();
   });
 });
 
-document.getElementById('n1').addEventListener('input', updateUI);
-document.getElementById('thickness').addEventListener('input', updateUI);
-document.getElementById('n2').addEventListener('input', updateUI);
+// ============ Substrate input ============
+document.getElementById('nSub').addEventListener('input', updateAll);
+// Substrate val click-to-edit
+(function() {
+  const nSubVal = document.getElementById('nSubVal');
+  nSubVal.addEventListener('click', function(e) {
+    e.stopPropagation();
+    const currentVal = parseFloat(document.getElementById('nSub').value);
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = 1.0; input.max = 5.0; input.step = 0.01;
+    input.value = currentVal;
+    Object.assign(input.style, {
+      width: '62px', height: '22px', padding: '1px 4px',
+      border: '1px solid #ff8a65', borderRadius: '4px',
+      background: '#0a0a0f', color: '#ff8a65',
+      fontSize: '10px', fontWeight: '600', textAlign: 'right',
+      outline: 'none', fontFamily: 'inherit'
+    });
+    this.replaceWith(input);
+    input.focus(); input.select();
+    const commit = () => {
+      let v = parseFloat(input.value);
+      if (isNaN(v)) v = currentVal;
+      v = Math.min(5.0, Math.max(1.0, v));
+      document.getElementById('nSub').value = v;
+      nSubVal.textContent = v.toFixed(2);
+      input.replaceWith(nSubVal);
+      updateAll();
+    };
+    input.addEventListener('blur', commit);
+    input.addEventListener('keydown', function(ev) {
+      if (ev.key === 'Enter') { ev.preventDefault(); commit(); }
+      if (ev.key === 'Escape') { input.value = currentVal; commit(); }
+    });
+  });
+})();
 
+// ============ Init ============
+// Defer UI build until canvas is ready (fixes iframe/headless timing issues)
+function initApp(attempt) {
+  attempt = attempt || 0;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  if ((rect.width <= 0 || rect.height <= 0) && attempt < 10) {
+    setTimeout(function() { initApp(attempt + 1); }, 100);
+    return;
+  }
+  resize();
+  rebuildLayerUI();
+  updateAll();
+}
 window.addEventListener('resize', resize);
-resize();
+initApp();
 </script>
 </body>
 </html>

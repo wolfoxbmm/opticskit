@@ -1,0 +1,35 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光学设计的思路很简单：给优化器一个评价函数和一组变量，让它找到最优解。你慷慨地加了30个约束——边缘厚度≥2mm、空气间隔≥0.5mm、总长≤80mm、后焦距≥15mm、每个面的曲率方向固定、非球面系数范围限定、玻璃限制在CDGM目录、直径不能超过Φ30mm……</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">然后Zemax跑完：评价函数下降了不到5%，MTF完全没改善。加了30个约束后，优化器在可行域里找不到更好的解——可行域本身被约束压缩到几乎为零了。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">约束把你逼进了角落</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">优化算法的本质是在多维参数空间中搜索评价函数的最小值。每个等式约束删除1个自由度（dimension），每个不等式约束在参数空间上切一刀（可行域缩小）。30个约束不是"方向指引"，是"把30面墙围在同一个小房间里"。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">一个6片透镜的光学系统：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 自由变量：曲率半径（6×2=12个面）+ 空气间隔和玻璃厚度（~11个）+ 玻璃类型选择（~6个折射率+色散自由度）+ 非球面系数（如果有）= 约30-40个设计自由度</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">加上你的30个约束后——有效自由度可能只剩几个。优化器只能在剩余维度里做微调，无法跳出当前设计的局部形态。它不是在"优化"——是在你画的栅栏里踱步。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">并非所有约束都是敌人</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">必要的物理约束：边缘/中心厚度≥加工极限、玻璃材料只能选自目录、总长和后焦距满足封装——这是结构性约束，不可去除。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">"伪必要"约束——你以为有必要但实际在压缩优化空间：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 限定曲率方向（"凸面必须朝外"）：镜片反转可能恰好消除像差</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 限定非球面系数范围：放宽系数≥±500，允许突然变陡的表面</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 每片透镜的空气间隔都设下限≥0.5mm：有些表面间可以在光瞳位置设为0</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">每删除一个"伪必要"约束，优化器就能多一个维度的自由空间搜寻解。经验规则：设计自由度数应至少是约束数的3-5倍（Kingslake &amp; Johnson, <em>Lens Design Fundamentals</em>, 2010）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">过度约束的症状</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">怎么判断你的约束太多了：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 评价函数在优化初期稍有改善后就停滞（约束边界形成"围墙"）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 拉格朗日乘子（Lagrange multipliers）显示大部分约束都处于活跃状态（在边界上）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 调松某个约束→评价函数立即显著改善——这个约束在此之前就是紧箍咒</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 蒙特卡罗公差分析显示MTF对变量极其敏感——因为可行域太窄，轻微变量偏离就出界</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">怎么办——约束"瘦身"策略</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 分优先级设约束：P0（物理极限/封装要求，不可松动）、P1（性能目标，可以挪动端点值）、P2（偏好，"好看的设计"，全部砍掉）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 用引导型约束替代硬边界：与其"MTF≥0.5"，不如在评价函数里对MTF加权重奖励——优化器可以权衡取舍</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 分阶段优化：第一阶段放开P1约束，仅保留P0，粗搜索全参数空间；第二阶段再收紧P1</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 检查每个活跃约束——它是不是真的"必须"？把边界值调松10-20%，看评价函数能否跃迁</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">结论</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">约束是优化器的"交通指示牌"，但30个指示牌在一个交叉路口就是迷惑。你的设计有～35个自由变量，被30个约束捆住，剩下约5个变量在那5维空间里找最优——它找得到的东西，并不比你自己手调的好多少。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的约束不是帮助优化器"找对方向"，而是把它的搜索空间压缩到几乎为零。少5个约束，MTF可能多0.1——放手让优化器自己跑。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>诊断建议</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 打开Zemax的"活跃约束列表"（Active Constraints），任何Lagrange Multiplier≠0的都是紧束缚</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 每次最多保留5个硬边界约束——其余转为权重式评价函数项</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 分阶段：粗优化（仅P0约束）→ 细优化（加P1约束）→ 公差分析</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 当优化停滞时，先删约束再看——永远不要同时加约束又调变量</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 玻璃类型约束用"替代"（Substitution）而非"固定"——让Hammer/Global Search自选玻璃</p></div>

@@ -1,0 +1,30 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">用InGaAs PIN光电二极管测1550nm脉冲激光器的"平均功率"，功率计读数稳定显示50mW。但当你用脉冲能量计直接测单脉冲能量——换算成峰值功率后，发现PIN探测器早在脉冲峰值时进入了饱和，实际平均功率应该是85mW。读数虚低了40%。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你读的是探测器输出的平均值，不是真实的脉冲峰值功率。而探测器在脉冲到达的瞬间已经饱和了——它给出的电流/电压上限被"压扁"了。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">光电二极管的饱和不是你想象的那样</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光电二极管的线性工作区受限于两个机制：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• <strong>载流子清除速度</strong>：PN结耗尽层内光生载流子必须被偏压电场扫出才能产生光电流。如果光子到达速率超过载流子被清除的速率→载流子在耗尽层内堆积→内建电场被屏蔽→光电流趋于饱和（Forrest, <em>J. Lightwave Technol.</em>, 1988）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• <strong>负载电阻压降</strong>：大光电流流过负载电阻→负载压降吃掉反向偏压→耗尽层变窄→响应度下降</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对于典型的Φ=1mm InGaAs PIN探测器：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 线性电流上限，50Ω负载：~5mA（对应5mW CW光功率@0.9A/W）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 饱和电流：~10mA（此时非线性&gt;5%）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">问题是：如果是脉冲激光——峰值10倍于平均值，你毫不知情。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">平均功率掩蔽了脉冲饱和</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">重复频率100kHz、脉宽100ns的脉冲激光（占空比1%），如果峰值功率100W，平均功率只有100mW。你读功率计：100mW。PIN光电流：90μA@0.9A/W——在5mA线性范围内，看起来完全没问题。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">但脉冲期间的光电流峰值：100W→光电流90mA——远超5mA线性上限，远超10mA饱和阈值。PIN在脉冲期间的90ns里完全饱和，光电流被压缩到~12mA。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结果：PIN输出的平均电流不是100μA（对应100mW真实平均功率），而是约60μA（对应约60mW）。你以为是60mW平均功率，实际是100mW。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">脉冲占空比越小、峰值功率越高，这个误差越大。Q开关激光器（脉宽~10ns，峰值MW级）用PIN测平均值——读数完全无意义。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">热释电 vs 光电二极管：为什么不能用错？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">脉冲能量测量应该用热释电探测器或积分球+APD方案。热释电探测器直接感应脉冲的瞬时温升→输出电压正比于脉冲能量，不依赖载流子清除——但响应速度慢（μs级），适合μs-ms脉宽。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光电二极管适合CW或高占空比脉冲（&gt;10%）。低占空比脉冲（&lt;1%）必须用热释电，否则饱和伪影无法避免。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">带宽也骗你</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">就算PIN没饱和，带宽不够也会"压扁"脉冲幅度。上升时间tr=0.35/BW——100MHz带宽→tr=3.5ns。10ns脉宽的脉冲经过100MHz探测器→峰值被展平约10-15%，脉冲形状变宽、峰值降低。频率响应引起的"伪饱和"叠加真正的载流子饱和效应，读数偏低幅度可达20-40%（Anderson &amp; McMurtry, <em>Proc. IEEE</em>, 1966）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">结论</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光电二极管测量的是光电流的时间平均值，不是脉冲光功率的包络。当脉冲峰值超过线性区上限，饱和效应无声地压缩了平均电流——而你读到的读数只是那个被压过的平均值。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">功率计上显示"平均功率50mW"，但脉冲峰值可能已经让探测器饱和了4倍。真正的平均功率85mW，40%的误差——全藏在"平均"两个字里。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>诊断建议</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 计算脉冲占空比和预估峰值电流：I_peak = P_avg/(占空比) × 响应度。与探测器规格书中的线性电流上限对比</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 如果I_peak &gt; 线性电流上限的30%，换用热释电探测器或衰减后测量</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 加衰减片（ND滤光片）降低入光功率到线性区，测后乘衰减倍数换算</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 4px 20px;text-indent:-12px;">• 用示波器直接观察脉冲波形——平顶（clip）现象就是饱和的铁证</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 16px 20px;text-indent:-12px;">• 占空比&lt;1%的脉冲绝对不能用光电二极管+平均功率直接换算</p></div>

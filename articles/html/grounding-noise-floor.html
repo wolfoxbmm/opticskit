@@ -1,0 +1,25 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的低噪声前置放大器板上密密麻麻铺满了铜地线，模拟地数字地分开，星形接地，所有教科书规则都遵守了。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结果底噪还是超标了——从10MHz开始，噪声高了整整10倍。换了接地方式也没用。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">地线不是"0欧姆电阻"</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">教科书告诉你：地线是参考电位点，电压为0。但这只是低频近似。<strong>在地线很长、信号频率变高时，地线不再是0电位——它有阻抗，而且是感性的。</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Z_gnd = R + jωL ≈ jωL（高频时）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">PCB上1cm铜走线的电感约10nH（来源：Bogatin, Signal and Power Integrity Simplified, 3rd ed., 2018）；@10MHz → X_L = 2π×10⁷×10⁻⁸ ≈ 0.63Ω。看起来不大，但在mA级电流下可产生μV级噪声电压。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这个感抗意味着：<strong>地线两端在高频时存在电位差</strong>。当两条不同路径的信号共地时，高频噪声会通过这个"地环路"耦合进敏感电路。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">三种典型的地线噪声场景</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>数字开关噪声污染模拟地</strong>：MCU或FPGA在翻转时，瞬态电流di/dt通过电源地线注入模拟地平面。di/dt越大，地线感抗产生的噪声电压越高。1mA的开关电流在10nH电感上产生@10MHz的噪声电压约62μV（来源：Bogatin, 2018）——对于12-bit ADC（LSB=244μV @2.5V基准）来说已经不可忽视。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>地环路天线效应</strong>：模拟电路板和电源之间形成的地环路，在空间电磁场（50Hz市电、射频环境）照射下，像天线一样接收干扰。最常见的"莫名其妙"噪声——没有信号输入，放大器输出也有噪声——往往来自这里。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>"单点接地"变成"多点串联"</strong>：教科书说星形接地最好，但如果星形接地的走线串联接入，每段走线都有阻抗，后级噪声会通过公共地阻抗耦合回前级——看似单点接地，实际上形成了串联地阻抗耦合。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">实测诊断：怎么判断是地线问题</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">遇到高频底噪超标，按以下步骤诊断：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>频谱分析</strong>：用频谱仪或示波器FFT观察噪声频谱。如果在特定频率（10MHz、100MHz）出现离散尖峰，很可能是数字开关或时钟通过地阻抗耦合进来的。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>接地引脚开路测试</strong>：将模拟地和电源地之间的连接断开，用一根短线分别从不同点连接，观察噪声变化。如果从某一点连接后噪声显著降低，说明问题在地线走线设计。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>地平面电压分布测量</strong>：用高阻探头（1MΩ示波器探头）在地平面不同点测量电位差。如果两点间有&gt;10mV的差异，说明地阻抗已不可忽略。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">怎么真正降低地线噪声</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>用完整地平面替代走线</strong>：4层以上PCB，第二层（完整铺铜）做地平面。完整平面在高频下的阻抗远低于走线（来源：Bogatin, 2018）（趋肤效应下电流沿最近路径流动而非单一走线），di/dt产生的噪声电压降低10–100倍。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>铁氧体磁珠隔离数字和模拟地</strong>：在模拟和数字电源入口串联磁珠（Bead），阻止高频数字开关噪声通过电源线传导到模拟区。注意：磁珠在直流时电阻只有几mΩ（来源：Murata/TDK铁氧体磁珠典型数据表），不会影响直流压降，但高频阻抗可达数百Ω。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>屏蔽罩切断地环路</strong>：对极低噪声前置放大器，金属屏蔽罩（接模拟地）包围敏感电路，同时将屏蔽罩与外部地隔离——避免外部环境电磁场在罩内电路和PCB地之间形成地环路。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>decoupling电容就近接地</strong>：每个IC的VCC引脚旁边就近放0.1μF+10nF去耦电容，电容另一端直接接到最近的过孔地平面（不要用长走线连到远处的地）。去耦电容的接地引脚和IC接地引脚之间的走线长度决定高频阻抗。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">地线噪声不是"接地不良"，而是<strong>高频下地线的感性阻抗和地环路耦合</strong>导致的系统性EMI问题。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">地线不是0欧姆电阻——它是有阻抗的导体。高频系统设计里，"接没接地"不重要，"地阻抗够不够低"才重要。</p></div>

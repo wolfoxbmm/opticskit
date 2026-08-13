@@ -1,0 +1,62 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Nyquist说采样率是带宽的2倍就够了。你的ADC规格书也这么写，实测200 MHz信号时SNR却只有34 dB——规格书明明写的80 dB。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">问题不在采样率，而在时钟抖动（jitter）。2倍过采样解决不了这个问题，高频信号比低频信号受jitter影响更大。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">2倍带宽为什么不够？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Nyquist采样定理告诉我们：<strong>采样率 ≥ 2 × 信号带宽</strong>，可以无失真重建信号。但这个结论有一个关键前提——<strong>ADC本身的采样时刻必须是精确的</strong>，即时钟抖动趋于零。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">实际ADC的时钟信号有抖动（jitter）——每次采样的时刻在理想时刻前后随机偏移Δt。这个Δt对高速信号的影响远比想象中大：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SNR_jitter = -20·log(2π · f_in · t_jitter)  [dB]</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">f_in：输入信号频率，t_jitter：时钟抖动均方根值（RMS jitter）（来源：Kester, Analog Devices Data Conversion Handbook, 2005）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>关键结论</strong>：抖动引起的SNR恶化与信号频率成正比。信号频率每增加10倍，jitter-SNR恶化20dB。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">一个公式说清楚jitter有多致命</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">（以下计算基于Kester, 2005的公式推导）假设ADC时钟抖动 RMS t_jitter = 1 ps（1皮秒 = 10⁻¹²秒）：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">输入信号频率</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">Jitter导致的SNR上限</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">等效ENOB（估算）</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">10 MHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~84 dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~13.7 bit</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">100 MHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~64 dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~10.3 bit</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">200 MHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~58 dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~9.4 bit</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">500 MHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~50 dB</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~8.0 bit</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">（来源：Kester, 2005；ENOB=（SNR-1.76）/6.02）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">一个标称<strong>14-bit ADC</strong>，时钟抖动1ps，测200 MHz信号时等效分辨率只剩<strong>9.4-bit</strong>——丢掉了近5个有效位，规格书上的14-bit无法兑现。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">工程选型：多高的采样率才够？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">工程中通常用<strong>有效过采样率（Effective Oversampling Ratio, EOSR）</strong>来评估采样率是否足够：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">经验规则（考虑jitter后）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>规则① 低频信号（f_in &lt; 10 MHz）</strong>：2倍~5倍过采样基本够用，jitter不是主要矛盾。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>规则② 中频信号（10~100 MHz）</strong>：至少10倍过采样。100MHz信号用1GSa/s（10倍），jitter-SNR≈44dB，勉强满足12-bit需求（需要72dB理论SNR）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>规则③ 高速ADC（&gt;200 MHz）</strong>：必须用低抖动时钟（t_jitter &lt; 200 fs）。此时采样率的选择与jitter budget共同决定ENOB。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>规则④ 评估jitter budget</strong>：根据目标ENOB反推允许的jitter：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">t_jitter ≤ 10^(-ENOB/20) / (2π · f_in · √2)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">要实现12-bit @ 200 MHz：t_jitter &lt; 200 fs（来源：Kester, 2005）</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;text-align:left;"><span style="border-left:4px solid #CC0000;padding-left:12px;">容易被忽视的三个工程陷阱</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>时钟抖动不是ADC的指标，是整个时钟链的指标</strong>。ADC规格书写的是"孔径抖动（aperture jitter）"（来源：Kester, 2005），但外部时钟分配电路、PLL、时钟缓冲器都会引入额外抖动。总抖动 = sqrt(ADC_jitter² + 时钟源_jitter² + 缓冲器_jitter²)。一个"时钟源jitter=500 fs + ADC标称100 fs"的组合，总抖动约510 fs，不是100 fs。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>过采样改善SNR有上限</strong>：过采样（OSR&gt;1）可以将量化噪声功率摊薄到更宽带宽，降低基带量化噪声。但jitter噪声不随OSR降低——因为jitter误差由信号瞬时斜率决定，与采样频率无关。当OSR足够大时，jitter噪声会"盖过"量化噪声，成为SNR的主要限制。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>高斜率窄脉冲信号比正弦波更怕jitter</strong>。公式SNR_jitter = -20log(2π·f_in·t_j)中的f_in是信号频率，但物理本质是信号在采样时刻的<strong>斜率（dV/dt）</strong>。脉冲信号尖峰处的斜率远高于同频率正弦波，jitter误差转化为更大的电压误差。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">采样率选型先算jitter budget：目标12-bit@200MHz → t_jitter&lt;200fs → 选低抖动时钟源+短PCB走线，采样率至少10倍过采样。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">规格书写ENOB=14bit @ 200MHz，但你测出来只有5bit？先去查你的时钟源jitter，再决定要不要骂ADC厂家。</p></div>

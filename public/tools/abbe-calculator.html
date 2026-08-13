@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="免费在线阿贝数计算器，内置 156 种 Schott 光学玻璃数据。支持 v_d 色散计算、部分色散 P_gF、ΔP 偏差分析和交互式 n_d-v_d 阿贝图。适用于光学设计选材与色散参数校核。">
+<title>阿贝数计算器 - OpticsKit</title>
+<style>
+:root{--bg-root:#F3F4F6;--bg-surface:#FFFFFF;--bg-elevated:#F9FAFB;--bg-hover:#F3F4F6;--border-subtle:#E5E7EB;--text-primary:#111827;--text-secondary:#4B5563;--text-tertiary:#6B7280;--text-disabled:#9CA3AF;--accent:#2563EB;--green:#059669;--amber:#D97706;--red:#DC2626;--shadow-sm:0 1px 2px rgba(0,0,0,0.04);--radius-sm:8px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg-root);color:var(--text-primary);-webkit-font-smoothing:antialiased;line-height:1.6}
+.app{max-width:1060px;margin:0 auto;padding:12px}
+.hd{text-align:center;margin-bottom:10px}
+.hd h1{font-size:18px;font-weight:700}
+.hd p{font-size:12px;color:var(--text-secondary)}
+.main-layout{display:flex;gap:10px;align-items:flex-start}
+.col-params{width:240px;flex-shrink:0;display:flex;flex-direction:column;gap:6px}
+.col-result{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:10px;box-shadow:var(--shadow-sm)}
+.search-box{position:relative}
+.search-box input{font-size:12px;padding:6px 28px 6px 10px;width:100%;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-elevated);outline:none;font-family:inherit}
+.search-box input:focus{border-color:var(--accent);background:var(--bg-surface)}
+.search-box .clear-btn{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:20px;height:20px;border:none;background:none;color:var(--text-disabled);font-size:14px;cursor:pointer;display:none;align-items:center;justify-content:center;border-radius:50%;line-height:1;padding:0}
+.search-box .clear-btn:hover{background:var(--bg-hover);color:var(--text-secondary)}
+.search-box .clear-btn.show{display:flex}
+.material-list{max-height:220px;overflow-y:auto;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);margin-top:4px}
+.material-list .item{font-size:11px;padding:4px 10px;cursor:pointer;border-bottom:1px solid var(--bg-hover);display:flex;justify-content:space-between;transition:background .1s}
+.material-list .item:hover{background:#EFF6FF}
+.material-list .item:last-child{border-bottom:none}
+.manual-input{border-top:1px solid var(--border-subtle);padding-top:6px;margin-top:6px}
+.manual-row{display:flex;align-items:center;gap:5px;margin-bottom:3px}
+.manual-row label{font-size:10px;color:var(--text-secondary);width:30px;text-align:right}
+.manual-row input{font-size:12px;padding:3px 6px;border:1px solid var(--border-subtle);border-radius:4px;background:var(--bg-elevated);outline:none;width:72px;font-family:inherit}
+.manual-row input:focus{border-color:var(--accent)}
+.manual-row span{font-size:10px;color:var(--text-tertiary);width:48px}
+.material-list .item span{font-size:10px;color:var(--text-primary)}
+.rslt-header{font-size:10px;font-weight:650;margin-bottom:6px;color:var(--text-secondary)}
+.abbe-hl{background:#EFF6FF;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:8px;display:flex;align-items:baseline;gap:16px;border-left:3px solid var(--accent)}
+.abbe-hl .v-num{font-size:28px;font-weight:700;color:var(--accent)}
+.abbe-hl .v-label{font-size:10px;color:var(--text-tertiary);margin-bottom:2px}
+.abbe-hl .v-val{font-size:15px;font-weight:700}
+.abbe-hl .v-class{font-size:10px;font-weight:600;padding:2px 10px;border-radius:999px;margin-left:auto;white-space:nowrap}
+.cl-crown{background:#ECFDF5;color:var(--green)}
+.cl-flint{background:#FEF3C7;color:var(--amber)}
+.cl-heavy{background:#FEE2E2;color:var(--red)}
+.r-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px 16px}
+.r-item{padding:5px 0;border-bottom:1px solid var(--bg-hover)}
+.r-item .rl{font-size:10px;color:var(--text-secondary)}
+.r-item .rv{font-size:14px;font-weight:700}
+.r-item .ru{font-size:10px;color:var(--text-tertiary)}
+.abbe-chart{width:100%;height:320px;background:var(--bg-elevated);border-radius:var(--radius-sm);border:1px solid var(--border-subtle);margin-top:6px}
+.abbe-chart canvas{width:100%;height:100%}
+.eq-note{font-size:10px;color:var(--text-tertiary);padding:8px 10px;background:var(--bg-elevated);border-radius:var(--radius-sm);line-height:1.8;margin-top:6px}
+@media(max-width:800px){.main-layout{flex-direction:column}.col-params{width:100%}.r-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd"><h1>阿贝数 & 色散计算器</h1><p>v_d · P_gF · ΔP · n_d–v_d 阿贝图 · 内置主流光学玻璃库</p></div>
+<div class="main-layout">
+<div class="col-params"><div class="card">
+<div class="search-box"><input type="text" id="searchInput" placeholder="搜索或输入玻璃名..." oninput="filterGlass();updateClearBtn()" onfocus="updateClearBtn()"><button class="clear-btn" id="clearBtn" onclick="clearGlass()" title="清除选择">✕</button></div>
+<div class="material-list" id="materialList"></div>
+<div class="manual-input">
+<div style="font-size:10px;font-weight:650;color:var(--text-secondary);margin-bottom:4px">手动输入折射率</div>
+<div class="manual-row"><label>n_d</label><input type="number" id="n_d" value="1.5168" step="0.00001" oninput="calcAbbe()"><span>587.6nm</span></div>
+<div class="manual-row"><label>n_F</label><input type="number" id="n_F" value="1.5224" step="0.00001" oninput="calcAbbe()"><span>486.1nm</span></div>
+<div class="manual-row"><label>n_C</label><input type="number" id="n_C" value="1.5143" step="0.00001" oninput="calcAbbe()"><span>656.3nm</span></div>
+<div class="manual-row"><label>n_g</label><input type="number" id="n_g" value="" step="0.00001" oninput="calcAbbe()" placeholder="可选"><span>435.8nm</span></div>
+</div></div></div>
+<div class="col-result">
+<div class="card" id="resultsCard"></div>
+<div class="card"><div class="rslt-header">📈 n_d – v_d 阿贝图</div><div class="abbe-chart"><canvas id="abbeCanvas"></canvas></div></div>
+</div></div></div>
+<script>
+const GLASS_DATA = [{"id": "glass_N-FK58", "name": "N-FK58", "nd": 1.456, "vd": 90.9}, {"id": "glass_N-FK51A", "name": "N-FK51A", "nd": 1.48656, "vd": 84.47}, {"id": "glass_N-PK52A", "name": "N-PK52A", "nd": 1.497, "vd": 81.61}, {"id": "glass_N-PK51", "name": "N-PK51", "nd": 1.52855, "vd": 76.98}, {"id": "glass_FK5HTi", "name": "FK5HTi", "nd": 1.48748, "vd": 70.47}, {"id": "glass_N-FK5", "name": "N-FK5", "nd": 1.48749, "vd": 70.41}, {"id": "glass_N-BK10", "name": "N-BK10", "nd": 1.49782, "vd": 66.95}, {"id": "glass_P-PK53", "name": "P-PK53", "nd": 1.5269, "vd": 66.22}, {"id": "glass_FK3", "name": "FK3", "nd": 1.4645, "vd": 65.77}, {"id": "glass_N-BK7", "name": "N-BK7", "nd": 1.5168, "vd": 64.17}, {"id": "glass_N-BK7HT", "name": "N-BK7HT", "nd": 1.5168, "vd": 64.17}, {"id": "glass_N-BK7HTSultra", "name": "N-BK7HTSultra", "nd": 1.5168, "vd": 64.17}, {"id": "glass_N-BK7HTi", "name": "N-BK7HTi", "nd": 1.5168, "vd": 64.17}, {"id": "glass_P-BK7", "name": "P-BK7", "nd": 1.5164, "vd": 64.06}, {"id": "glass_BK7G18", "name": "BK7G18", "nd": 1.51975, "vd": 63.58}, {"id": "glass_N-PSK53", "name": "N-PSK53", "nd": 1.62014, "vd": 63.48}, {"id": "glass_N-PSK3", "name": "N-PSK3", "nd": 1.55232, "vd": 63.46}, {"id": "glass_N-PSK53A", "name": "N-PSK53A", "nd": 1.618, "vd": 63.39}, {"id": "glass_N-SK5", "name": "N-SK5", "nd": 1.58913, "vd": 61.27}, {"id": "glass_N-SK5HTi", "name": "N-SK5HTi", "nd": 1.58913, "vd": 61.27}, {"id": "glass_N-ZK7", "name": "N-ZK7", "nd": 1.50847, "vd": 61.19}, {"id": "glass_P-SK58A", "name": "P-SK58A", "nd": 1.58913, "vd": 61.15}, {"id": "glass_N-ZK7A", "name": "N-ZK7A", "nd": 1.50805, "vd": 61.04}, {"id": "glass_N-SK11", "name": "N-SK11", "nd": 1.56384, "vd": 60.8}, {"id": "glass_N-SK14", "name": "N-SK14", "nd": 1.60311, "vd": 60.6}, {"id": "glass_K7", "name": "K7", "nd": 1.51112, "vd": 60.41}, {"id": "glass_N-SK16", "name": "N-SK16", "nd": 1.62041, "vd": 60.32}, {"id": "glass_N-LAK21", "name": "N-LAK21", "nd": 1.64049, "vd": 60.1}, {"id": "glass_N-BAK2", "name": "N-BAK2", "nd": 1.53996, "vd": 59.71}, {"id": "glass_P-SK57", "name": "P-SK57", "nd": 1.587, "vd": 59.6}, {"id": "glass_P-SK57Q1", "name": "P-SK57Q1", "nd": 1.586, "vd": 59.5}, {"id": "glass_N-K5", "name": "N-K5", "nd": 1.52249, "vd": 59.48}, {"id": "glass_N-SK4", "name": "N-SK4", "nd": 1.61272, "vd": 58.63}, {"id": "glass_N-LAK7", "name": "N-LAK7", "nd": 1.6516, "vd": 58.52}, {"id": "glass_N-SK15", "name": "N-SK15", "nd": 1.62296, "vd": 58.02}, {"id": "glass_P-SK60", "name": "P-SK60", "nd": 1.61035, "vd": 57.9}, {"id": "glass_N-BAK1", "name": "N-BAK1", "nd": 1.5725, "vd": 57.55}, {"id": "glass_N-SK10", "name": "N-SK10", "nd": 1.62278, "vd": 56.98}, {"id": "glass_K5G20", "name": "K5G20", "nd": 1.52344, "vd": 56.76}, {"id": "glass_N-SK2", "name": "N-SK2", "nd": 1.60738, "vd": 56.65}, {"id": "glass_N-SK2HT", "name": "N-SK2HT", "nd": 1.60738, "vd": 56.65}, {"id": "glass_K10", "name": "K10", "nd": 1.50137, "vd": 56.41}, {"id": "glass_N-BAK4", "name": "N-BAK4", "nd": 1.56883, "vd": 55.98}, {"id": "glass_N-BAK4HT", "name": "N-BAK4HT", "nd": 1.56883, "vd": 55.98}, {"id": "glass_N-LAK22", "name": "N-LAK22", "nd": 1.65113, "vd": 55.89}, {"id": "glass_N-LAK14", "name": "N-LAK14", "nd": 1.6968, "vd": 55.41}, {"id": "glass_N-LAK12", "name": "N-LAK12", "nd": 1.6779, "vd": 55.2}, {"id": "glass_LAK9G15", "name": "LAK9G15", "nd": 1.69064, "vd": 54.76}, {"id": "glass_N-LAK9", "name": "N-LAK9", "nd": 1.691, "vd": 54.71}, {"id": "glass_N-LAK34", "name": "N-LAK34", "nd": 1.72916, "vd": 54.5}, {"id": "glass_N-KZFS2", "name": "N-KZFS2", "nd": 1.55836, "vd": 54.01}, {"id": "glass_N-BALF4", "name": "N-BALF4", "nd": 1.57956, "vd": 53.87}, {"id": "glass_N-LAK8", "name": "N-LAK8", "nd": 1.713, "vd": 53.83}, {"id": "glass_N-BALF5", "name": "N-BALF5", "nd": 1.54739, "vd": 53.63}, {"id": "glass_N-SSK2", "name": "N-SSK2", "nd": 1.62229, "vd": 53.27}, {"id": "glass_P-LAK35", "name": "P-LAK35", "nd": 1.6935, "vd": 53.2}, {"id": "glass_N-LAK33B", "name": "N-LAK33B", "nd": 1.755, "vd": 52.3}, {"id": "glass_N-LAK33A", "name": "N-LAK33A", "nd": 1.75393, "vd": 52.27}, {"id": "glass_N-KF9", "name": "N-KF9", "nd": 1.52346, "vd": 51.54}, {"id": "glass_N-SSK5", "name": "N-SSK5", "nd": 1.65844, "vd": 50.88}, {"id": "glass_N-LAK28", "name": "N-LAK28", "nd": 1.74429, "vd": 50.77}, {"id": "glass_N-LAK10", "name": "N-LAK10", "nd": 1.72003, "vd": 50.62}, {"id": "glass_N-SSK20", "name": "N-SSK20", "nd": 1.62568, "vd": 50.2}, {"id": "glass_N-SSK8", "name": "N-SSK8", "nd": 1.61773, "vd": 49.83}, {"id": "glass_N-LAF34", "name": "N-LAF34", "nd": 1.7725, "vd": 49.62}, {"id": "glass_N-LAF35", "name": "N-LAF35", "nd": 1.7433, "vd": 49.4}, {"id": "glass_BAFN6", "name": "BAFN6", "nd": 1.589, "vd": 48.45}, {"id": "glass_N-LAF3", "name": "N-LAF3", "nd": 1.717, "vd": 47.96}, {"id": "glass_N-LAF21", "name": "N-LAF21", "nd": 1.788, "vd": 47.49}, {"id": "glass_N-BAF10", "name": "N-BAF10", "nd": 1.67003, "vd": 47.11}, {"id": "glass_N-BAF3", "name": "N-BAF3", "nd": 1.58272, "vd": 46.64}, {"id": "glass_N-BAF52", "name": "N-BAF52", "nd": 1.60863, "vd": 46.6}, {"id": "glass_N-LASF44", "name": "N-LASF44", "nd": 1.8042, "vd": 46.5}, {"id": "glass_LLF1HTi", "name": "LLF1HTi", "nd": 1.54815, "vd": 45.9}, {"id": "glass_LLF1", "name": "LLF1", "nd": 1.54814, "vd": 45.75}, {"id": "glass_P-LAF37", "name": "P-LAF37", "nd": 1.7555, "vd": 45.66}, {"id": "glass_N-BAF51", "name": "N-BAF51", "nd": 1.65224, "vd": 44.96}, {"id": "glass_N-LAF2", "name": "N-LAF2", "nd": 1.74397, "vd": 44.85}, {"id": "glass_N-KZFS4", "name": "N-KZFS4", "nd": 1.61336, "vd": 44.49}, {"id": "glass_N-KZFS4HT", "name": "N-KZFS4HT", "nd": 1.61336, "vd": 44.49}, {"id": "glass_N-LAF33", "name": "N-LAF33", "nd": 1.78582, "vd": 44.05}, {"id": "glass_N-BAF4", "name": "N-BAF4", "nd": 1.60568, "vd": 43.72}, {"id": "glass_N-LASF41", "name": "N-LASF41", "nd": 1.83501, "vd": 43.13}, {"id": "glass_N-KZFS11", "name": "N-KZFS11", "nd": 1.63775, "vd": 42.41}, {"id": "glass_N-LAF36", "name": "N-LAF36", "nd": 1.79952, "vd": 42.37}, {"id": "glass_P-LASF51", "name": "P-LASF51", "nd": 1.81, "vd": 40.93}, {"id": "glass_P-LASF47", "name": "P-LASF47", "nd": 1.8061, "vd": 40.9}, {"id": "glass_LF5HTi", "name": "LF5HTi", "nd": 1.58144, "vd": 40.89}, {"id": "glass_LF5", "name": "LF5", "nd": 1.58144, "vd": 40.85}, {"id": "glass_LF5G15", "name": "LF5G15", "nd": 1.58397, "vd": 40.83}, {"id": "glass_N-LASF31A", "name": "N-LASF31A", "nd": 1.883, "vd": 40.76}, {"id": "glass_N-LASF43", "name": "N-LASF43", "nd": 1.8061, "vd": 40.61}, {"id": "glass_P-LASF50", "name": "P-LASF50", "nd": 1.8086, "vd": 40.46}, {"id": "glass_LF5G19", "name": "LF5G19", "nd": 1.59655, "vd": 39.89}, {"id": "glass_N-KZFS5", "name": "N-KZFS5", "nd": 1.65412, "vd": 39.7}, {"id": "glass_KZFSN5", "name": "KZFSN5", "nd": 1.65412, "vd": 39.63}, {"id": "glass_N-BASF64", "name": "N-BASF64", "nd": 1.704, "vd": 39.38}, {"id": "glass_F5", "name": "F5", "nd": 1.60342, "vd": 38.03}, {"id": "glass_N-LASF40", "name": "N-LASF40", "nd": 1.83404, "vd": 37.3}, {"id": "glass_F2G12", "name": "F2G12", "nd": 1.62072, "vd": 36.56}, {"id": "glass_N-F2", "name": "N-F2", "nd": 1.62005, "vd": 36.43}, {"id": "glass_F2", "name": "F2", "nd": 1.62004, "vd": 36.37}, {"id": "glass_F2HT", "name": "F2HT", "nd": 1.62004, "vd": 36.37}, {"id": "glass_F2HTi", "name": "F2HTi", "nd": 1.62004, "vd": 36.37}, {"id": "glass_KZFS12", "name": "KZFS12", "nd": 1.696, "vd": 36.29}, {"id": "glass_N-BASF2", "name": "N-BASF2", "nd": 1.66446, "vd": 36.0}, {"id": "glass_N-LASF45", "name": "N-LASF45", "nd": 1.80107, "vd": 34.97}, {"id": "glass_N-LASF45HT", "name": "N-LASF45HT", "nd": 1.80107, "vd": 34.97}, {"id": "glass_LAFN7", "name": "LAFN7", "nd": 1.7495, "vd": 34.95}, {"id": "glass_N-LAF7", "name": "N-LAF7", "nd": 1.7495, "vd": 34.82}, {"id": "glass_N-KZFS8", "name": "N-KZFS8", "nd": 1.72047, "vd": 34.7}, {"id": "glass_SF2", "name": "SF2", "nd": 1.64769, "vd": 33.85}, {"id": "glass_N-SF2", "name": "N-SF2", "nd": 1.64769, "vd": 33.82}, {"id": "glass_N-SF19", "name": "N-SF19", "nd": 1.66679, "vd": 33.12}, {"id": "glass_N-SF5", "name": "N-SF5", "nd": 1.67271, "vd": 32.25}, {"id": "glass_SF5", "name": "SF5", "nd": 1.6727, "vd": 32.21}, {"id": "glass_N-LASF9", "name": "N-LASF9", "nd": 1.85025, "vd": 32.17}, {"id": "glass_N-LASF9HT", "name": "N-LASF9HT", "nd": 1.85025, "vd": 32.17}, {"id": "glass_N-LASF46A", "name": "N-LASF46A", "nd": 1.90366, "vd": 31.32}, {"id": "glass_N-LASF46B", "name": "N-LASF46B", "nd": 1.90366, "vd": 31.32}, {"id": "glass_N-SF8", "name": "N-SF8", "nd": 1.68894, "vd": 31.31}, {"id": "glass_P-SF8", "name": "P-SF8", "nd": 1.68893, "vd": 31.25}, {"id": "glass_N-LASF55", "name": "N-LASF55", "nd": 1.9538, "vd": 30.56}, {"id": "glass_N-SF64", "name": "N-SF64", "nd": 1.70591, "vd": 30.23}, {"id": "glass_N-SF15", "name": "N-SF15", "nd": 1.69892, "vd": 30.2}, {"id": "glass_N-SF1", "name": "N-SF1", "nd": 1.71736, "vd": 29.62}, {"id": "glass_SF1", "name": "SF1", "nd": 1.71736, "vd": 29.51}, {"id": "glass_P-SF69", "name": "P-SF69", "nd": 1.7225, "vd": 29.23}, {"id": "glass_SCHOTT_RealView", "name": "SCHOTT RealView 2.0", "nd": 2.00102, "vd": 29.14}, {"id": "glass_N-SF10", "name": "N-SF10", "nd": 1.72828, "vd": 28.53}, {"id": "glass_SF10", "name": "SF10", "nd": 1.72825, "vd": 28.41}, {"id": "glass_SF3", "name": "SF3", "nd": 1.74, "vd": 28.2}, {"id": "glass_SF4", "name": "SF4", "nd": 1.7552, "vd": 27.58}, {"id": "glass_N-SF4", "name": "N-SF4", "nd": 1.75513, "vd": 27.38}, {"id": "glass_N-SF14", "name": "N-SF14", "nd": 1.76182, "vd": 26.53}, {"id": "glass_N-SF56", "name": "N-SF56", "nd": 1.7847, "vd": 26.1}, {"id": "glass_SF56A", "name": "SF56A", "nd": 1.7847, "vd": 26.08}, {"id": "glass_SF11", "name": "SF11", "nd": 1.78472, "vd": 25.76}, {"id": "glass_N-SF11", "name": "N-SF11", "nd": 1.78472, "vd": 25.68}, {"id": "glass_SF6", "name": "SF6", "nd": 1.80518, "vd": 25.43}, {"id": "glass_SF6HT", "name": "SF6HT", "nd": 1.80518, "vd": 25.43}, {"id": "glass_SFL6", "name": "SFL6", "nd": 1.80518, "vd": 25.39}, {"id": "glass_N-SF6", "name": "N-SF6", "nd": 1.80518, "vd": 25.36}, {"id": "glass_N-SF6HT", "name": "N-SF6HT", "nd": 1.80518, "vd": 25.36}, {"id": "glass_N-SF6HTultra", "name": "N-SF6HTultra", "nd": 1.80518, "vd": 25.36}, {"id": "glass_SF6G05", "name": "SF6G05", "nd": 1.80906, "vd": 25.27}, {"id": "glass_SF57", "name": "SF57", "nd": 1.84666, "vd": 23.83}, {"id": "glass_SF57HT", "name": "SF57HT", "nd": 1.84666, "vd": 23.83}, {"id": "glass_SF57HTultra", "name": "SF57HTultra", "nd": 1.84666, "vd": 23.83}, {"id": "glass_N-SF57", "name": "N-SF57", "nd": 1.84666, "vd": 23.78}, {"id": "glass_N-SF57HT", "name": "N-SF57HT", "nd": 1.84666, "vd": 23.78}, {"id": "glass_N-SF57HTultra", "name": "N-SF57HTultra", "nd": 1.84666, "vd": 23.78}, {"id": "glass_SFL57", "name": "SFL57", "nd": 1.84666, "vd": 23.62}, {"id": "glass_P-SF67", "name": "P-SF67", "nd": 1.9068, "vd": 21.4}, {"id": "glass_P-SF68", "name": "P-SF68", "nd": 2.0052, "vd": 21.0}, {"id": "glass_N-SF66", "name": "N-SF66", "nd": 1.92286, "vd": 20.88}];
+// 156 glasses
+
+let GLASS_DB = GLASS_DATA.map(g => ({...g, formula: ""}));
+let curGlass = null;
+
+function $(id){return document.getElementById(id)}
+function fmt(v,d){if(v==null||isNaN(v))return'—';return Number(v).toFixed(d!=null?d:2)}
+
+// Glass family tags based on name prefix (Schott convention)
+function glassFamily(name){
+  const n=name;
+  if(/^(?:N-|P-)?(?:FK|PK|PSK|BK|K\d|ZK|SK|SSK|BAK|LAK)/.test(n)) return['冕牌','cl-crown'];
+  if(/^(?:N-|P-)?(?:KZFS|KZFSN|LLF|LF|BALF|BAF|KF|F\d)/.test(n)) return['火石','cl-flint'];
+  if(/^(?:N-|P-)?(?:SF|SFL|LAF|LASF|BASF|LAFN)/.test(n)) return['重火石','cl-heavy'];
+  return ['',''];
+}
+
+function initGlasses(){
+  // GLASS_DB already populated with nd/vd from inline GLASS_DATA
+  renderGlassList();
+  calcAbbe();
+}
+
+function renderGlassList(filter){
+  const el=$('materialList');
+  let list=GLASS_DB;
+  if(filter){
+    const f=filter.toLowerCase();
+    list=GLASS_DB
+      .filter(g=>g.name.toLowerCase().includes(f)||g.id.toLowerCase().includes(f))
+      .map(g=>{
+        const nl=g.name.toLowerCase();
+        let score=0;
+        if(nl===f)score=100;              // exact match
+        else if(nl.startsWith(f))score=80; // prefix match
+        else if(nl.includes('-'+f))score=60; // segment match (e.g. N-SF6 matches SF6)
+        else score=50;                     // substring match
+        return{g,score};
+      })
+      .sort((a,b)=>b.score-a.score||a.g.name.localeCompare(b.g.name))
+      .map(x=>x.g);
+  }
+  if(!list.length){el.innerHTML='<div class="item" style="color:var(--text-disabled);justify-content:center">无匹配玻璃</div>';return}
+  el.innerHTML=list.map(g=>{
+    const a=curGlass&&curGlass.id===g.id?'background:#EFF6FF;':'';
+    const vdText=g.vd?'v_d='+fmt(g.vd,1):'加载中...';
+    const [fam,fc]=glassFamily(g.name);
+    const famTag=fam?`<span style="font-size:9px;color:var(--text-disabled);margin:0 4px">${fam}</span>`:'';
+    return `<div class="item" style="${a}" onclick="selectGlass('${g.id}')"><span style="font-weight:500">${g.name}${famTag}</span><span style="color:var(--text-tertiary);font-size:10px">${vdText}</span></div>`;
+  }).join('');
+}
+
+function filterGlass(){renderGlassList($('searchInput').value.trim()||null)}
+
+function updateClearBtn(){
+  const v=$('searchInput').value.trim();
+  $('clearBtn').classList.toggle('show',v.length>0);
+}
+
+function clearGlass(){
+  curGlass=null;
+  $('searchInput').value='';
+  $('clearBtn').classList.remove('show');
+  renderGlassList();
+  // Reset to default demo values
+  $('n_d').value='1.5168';$('n_F').value='1.5224';$('n_C').value='1.5143';$('n_g').value='';
+  calcAbbe();
+}
+
+// Keyboard navigation for glass list
+let kbIdx=-1;
+$('searchInput').addEventListener('keydown',function(e){
+  const items=$('materialList').querySelectorAll('.item');
+  if(e.key==='ArrowDown'){e.preventDefault();kbIdx=Math.min(kbIdx+1,items.length-1);highlightKb(items);return}
+  if(e.key==='ArrowUp'){e.preventDefault();kbIdx=Math.max(kbIdx-1,0);highlightKb(items);return}
+  if(e.key==='Enter'){if(kbIdx>=0&&items[kbIdx]){items[kbIdx].click();kbIdx=-1;return}}
+  kbIdx=-1;
+});
+function highlightKb(items){items.forEach((it,i)=>{it.style.background=i===kbIdx?'#EFF6FF':(curGlass&&it.onclick&&it.textContent.includes(curGlass.name)?'#EFF6FF':'')})}
+
+async function selectGlass(id){
+  const g = GLASS_DB.find(x => x.id === id);
+  if(!g || !g.nd) return;
+  curGlass = g;
+  $('searchInput').value = g.name;
+  updateClearBtn();
+  // Calculate nF, nC from nd and vd
+  $('n_d').value = fmt(g.nd, 5);
+  const delta = (g.nd - 1) / g.vd;
+  $('n_F').value = fmt(g.nd + delta * 0.55, 5);
+  $('n_C').value = fmt(g.nd - delta * 0.45, 5);
+  $('n_g').value = '';
+  
+  renderGlassList($('searchInput').value.trim()||null);
+  calcAbbe();
+}
+
+function calcAbbe(){
+  const nd = parseFloat($('n_d').value)||0, nF = parseFloat($('n_F').value)||0;
+  const nC = parseFloat($('n_C').value)||0, ng = parseFloat($('n_g').value)||null;
+  
+  if(nd<=1||nF<=1||nC<=1){$('resultsCard').innerHTML='<div style="padding:20px;text-align:center;color:var(--text-disabled)">请输入有效折射率（n &gt; 1）</div>';drawChart(null);return}
+  const delta = nF - nC;
+  if(delta<=0){$('resultsCard').innerHTML='<div style="padding:20px;text-align:center;color:var(--text-disabled)">⚠ n_F 需大于 n_C（正常色散材料）</div>';drawChart(null);return}
+  
+  const vd = (nd-1)/delta;
+  const PgF = ng ? (ng-nF)/delta : null;
+  const PgFn = 0.6438 - 0.001682*vd;
+  const deltaP = PgF!==null ? PgF-PgFn : null;
+  
+  let gc,cs;
+  if(vd>=55&&nd<1.60){gc='冕牌';cs='cl-crown'}
+  else if(vd>=50&&nd<1.60){gc='轻火石';cs='cl-crown'}
+  else if(vd>=35){gc='火石';cs='cl-flint'}
+  else{gc='重火石';cs='cl-heavy'}
+  
+  let h = '<div class="rslt-header">📊 色散计算结果</div>';
+  h += `<div class="abbe-hl"><div><div class="v-label">阿贝数 v<sub>d</sub></div><div class="v-num">${fmt(vd,1)}</div></div><div style="flex:1"><div class="v-label">n<sub>d</sub></div><div class="v-val">${fmt(nd,4)}</div></div><div style="flex:1"><div class="v-label">n<sub>F</sub>−n<sub>C</sub></div><div class="v-val">${fmt(delta,5)}</div></div><span class="v-class ${cs}">${gc}</span></div>`;
+  
+  h += '<div class="r-grid">';
+  h += `<div class="r-item"><div class="rl">n<sub>d</sub></div><div class="rv">${fmt(nd,5)}</div><div class="ru">d线 587.6nm (He)</div></div>`;
+  h += `<div class="r-item"><div class="rl">n<sub>F</sub></div><div class="rv">${fmt(nF,5)}</div><div class="ru">F线 486.1nm (H)</div></div>`;
+  h += `<div class="r-item"><div class="rl">n<sub>C</sub></div><div class="rv">${fmt(nC,5)}</div><div class="ru">C线 656.3nm (H)</div></div>`;
+  h += `<div class="r-item"><div class="rl">n<sub>F</sub>−n<sub>C</sub></div><div class="rv">${fmt(delta,5)}</div><div class="ru">主色散（中部色散）</div></div>`;
+  h += `<div class="r-item"><div class="rl">阿贝数 v<sub>d</sub></div><div class="rv">${fmt(vd,2)}</div><div class="ru">(n<sub>d</sub>−1)/(n<sub>F</sub>−n<sub>C</sub>)</div></div>`;
+  
+  if(PgF!==null){
+    h += `<div class="r-item"><div class="rl">部分色散 P<sub>gF</sub></div><div class="rv">${fmt(PgF,4)}</div><div class="ru">(n<sub>g</sub>−n<sub>F</sub>)/(n<sub>F</sub>−n<sub>C</sub>)</div></div>`;
+    h += `<div class="r-item"><div class="rl">正常线 P<sub>gF</sub></div><div class="rv">${fmt(PgFn,4)}</div><div class="ru">Schott正常色散线</div></div>`;
+    h += `<div class="r-item"><div class="rl">ΔP</div><div class="rv" style="color:${Math.abs(deltaP)>0.01?'var(--red)':'var(--green)'}">${fmt(deltaP,5)}</div><div class="ru">${Math.abs(deltaP)>0.01?'⚠异常色散':'✅正常色散'}</div></div>`;
+  }
+  h += '</div>';
+  
+  // Formula reference + disclaimer
+  h += `<div class="eq-note"><b>参考公式 & 玻璃分类</b><br>阿贝数：v<sub>d</sub> = (n<sub>d</sub> − 1) / (n<sub>F</sub> − n<sub>C</sub>)<br>部分色散：P<sub>gF</sub> = (n<sub>g</sub> − n<sub>F</sub>) / (n<sub>F</sub> − n<sub>C</sub>)<br>正常线(Schott)：P<sub>gF</sub> ≈ 0.6438 − 0.001682·v<sub>d</sub><br>冕牌 v<sub>d</sub>≥55 | 火石 35≤v<sub>d</sub>&lt;55 | 重火石 v<sub>d</sub>&lt;35<br>⚠ 免责声明：选玻璃时 n<sub>F</sub>/n<sub>C</sub> 由 v<sub>d</sub> 反推估算（偏差 ~±0.001），精确值请参考玻璃厂商 datasheet。计算结果仅供参考，不构成工程设计依据。</div>`;
+  
+  $('resultsCard').innerHTML = h;
+  
+  // Collect all glasses with data for chart
+  const chartPoints = GLASS_DB.filter(g => g.nd && g.vd).map(g => ({nd:g.nd, vd:g.vd, name:g.name, active:curGlass&&g.id===curGlass.id}));
+  drawChart({nd, vd, name:curGlass?curGlass.name:'手动输入', allGlasses:chartPoints});
+}
+
+function drawChart(pt){
+  const c=$('abbeCanvas'),r=c.parentElement.getBoundingClientRect();
+  c.width=r.width*2;c.height=320*2;c.style.width=r.width+'px';c.style.height='320px';
+  const ct=c.getContext('2d');ct.scale(2,2);
+  const W=r.width,H=320,pad={t:20,r:35,b:40,l:50},pw=W-pad.l-pad.r,ph=H-pad.t-pad.b;
+  const xMin=20,xMax=100,yMin=1.38,yMax=2.10;
+  function xf(v){return pad.l+(v-xMin)/(xMax-xMin)*pw}
+  function yf(v){return pad.t+(yMax-v)/(yMax-yMin)*ph}
+  
+  ct.fillStyle='#F9FAFB';ct.fillRect(0,0,W,H);
+  
+  // Glass region shading
+  ct.fillStyle='rgba(37,99,235,0.04)';ct.beginPath();
+  ct.moveTo(xf(100),yf(1.42));ct.lineTo(xf(85),yf(1.44));ct.lineTo(xf(70),yf(1.49));
+  ct.lineTo(xf(55),yf(1.55));ct.lineTo(xf(40),yf(1.65));
+  ct.lineTo(xf(30),yf(1.78));ct.lineTo(xf(20),yf(2.05));ct.lineTo(xf(20),yf(1.42));ct.fill();
+  
+  // Grid
+  ct.strokeStyle='#E5E7EB';ct.lineWidth=0.5;
+  for(let v=20;v<=100;v+=20){ct.beginPath();ct.moveTo(xf(v),pad.t);ct.lineTo(xf(v),pad.t+ph);ct.stroke()}
+  for(let n=1.4;n<=2.1;n+=0.1){ct.beginPath();ct.moveTo(pad.l,yf(n));ct.lineTo(pad.l+pw,yf(n));ct.stroke()}
+  
+  // Region labels
+  ct.fillStyle='rgba(107,114,128,0.18)';ct.font='10px Inter,sans-serif';ct.textAlign='center';
+  ct.fillText('冕牌玻璃 (Crown)',xf(75),yf(1.46));
+  ct.fillText('火石玻璃 (Flint)',xf(45),yf(1.56));
+  ct.fillText('重火石 (SF)',xf(28),yf(1.72));
+  
+  // Plot all loaded glasses as small dots
+  if(pt && pt.allGlasses){
+    pt.allGlasses.forEach(g => {
+      if(g.vd>=xMin&&g.vd<=xMax&&g.nd>=yMin&&g.nd<=yMax){
+        ct.beginPath();
+        ct.arc(xf(g.vd),yf(g.nd), g.active?5:1.5, 0, Math.PI*2);
+        ct.fillStyle = g.active ? '#2563EB' : 'rgba(156,163,175,0.55)';
+        ct.fill();
+        if(g.active){
+          ct.strokeStyle='#fff';ct.lineWidth=2;ct.stroke();
+        }
+      }
+    });
+  }
+  
+  // Axes
+  ct.fillStyle='#4B5563';ct.font='10px Inter,sans-serif';ct.textAlign='center';
+  for(let v=20;v<=100;v+=20)ct.fillText(v,xf(v),pad.t+ph+15);
+  ct.fillText('阿贝数 v_d ← 低色散                    高色散 →',pad.l+pw/2,pad.t+ph+32);
+  ct.textAlign='right';
+  for(let n=1.4;n<=2.1;n+=0.2)ct.fillText(n.toFixed(1),pad.l-5,yf(n)+3);
+  ct.save();ct.translate(12,pad.t+ph/2);ct.rotate(-Math.PI/2);ct.textAlign='center';
+  ct.fillText('折射率 n_d →',0,0);ct.restore();
+  ct.strokeStyle='#9CA3AF';ct.lineWidth=1;
+  ct.beginPath();ct.moveTo(pad.l,pad.t);ct.lineTo(pad.l,pad.t+ph);ct.stroke();
+  ct.beginPath();ct.moveTo(pad.l,pad.t+ph);ct.lineTo(pad.l+pw,pad.t+ph);ct.stroke();
+  
+  // Label active point
+  if(pt&&pt.nd>0&&pt.vd>0){
+    const px=xf(pt.vd),py=yf(pt.nd);
+    ct.fillStyle='#111827';ct.font='600 11px Inter,sans-serif';ct.textAlign='left';
+    ct.fillText(pt.name,px+10,py-8);
+    ct.fillStyle='#4B5563';ct.font='10px Inter,sans-serif';
+    ct.fillText(`n_d=${fmt(pt.nd,4)}  v_d=${fmt(pt.vd,1)}`,px+10,py+6);
+  }
+}
+
+initGlasses();
+window.addEventListener('resize',()=>calcAbbe());
+</script></body></html>

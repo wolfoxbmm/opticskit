@@ -1,0 +1,49 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的FBG应变传感器标定后放了3个月，再测出来波长怎么漂了30pm（来源：FBG长期稳定性典型数据，Lindner et al., Meas. Sci. Technol. 2011）？你做了温度补偿，剩下的漂移是哪里来的？</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">FBG长期漂移是FBG自身老化+光纤蠕变+解调系统漂移三者的叠加。工程师往往只做温度补偿，忽视了最容易被忽视的解调系统漂移。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">FBG波长为什么会漂？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">FBG的布拉格波长由光栅周期和有效折射率决定：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">λ_B = 2n_eff Λ</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">λ_B: 布拉格波长 | n_eff: 有效折射率 | Λ: 光栅周期</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">任何改变n_eff或Λ的因素都会引起波长漂移，其中最显著的是<strong>温度</strong>和<strong>应变</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δλ/λ = (1 - p_e) · ε + (α + ξ) · ΔT</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">p_e≈0.22（有效光弹系数）| α≈0.55×10⁻⁶/°C | ξ≈7×10⁻⁶/°C（热光系数）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对于1550nm FBG：温度每变化1°C→波长漂移约<strong>10-13pm（来源：Othonos &amp; Kalli, Fiber Bragg Gratings, 1999）</strong>。这是FBG传感器的核心原理，但也是长期漂移的主要来源之一。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">长期漂移的三大来源</span></h2>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">来源</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">漂移量级</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">缓解措施</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">FBG应力松弛（老化）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">5-30pm（3-6个月）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">预老化处理（thermal anneal）</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光纤蠕变</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.1-1pm/年（来源：Lindner et al., 2011）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">选用金属涂覆光纤（铝或金）</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">解调光源漂移</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1-5pm（来源：典型FBG解调仪长期稳定性指标）⚠️</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">定期波长校准（最易被忽视！）</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>最容易被忽视的罪魁祸首：解调光源漂移。</strong>解调仪里的宽带光源（SLED或DFB）波长会随温度漂移，而很多工程师只关注FBG本身的温度补偿，完全没想到解调仪光源也是"隐形漂移源"。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么温度补偿做了还是漂？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">温度补偿的前提是：FBG和温度传感器感受到相同的温度变化。但在实际工程中，这个前提往往不成立：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>热滞后</strong>：参考FBG贴在结构表面，FBG传感器埋在里面，温度响应有时间差</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>动态温度梯度</strong>：温度补偿是针对静态温度的，动态温度变化中FBG和参考FBG的热膨胀不同步</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>应变-温度耦合</strong>：应变本身也会引起温度变化（压阻效应），导致交叉敏感问题</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">FBG长期漂移多因素叠加，温度补偿只是其中一环。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">FBG 30pm漂移的三层归因：温度系数贡献~10pm（1°C变化）、光纤蠕变贡献~3pm/3个月、解调系统漂移贡献~15pm（最大且最被忽视）。只做温度补偿只能消1/3，解调仪定期校准（每3个月用标准具标定）是关键。</p></div>

@@ -1,0 +1,87 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的OCT系统原来用ASE光源，换成SLED光源之后信噪比反而更差了——SLED噪声比ASE低25dB，但功率低了20dB，净SNR反而下降。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你以为是功率不够，加了放大器还是一样——其实问题在于你选错了光源类型。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">两种宽带光源的本质区别</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">在光纤传感和OCT系统中，ASE和SLED是两种最常见的宽带光源。名字听起来相似，但它们的物理机制和噪声特性完全不同。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>ASE（放大自发辐射）</strong>：EDFA或TDFA在无输入信号时的自发辐射输出，本质上是放大器噪声的体现。功率较高（+10~+20dBm），但光谱受增益介质限制，噪声相关性高。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>SLED（超辐射发光二极管）</strong>：大电流注入二极管产生的宽光谱非相干光源。光谱宽度更宽（&gt;60nm@1310nm，&gt;50nm@1550nm）（来源：SLED典型参数，各厂家数据表汇总），相干长度极短（~10-50μm）（来源：Drexler &amp; Fujimoto, Optical Coherence Tomography, 2nd ed., 2015），偏振度低（DOP&lt;5%）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">噪声特性：选错光源的根源</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这两种光源的噪声特性差异，是选型错误的根本原因：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">特性</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">ASE光源</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">SLED光源</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">功率</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">+10~+20dBm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-10~+5dBm</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光谱宽度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~30-50nm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&gt;50-80nm</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">偏振特性</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">偏振相关，两路独立</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">低偏振度（DOP&lt;5%）</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">RIN噪声</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-120~-140dBc/Hz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt;-145dBc/Hz</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">相干长度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~100μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~10-50μm</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">（来源：Drexler &amp; Fujimoto, 2015; Superlum/SLED典型数据表）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">ASE光源的偏振相关噪声是致命问题：在高增益光纤放大器中，放大后的自发辐射会形成两个正交的偏振分量，它们之间的相对相位随机变化，导致总功率噪声反而增加。对于偏振敏感的光纤干涉仪系统，这种噪声会直接降低相干探测的信噪比。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">OCT应用如何选择</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>眼底OCT（高分辨率要求）→ 选择SLED</strong>：宽光谱意味着更好的轴向分辨率（Δz ∝ λ²/Δλ），眼底成像通常需要&gt;50nm带宽。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>工业OCT（大深度范围）→ 选择ASE</strong>：高功率输出意味着更深的穿透深度，功率预算更宽裕。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δz ≈ 0.44 · λ² / Δλ</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">OCT轴向分辨率公式：λ为中心波长，Δλ为光谱带宽。带宽越宽，分辨率越高（来源：Drexler &amp; Fujimoto, 2015）</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">实测对比数据</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以1550nm波段、50nm带宽的实测数据为例：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">参数</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">SLED</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">ASE</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">RIN（宽频带）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt;-145dBc/Hz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">-120~-140dBc/Hz</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">相干长度</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~30μm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~100μm</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">偏振噪声</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">极低</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">显著</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">选宽带光源先看偏振敏感性：偏振敏感系统（光纤干涉仪）必须用SLED，ASE的偏振相关RIN比SLED高20-25dB。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光源选型，先看噪声特性，再看功率和带宽。</p></div>

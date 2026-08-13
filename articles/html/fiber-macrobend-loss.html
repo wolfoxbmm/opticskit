@@ -1,0 +1,93 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的跳线在机柜里拐了个10mm的小弯，OTDR测出来发现——1550nm波长多了1.5dB损耗。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">标称"最小弯曲半径7.5mm"，怎么还是弯出问题来了？</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">"最小弯曲半径"的真实含义</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光纤规格书上的"最小弯曲半径"（Minimum Bending Radius）通常指光纤<strong>机械安全极限</strong>——超过这个半径，光纤可能会产生微裂纹，长期使用有断裂风险。但这个参数并不代表"超过这个半径就不会有损耗"。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">真正决定弯曲损耗的是宏弯损耗（Macrobending Loss）。当光纤弯曲时，纤芯中的导模部分光场分布被弯曲的场界面"甩"出纤芯，形成辐射模，产生损耗。这个损耗在 1550nm 波长下比 1310nm 严重得多，因为 1550nm 的光场分布更"胖"，更容易触及弯曲引起的模式截止条件。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">宏弯损耗的物理机制</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">宏弯损耗的简化公式（Marcuse 模型，来源：D. Marcuse, J. Opt. Soc. Am., 1976）为：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">α_mb ∝ exp(-2R/r_core) · (R/γ)^0.5 · Δ^-1</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">R = 弯曲半径；r_core = 纤芯半径；Δ = 相对折射率差；γ = 归一化传播常数。宏弯损耗随 R 减小呈指数增长，随波长 λ 增大（γ 减小）而恶化。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">关键参数解读：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>弯曲半径 R 越小，损耗指数增长</strong>：R 从 30mm 降到 15mm，损耗增加约 30-100 倍（不是线性关系）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>波长 λ 越长，损耗越大</strong>：1550nm 的弯曲损耗是 1310nm 的约 10 倍（场分布半径更大，更易泄漏）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>相对折射率差 Δ 越小，损耗越敏感</strong>：G.652 光纤 Δ ≈ 0.36%，而 G.657 光纤 Δ 更大（0.5-0.8%），因此 G.657 对弯曲不敏感</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">实测数据：G.652.D光纤弯曲损耗有多严重</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以典型 G.652.D 标准单模光纤为例（来源：ITU-T G.652建议书及M.-J. Li et al., J. Lightwave Technol., 2009），1550nm 下的宏弯损耗实测数据：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">弯曲半径 R</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">1550nm 损耗（典型）</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">1310nm 损耗（对比）</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">工程判断</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">30 mm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~0.01 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt; 0.001 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">安全，几乎无影响</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">15 mm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.3 ~ 1 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.03 ~ 0.1 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">⚠ 不可忽视，3圈&gt;1dB</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">10 mm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1 ~ 5 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.1 ~ 0.5 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">⚠⚠ 严重，1圈&gt;1dB</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">7.5 mm（标称最小）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">5 ~ 15 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.5 ~ 1.5 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">⚠⚠⚠ 临界，单圈损耗极大</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这就是为什么你的 10mm 暗弯（机柜里看似不起眼的弯曲）会导致 1550nm 多 1.5dB 损耗——可能只有 1-2 圈，但每圈 1-5dB 的损耗叠加起来足以吃掉整个功率预算。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">G.652 vs G.657：弯曲不敏感光纤的改善</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">G.657.B3 是专为弯曲不敏感设计的光纤（与 G.652.D 兼容，但在包层结构上做了优化），其核心改进是增大了相对折射率差 Δ 并优化了折射率分布，使光场在弯曲时更难泄漏。</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">光纤类型</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">R = 15mm 损耗</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">R = 10mm 损耗</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">R = 7.5mm 损耗</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">G.652.D</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.3 ~ 1 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1 ~ 5 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">5 ~ 15 dB/圈</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">G.657.A2</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt; 0.1 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.1 ~ 0.5 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.5 ~ 2 dB/圈</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">G.657.B3</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt; 0.01 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt; 0.1 dB/圈</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt; 0.1 dB/圈</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">G.657.B3 在 R = 7.5mm 时损耗 &lt; 0.1dB/圈，相比 G.652.D 改善了约 100 倍（来源：ITU-T G.657建议书）。对于数据中心这种跳线密集、空间受限的场景，G.657 几乎是必选项。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">"最小弯曲半径"是机械安全极限，不是光学损耗保证值——1550nm 系统的弯曲半径应单独管控。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">标称"7.5mm可用"不是"7.5mm无损耗"——1550nm 系统，你的安全半径是15mm，不是7.5mm。</p></div>

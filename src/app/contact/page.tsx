@@ -29,7 +29,7 @@ export default function ContactPage() {
           <p className="text-xs text-[#9CA3AF] mt-6">
             也可关注公众号
             <br />
-            <span className="text-[#4B5563] font-medium">光学科技资讯</span>
+            <span className="text-[#4B5563] font-medium">OpticsKit</span>
           </p>
         </div>
 

@@ -1,0 +1,157 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">供应商的BBO晶体规格书上写着"倍频转换效率&gt;70%"，你买回来搭光路，调了一整天，功率计上读出的转换效率只有<strong>4.8%</strong>。你换了新晶体，重新对准，效率还是卡在5%上下。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">同事说"这很正常"。但4.8%和70%差了<strong>14倍</strong>，到底差在哪？<strong>相位匹配角差了0.1°，走离角吃了3.2°，接受角只剩1 mrad·cm——你的晶体根本不在工作点上。</strong></p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">一、现象：70%和5%之间隔着什么？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">先说清楚：规格书上的"&gt;70%"不是虚假宣传，但它对应的是<strong>纳秒脉冲、高峰值功率、精心优化的实验室条件</strong>。BBO晶体数据表明确标注：1064 nm输入600 mJ的纳秒脉冲，SHG输出350 mJ——转换效率58%（来源：BBO SHG典型数据表，1064nm ns脉冲）。这是在<strong>完美相位匹配</strong>下的结果。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">而你实验室的典型场景：飞秒振荡器出光，平均功率几百mW，经过聚焦后峰值功率也就10 kW量级，晶体长度5 mm，<strong>相位匹配角你凭经验调的</strong>——这就是5%的由来。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SHG效率基准数据给出了一个残酷的标尺：<strong>1 kW峰值功率 + 1 cm LBO + 最佳聚焦 = 6%转换效率</strong>（来源：Boyd &amp; Kleinman, J. Appl. Phys. 1968）。这个6%已经是"所有条件完美"的值。你的条件不可能比它更好，只会更差。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">二、原理解析：三个"效率杀手"的物理机制</span></h2>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">杀手1：相位失配——差0.1°，效率掉一半</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">倍频的功率转换效率核心公式：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">η_SHG ∝ d_eff² × P_in × L² × sinc²(Δk·L/2)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">其中Δk = k_2ω - 2k_ω为相位失配量，d_eff为有效非线性系数，L为晶体长度。sinc²项是效率的"开关"——Δk=0时sinc²=1（完美匹配），Δk增大后sinc²迅速归零。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">相位匹配角偏差与Δk的关系：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δk ≈ (∂k/∂θ) × Δθ</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">对BBO晶体Type I SHG @800nm，接受角仅1.0 mrad·cm（来源：Dmitriev et al., 1999）。这意味着5 mm晶体的角度容忍度约2 mrad≈0.11°。偏0.1°，效率直接减半。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">杀手2：走离效应——基频和倍频各走各的路</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">临界相位匹配下，非常光（倍频光）和寻常光（基频光）的坡印廷矢量方向不同，形成<strong>走离角</strong>。BBO的走离角数据如下：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">过程</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">走离角</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">接受角</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">有效交互长度</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">BBO SHG (1064→532)</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">3.2°</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">1.0 mrad·cm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~3 mm (光斑100μm)</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">BBO THG (1064→355)</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">4.1°</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.5 mrad·cm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~2.5 mm</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">LBO NCPM SHG</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~0°</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">宽</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">= 晶体长度</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">KTP SHG (1064→532)</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">0.3°</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">窄</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~15 mm</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">（来源：Dmitriev et al., Handbook of Nonlinear Optical Crystals, 3rd ed., 1999）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">走离的后果是：基频光和倍频光在晶体内<strong>逐渐分离</strong>，超过有效交互长度后，新产生的倍频光与已有的倍频光不再相干叠加，效率急剧下降。你用10 mm的BBO做SHG，但真正在工作的只有前3 mm。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">杀手3：功率不够——低转换效率区的"平方诅咒"</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">在低转换效率区（η &lt; 10%），SHG效率与输入峰值功率<strong>成正比</strong>：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">η_SHG ∝ d_eff² × P_peak × L / A_beam</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">A_beam为光束截面积。这决定了：在低功率下，效率不是线性增长，而是被功率水平"锁死"。1 kW峰值功率+1 cm LBO = 6%，你的条件如果只有500 W，理论效率就只剩3%。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">三、工程实战：你的5%到底丢在哪？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">以下是一个典型的飞秒振荡器+倍频实验的效率损失清单：</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">损失项</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型损失量</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">原因</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">理论效率上限</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~8%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">500 W峰值+5mm BBO+最佳聚焦</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">相位匹配角偏差</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">×0.5</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">角度偏差0.1°</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">走离效应</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">×0.6</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">5mm晶体，有效交互3mm</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光束质量M² &gt; 1</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">×0.7</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">M²≈1.5</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">聚焦非最优</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">×0.8</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">瑞利长度与晶体长度失配</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">晶体表面反射</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">×0.9</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">两面未镀AR膜</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">综合效率</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">8%×0.5×0.6×0.7×0.8×0.9 ≈ 1.2%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">——</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">算完只有1.2%？别急，实际测量通常在3%～5%之间，因为你可能功率稍高或晶体稍长。但量级是对的：<strong>多项损失的乘积效应，让理论8%缩水到实测5%以下。</strong></p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">四、解决方案：从5%到30%的升级路径</span></h2>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">Step 1：精确相位匹配——别凭手感</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">用<strong>测角仪+功率计闭环</strong>：先根据Sellmeier方程计算理论匹配角，再以0.01°步长微调，同时监测倍频功率。BBO的接受角只有1 mrad·cm，手动粗调永远到不了最优点。推荐使用SNLO软件或iPhasematch App预先计算匹配角，再精调。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">Step 2：选对晶体——匹配你的功率水平</h3>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">场景</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">推荐晶体</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">理由</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">预期效率</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">飞秒振荡器 (平均&lt;1W)</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">BBO 1-3mm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">d_eff高，短晶体抗走离</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">5-15%</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">放大器 (平均&gt;1W)</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">LBO NCPM</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">零走离，高损伤阈值</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">30-50%</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">腔内倍频 (CW)</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">KTP</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">d_eff最高，走离小</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">20-40%</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">Step 3：优化聚焦——瑞利长度 ≈ 晶体长度/3</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">聚焦过紧，瑞利长度短于晶体长度，晶体两端的功率密度下降；聚焦过松，峰值功率密度不够。最佳条件是<strong>瑞利长度 ≈ L/3</strong>，此时Boyd-Kleinman聚焦参数ξ≈2.84（来源：Boyd &amp; Kleinman, J. Appl. Phys. 1968），效率最高。对5 mm BBO，瑞利长度约1.7 mm，对应束腰约30 μm @800 nm。</p>
+<h3 style="font-size:17px;font-weight:bold;color:#000;margin:0;padding:28px 0 12px 0;line-height:1.4;">Step 4：温度控制——别小看热光系数</h3>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">BBO的热光系数dne/dT = -16.6×10⁻⁶/°C（来源：Dmitriev et al., 1999）。温度变化1°C，折射率变化1.66×10⁻⁵，对应的相位匹配角偏移约为<strong>0.03°/°C</strong>。实验室空调波动2°C，匹配角偏0.06°——对接受角0.11°的BBO来说，效率可能直接掉30%。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>1. 70%是纳秒脉冲、高峰值功率、完美匹配下的理论值——你用飞秒振荡器+5mm BBO+手动调角，5%才是正常的起跑线</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>2. 相位匹配角是最大的变量</strong>：0.1°的偏差就能让效率减半。凭手感调角是在浪费晶体——用测角仪+功率计闭环精调。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>3. 500W峰值功率+5mm BBO的理论上限是8%，精确匹配能让你从5%触到15%，差的只是0.01°的调角精度</strong></p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">倍频效率不是晶体决定的，是你调出来的——0.1°的执念，就是5%和15%的差距。</p></div>

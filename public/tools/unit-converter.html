@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>工程单位换算中心 - OpticsKit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet">
+<style>
+/* OpticsKit Design System v2 */
+:root{--bg-root:#F3F4F6;--bg-surface:#FFFFFF;--bg-elevated:#F9FAFB;--bg-hover:#F3F4F6;--border-subtle:#E5E7EB;--text-primary:#111827;--text-secondary:#4B5563;--text-tertiary:#6B7280;--text-disabled:#9CA3AF;--accent:#2563EB;--accent-hover:#1D4ED8;--accent-light:#EFF6FF;--shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.06);--radius-sm:8px;--radius-md:12px;--radius-full:9999px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg-root);color:var(--text-primary);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-0.01em;line-height:1.6}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-subtle);border-radius:3px}::selection{background:rgba(34,139,230,0.15);color:var(--text-primary)}
+
+.app{max-width:1060px;margin:0 auto;padding:32px 20px 24px}
+.hd{text-align:center;margin-bottom:24px}
+.hd h1{font-size:22px;font-weight:700;letter-spacing:-0.02em}
+.hd p{font-size:13px;color:var(--text-tertiary);margin-top:4px}
+
+.layout{display:flex;gap:16px;align-items:flex-start}
+.sidebar{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:2px}
+.cat-btn{display:flex;align-items:center;gap:8px;padding:10px 14px;border:none;border-radius:var(--radius-sm);background:transparent;color:var(--text-secondary);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;text-align:left;font-family:inherit;width:100%}
+.cat-btn:hover{background:var(--bg-hover)}
+.cat-btn.active{background:var(--accent-light);color:var(--accent);font-weight:600}
+.cat-btn .icon{font-size:16px;width:22px;text-align:center;flex-shrink:0}
+
+.main-panel{flex:1;display:flex;flex-direction:column;gap:16px}
+.card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:20px;box-shadow:var(--shadow-sm)}
+
+.card-title{font-size:14px;font-weight:650;color:var(--text-primary);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title .icon{font-size:20px}
+
+.converter{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.input-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
+.input-group label{font-size:11px;font-weight:600;color:var(--text-secondary)}
+.input-group input{font-size:18px;font-weight:600;padding:12px 16px;border:2px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-elevated);color:var(--text-primary);outline:none;font-family:inherit;transition:border-color .2s,background .2s;width:100%;-moz-appearance:textfield}
+.input-group input::-webkit-inner-spin-button,.input-group input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.input-group input:focus{border-color:var(--accent);background:var(--bg-surface)}
+.input-group select{font-size:13px;padding:7px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-surface);color:var(--text-primary);outline:none;cursor:pointer;font-family:inherit;transition:border-color .2s}
+.input-group select:focus,.result-group select:focus{border-color:var(--accent)}
+.result-group select{font-size:13px;padding:7px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-surface);color:var(--text-primary);outline:none;cursor:pointer;font-family:inherit;transition:border-color .2s}
+
+.eq{font-size:24px;color:var(--text-disabled);padding-top:20px;flex-shrink:0}
+.result-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px}
+.result-group label{font-size:11px;font-weight:600;color:var(--text-secondary)}
+.result-group .result-value{font-size:18px;font-weight:600;padding:12px 16px;border:2px solid var(--accent);border-radius:var(--radius-sm);background:var(--accent-light);color:var(--accent);font-family:inherit;display:flex;align-items:center;height:50px}
+
+.copy-btn{padding:4px 12px;font-size:11px;font-weight:600;border:1px solid var(--border-subtle);border-radius:var(--radius-full);background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;transition:all .15s;font-family:inherit;margin-top:6px}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.formula-hint{font-size:11px;color:var(--text-disabled);margin-top:2px;font-style:italic}
+
+/* Swapped indicator */
+.swap-btn{padding:6px 10px;font-size:16px;border:1px solid var(--border-subtle);border-radius:var(--radius-full);background:var(--bg-surface);cursor:pointer;transition:all .15s;margin-top:20px;flex-shrink:0;color:var(--text-secondary)}
+.swap-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+
+@media(max-width:700px){
+  .layout{flex-direction:column}
+  .sidebar{width:100%;flex-direction:row;overflow-x:auto;padding-bottom:8px}
+  .cat-btn{white-space:nowrap;font-size:12px;padding:8px 12px}
+  .cat-btn .icon{font-size:14px;width:18px}
+  .converter{flex-direction:column}
+  .eq{transform:rotate(90deg);padding-top:0}
+  .swap-btn{margin-top:0;transform:rotate(90deg)}
+}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text-primary);color:#fff;padding:8px 20px;border-radius:var(--radius-md);font-size:12px;z-index:99;display:none;box-shadow:var(--shadow-md);font-family:inherit}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd">
+  <h1>工程单位换算中心</h1>
+  <p>10 大物理量类别 · 支持双向换算 · 光学工程日常必备</p>
+</div>
+
+<div class="layout">
+  <div class="sidebar" id="sidebar"></div>
+  <div class="main-panel" id="mainPanel"></div>
+</div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const categories = [
+  {
+    id: 'length', name: '长度/距离', icon: '📏',
+    units: [
+      { id: 'mm', name: '毫米 (mm)', toBase: 0.001 },
+      { id: 'um', name: '微米 (μm)', toBase: 0.000001 },
+      { id: 'nm', name: '纳米 (nm)', toBase: 1e-9 },
+      { id: 'angstrom', name: '埃 (Å)', toBase: 1e-10 },
+      { id: 'cm', name: '厘米 (cm)', toBase: 0.01 },
+      { id: 'm', name: '米 (m)', toBase: 1 },
+      { id: 'km', name: '千米 (km)', toBase: 1000 },
+      { id: 'inch', name: '英寸 (in)', toBase: 0.0254 },
+      { id: 'mil', name: '密耳 (mil)', toBase: 0.0000254 },
+      { id: 'ft', name: '英尺 (ft)', toBase: 0.3048 },
+    ],
+    formula: '线性换算，以米(m)为基准单位',
+    defaultFrom: 'mm', defaultTo: 'inch',
+  },
+  {
+    id: 'angle', name: '角度', icon: '📐',
+    units: [
+      { id: 'deg', name: '度 (°)', toBase: 1 },
+      { id: 'rad', name: '弧度 (rad)', toBase: 180 / Math.PI },
+      { id: 'mrad', name: '毫弧度 (mrad)', toBase: 180 / (Math.PI * 1000) },
+      { id: 'urad', name: '微弧度 (μrad)', toBase: 180 / (Math.PI * 1e6) },
+      { id: 'arcmin', name: '角分 (′)', toBase: 1 / 60 },
+      { id: 'arcsec', name: '角秒 (″)', toBase: 1 / 3600 },
+      { id: 'grad', name: '百分度 (grad)', toBase: 0.9 },
+    ],
+    formula: '以度(°)为基准单位',
+    defaultFrom: 'deg', defaultTo: 'rad',
+  },
+  {
+    id: 'area', name: '面积/孔径', icon: '⭕',
+    units: [
+      { id: 'mm2', name: '平方毫米 (mm²)', toBase: 0.000001 },
+      { id: 'cm2', name: '平方厘米 (cm²)', toBase: 0.0001 },
+      { id: 'm2', name: '平方米 (m²)', toBase: 1 },
+      { id: 'inch2', name: '平方英寸 (in²)', toBase: 0.00064516 },
+      { id: 'ft2', name: '平方英尺 (ft²)', toBase: 0.092903 },
+    ],
+    formula: '线性换算，以平方米(m²)为基准',
+    defaultFrom: 'mm2', defaultTo: 'cm2',
+  },
+  {
+    id: 'photon', name: '波长/频率/能量', icon: '🌈',
+    units: [
+      { id: 'nm_wl', name: '波长 (nm)', toBase: null },
+      { id: 'um_wl', name: '波长 (μm)', toBase: null },
+      { id: 'angstrom_wl', name: '波长 (Å)', toBase: null },
+      { id: 'thz', name: '频率 (THz)', toBase: null },
+      { id: 'ghz', name: '频率 (GHz)', toBase: null },
+      { id: 'cm1', name: '波数 (cm⁻¹)', toBase: null },
+      { id: 'ev', name: '光子能量 (eV)', toBase: null },
+    ],
+    formula: 'c = λν, E = hν, ν̃ = 1/λ (c=2.998e8 m/s, h=4.136e-15 eV·s)',
+    defaultFrom: 'nm_wl', defaultTo: 'thz',
+    isPhoton: true,
+  },
+  {
+    id: 'power', name: '功率/能量', icon: '⚡',
+    units: [
+      { id: 'w', name: '瓦特 (W)', toBase: 1 },
+      { id: 'mw', name: '毫瓦 (mW)', toBase: 0.001 },
+      { id: 'uw', name: '微瓦 (μW)', toBase: 0.000001 },
+      { id: 'dbm', name: '分贝毫瓦 (dBm)', toBase: null, isLog: true },
+      { id: 'j', name: '焦耳 (J)', toBase: 1 },
+      { id: 'ev_e', name: '电子伏特 (eV)', toBase: 1.602176634e-19 },
+      { id: 'cal', name: '卡路里 (cal)', toBase: 4.184 },
+      { id: 'btu', name: '英热单位 (BTU)', toBase: 1055.06 },
+    ],
+    formula: '功率: W↔mW↔μW线性，dBm=10·log10(P/1mW); 能量: J↔eV↔cal↔BTU线性',
+    defaultFrom: 'mw', defaultTo: 'dbm',
+  },
+  {
+    id: 'irradiance', name: '功率密度', icon: '☀️',
+    units: [
+      { id: 'wcm2', name: 'W/cm²', toBase: 10000 },
+      { id: 'wm2', name: 'W/m²', toBase: 1 },
+      { id: 'mwcm2', name: 'mW/cm²', toBase: 10 },
+      { id: 'wmm2', name: 'W/mm²', toBase: 1000000 },
+    ],
+    formula: '以 W/m² 为基准单位',
+    defaultFrom: 'wcm2', defaultTo: 'wm2',
+  },
+  {
+    id: 'temperature', name: '温度', icon: '🌡️',
+    units: [
+      { id: 'k', name: '开尔文 (K)', toBase: null },
+      { id: 'c', name: '摄氏度 (°C)', toBase: null },
+      { id: 'f', name: '华氏度 (°F)', toBase: null },
+    ],
+    formula: '°C = K - 273.15, °F = °C × 9/5 + 32',
+    defaultFrom: 'c', defaultTo: 'f',
+    isTemp: true,
+  },
+  {
+    id: 'pressure', name: '压力/真空', icon: '🌀',
+    units: [
+      { id: 'pa', name: '帕斯卡 (Pa)', toBase: 1 },
+      { id: 'hpa', name: '百帕 (hPa)', toBase: 100 },
+      { id: 'kpa', name: '千帕 (kPa)', toBase: 1000 },
+      { id: 'mpa', name: '兆帕 (MPa)', toBase: 1e6 },
+      { id: 'bar', name: '巴 (bar)', toBase: 100000 },
+      { id: 'mbar', name: '毫巴 (mbar)', toBase: 100 },
+      { id: 'torr', name: '托 (Torr)', toBase: 133.322 },
+      { id: 'atm', name: '标准大气压 (atm)', toBase: 101325 },
+      { id: 'psi', name: '磅/平方英寸 (psi)', toBase: 6894.757 },
+    ],
+    formula: '以 帕斯卡(Pa) 为基准单位',
+    defaultFrom: 'torr', defaultTo: 'pa',
+  },
+  {
+    id: 'velocity', name: '速度', icon: '💨',
+    units: [
+      { id: 'ms', name: '米/秒 (m/s)', toBase: 1 },
+      { id: 'kmh', name: '公里/小时 (km/h)', toBase: 0.277778 },
+      { id: 'mph', name: '英里/小时 (mph)', toBase: 0.44704 },
+      { id: 'fts', name: '英尺/秒 (ft/s)', toBase: 0.3048 },
+      { id: 'knot', name: '节 (knot)', toBase: 0.514444 },
+    ],
+    formula: '以 米/秒(m/s) 为基准单位',
+    defaultFrom: 'kmh', defaultTo: 'ms',
+  },
+  {
+    id: 'electrical', name: '电学', icon: '🔌',
+    subCategories: [
+      {
+        name: '电压', id: 'voltage',
+        units: [
+          { id: 'v', name: '伏特 (V)', toBase: 1 },
+          { id: 'mv_v', name: '毫伏 (mV)', toBase: 0.001 },
+          { id: 'uv_v', name: '微伏 (μV)', toBase: 0.000001 },
+        ],
+      },
+      {
+        name: '电流', id: 'current',
+        units: [
+          { id: 'a', name: '安培 (A)', toBase: 1 },
+          { id: 'ma_a', name: '毫安 (mA)', toBase: 0.001 },
+          { id: 'ua_a', name: '微安 (μA)', toBase: 0.000001 },
+          { id: 'na_a', name: '纳安 (nA)', toBase: 1e-9 },
+        ],
+      },
+      {
+        name: '电阻', id: 'resistance',
+        units: [
+          { id: 'ohm', name: '欧姆 (Ω)', toBase: 1 },
+          { id: 'kohm', name: '千欧 (kΩ)', toBase: 1000 },
+          { id: 'mohm', name: '兆欧 (MΩ)', toBase: 1e6 },
+        ],
+      },
+    ],
+    formula: '线性换算',
+    defaultFrom: 'v', defaultTo: 'mv_v',
+    isElectrical: true,
+  },
+];
+
+const C = 2.99792458e8;
+const H_EV = 4.135667662e-15;
+
+let activeCat = 'length';
+let activeElecSub = 'voltage';
+let fromUnit = '';
+let toUnit = '';
+
+function getCat(id) { return categories.find(c => c.id === id); }
+
+function toBase(val, unit) {
+  if (unit.toBase === null) return val;
+  return val * unit.toBase;
+}
+function fromBase(val, unit) {
+  if (unit.toBase === null) return val;
+  return val / unit.toBase;
+}
+
+// --- Photon conversions ---
+function photonConvert(val, fromId, toId) {
+  // Convert input to wavelength in meters
+  let wl_m;
+  switch (fromId) {
+    case 'nm_wl': wl_m = val * 1e-9; break;
+    case 'um_wl': wl_m = val * 1e-6; break;
+    case 'angstrom_wl': wl_m = val * 1e-10; break;
+    case 'thz': wl_m = C / (val * 1e12); break;
+    case 'ghz': wl_m = C / (val * 1e9); break;
+    case 'cm1': wl_m = 1 / (val * 100); break;
+    case 'ev': wl_m = (H_EV * C) / val; break;
+    default: return val;
+  }
+  // Convert to target
+  switch (toId) {
+    case 'nm_wl': return wl_m * 1e9;
+    case 'um_wl': return wl_m * 1e6;
+    case 'angstrom_wl': return wl_m * 1e10;
+    case 'thz': return C / wl_m / 1e12;
+    case 'ghz': return C / wl_m / 1e9;
+    case 'cm1': return 1 / (wl_m * 100);
+    case 'ev': return (H_EV * C) / wl_m;
+    default: return val;
+  }
+}
+
+// --- Temperature ---
+function tempConvert(val, fromId, toId) {
+  let k;
+  switch (fromId) {
+    case 'k': k = val; break;
+    case 'c': k = val + 273.15; break;
+    case 'f': k = (val + 459.67) * 5/9; break;
+  }
+  switch (toId) {
+    case 'k': return k;
+    case 'c': return k - 273.15;
+    case 'f': return k * 9/5 - 459.67;
+  }
+}
+
+// --- dBm ---
+function dbmToMw(dbm) { return Math.pow(10, dbm / 10); }
+function mwToDbm(mw) { return 10 * Math.log10(Math.max(mw, 1e-300)); }
+
+// --- Energy ---
+const energyUnits = new Set(['j', 'ev_e', 'cal', 'btu']);
+function energyConvert(val, fromId, toId) {
+  const fromU = getCat('power').units.find(u => u.id === fromId);
+  const toU = getCat('power').units.find(u => u.id === toId);
+  return fromBase(toBase(val, fromU), toU);
+}
+
+function convert(val, cat, fromId, toId) {
+  if (cat.isPhoton) return photonConvert(val, fromId, toId);
+  if (cat.isTemp) return tempConvert(val, fromId, toId);
+
+  // Power category special handling for dBm and energy
+  if (cat.id === 'power') {
+    if (fromId === 'dbm') {
+      const mw = dbmToMw(val);
+      if (toId === 'dbm') return val;
+      if (toId === 'w') return mw / 1000;
+      if (toId === 'mw') return mw;
+      if (toId === 'uw') return mw * 1000;
+      return energyConvert(mw / 1000, 'j', toId);
+    }
+    if (toId === 'dbm') {
+      let w;
+      if (fromId === 'w') w = val;
+      else if (fromId === 'mw') w = val / 1000;
+      else if (fromId === 'uw') w = val / 1e6;
+      else w = energyConvert(val, fromId, 'j');
+      return mwToDbm(w * 1000);
+    }
+    if (energyUnits.has(fromId) || energyUnits.has(toId)) {
+      return energyConvert(val, fromId, toId);
+    }
+  }
+
+  const fromU = cat.units.find(u => u.id === fromId);
+  const toU = cat.units.find(u => u.id === toId);
+  return fromBase(toBase(val, fromU), toU);
+}
+
+function formatResult(v) {
+  if (v === 0) return '0';
+  if (Math.abs(v) >= 1e12 || (Math.abs(v) < 0.0001 && v !== 0)) return v.toExponential(6);
+  // Smart precision
+  const av = Math.abs(v);
+  if (av >= 1000) return v.toLocaleString('en-US', { maximumFractionDigits: 2 });
+  if (av >= 1) return v.toLocaleString('en-US', { maximumFractionDigits: 6 });
+  return v.toLocaleString('en-US', { maximumFractionDigits: 9 });
+}
+
+function $(id) { return document.getElementById(id); }
+
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 2000);
+}
+
+function renderSidebar() {
+  let html = '';
+  categories.forEach(cat => {
+    const isActive = cat.id === activeCat;
+    html += `<button class="cat-btn${isActive ? ' active' : ''}" data-cat="${cat.id}">`;
+    html += `<span class="icon">${cat.icon}</span>${cat.name}</button>`;
+  });
+  $('sidebar').innerHTML = html;
+
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeCat = btn.dataset.cat;
+      activeElecSub = 'voltage';
+      renderSidebar();
+      renderMain();
+    });
+  });
+}
+
+function renderMain() {
+  const cat = getCat(activeCat);
+  if (!cat) return;
+
+  let units = cat.units || [];
+  let subLabel = '';
+
+  if (cat.isElectrical) {
+    const sub = cat.subCategories.find(s => s.id === activeElecSub) || cat.subCategories[0];
+    units = sub.units;
+    subLabel = ' · ' + sub.name;
+  }
+
+  // Use from/to or defaults
+  if (!fromUnit) {
+    fromUnit = cat.defaultFrom || units[0].id;
+  }
+  if (!toUnit) {
+    toUnit = cat.defaultTo || units[1]?.id || units[0].id;
+  }
+
+  // Ensure from/to are valid for current units
+  const unitIds = new Set(units.map(u => u.id));
+  if (!unitIds.has(fromUnit)) fromUnit = units[0].id;
+  if (!unitIds.has(toUnit)) toUnit = units[1]?.id || units[0].id;
+
+  let html = `<div class="card">`;
+  html += `<div class="card-title"><span class="icon">${cat.icon}</span>${cat.name}${subLabel}</div>`;
+
+  // Electrical sub-tabs
+  if (cat.isElectrical) {
+    html += `<div style="display:flex;gap:4px;margin-bottom:12px">`;
+    cat.subCategories.forEach(s => {
+      html += `<button class="sub-tab${s.id === activeElecSub ? ' active' : ''}" style="font-size:12px;padding:4px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-full);background:${s.id===activeElecSub?'var(--accent-light)':'transparent'};color:${s.id===activeElecSub?'var(--accent)':'var(--text-secondary)'};cursor:pointer;font-family:inherit">${s.name}</button>`;
+    });
+    html += `</div>`;
+  }
+
+  html += `<div class="converter">`;
+
+  // From
+  html += `<div class="input-group"><label>输入值</label>`;
+  html += `<input type="number" id="fromInput" value="1" step="any" oninput="onInput(true)">`;
+  html += `<select id="fromSelect" onchange="swapUnits()">${units.map(u => `<option value="${u.id}"${u.id===fromUnit?' selected':''}>${u.name}</option>`).join('')}</select>`;
+  html += `</div>`;
+
+  html += `<button class="swap-btn" onclick="doSwap()" title="交换单位">⇄</button>`;
+
+  // To
+  html += `<div class="result-group"><label>结果</label>`;
+  html += `<div class="result-value" id="resultValue">—</div>`;
+  html += `<select id="toSelect" onchange="onInput(false)">${units.map(u => `<option value="${u.id}"${u.id===toUnit?' selected':''}>${u.name}</option>`).join('')}</select>`;
+  html += `<button class="copy-btn" onclick="copyResult()">📋 复制</button>`;
+  html += `</div>`;
+
+  html += `</div>`; // converter
+
+  if (cat.formula) {
+    html += `<div class="formula-hint" style="margin-top:10px">${cat.formula}</div>`;
+  }
+
+  html += `</div>`; // card
+
+  $('mainPanel').innerHTML = html;
+
+  // Bind electrical sub-tabs
+  document.querySelectorAll('.sub-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeElecSub = btn.textContent;
+      if (activeElecSub === '电压') activeElecSub = 'voltage';
+      else if (activeElecSub === '电流') activeElecSub = 'current';
+      else if (activeElecSub === '电阻') activeElecSub = 'resistance';
+      fromUnit = '';
+      toUnit = '';
+      renderMain();
+    });
+  });
+
+  calculate();
+}
+
+function swapUnits() {
+  fromUnit = $('fromSelect').value;
+  calculate();
+}
+
+function doSwap() {
+  const tmp = fromUnit;
+  fromUnit = toUnit;
+  toUnit = tmp;
+  const fromVal = parseFloat($('fromInput')?.value) || 1;
+  const result = parseFloat($('resultValue')?.textContent) || fromVal;
+  renderMain();
+  setTimeout(() => {
+    const fi = $('fromInput');
+    if (fi) fi.value = formatResult(result);
+  }, 0);
+}
+
+function onInput(isFrom) {
+  if (isFrom) {
+    fromUnit = $('fromSelect').value;
+  } else {
+    toUnit = $('toSelect').value;
+  }
+  calculate();
+}
+
+function calculate() {
+  const fi = $('fromInput');
+  const fs = $('fromSelect');
+  const ts = $('toSelect');
+  const rv = $('resultValue');
+  if (!fi || !fs || !ts || !rv) return;
+
+  const val = parseFloat(fi.value);
+  if (isNaN(val)) { rv.textContent = '—'; return; }
+  if (val === 0 && activeCat === 'temperature' && fs.value === 'k') {
+    rv.textContent = '—';
+    return;
+  }
+
+  fromUnit = fs.value;
+  toUnit = ts.value;
+  const cat = getCat(activeCat);
+  let result;
+  if (cat.isElectrical) {
+    const sub = cat.subCategories.find(s => s.id === activeElecSub) || cat.subCategories[0];
+    const fromU = sub.units.find(u => u.id === fromUnit);
+    const toU = sub.units.find(u => u.id === toUnit);
+    result = fromBase(toBase(val, fromU), toU);
+  } else {
+    result = convert(val, cat, fromUnit, toUnit);
+  }
+
+  rv.textContent = formatResult(result);
+  rv.setAttribute('data-result', result);
+}
+
+function copyResult() {
+  const rv = $('resultValue');
+  const text = rv.getAttribute('data-result') || rv.textContent;
+  if (!text || text === '—') return;
+  navigator.clipboard.writeText(text).then(() => {
+    toast('已复制: ' + text);
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    toast('已复制');
+  });
+}
+
+// Init
+renderSidebar();
+renderMain();
+</script>
+</body>
+</html>

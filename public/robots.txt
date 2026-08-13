@@ -1,5 +1,10 @@
+User-agent: Baiduspider
+Allow: /
+Disallow: /api/
+
 User-agent: *
 Allow: /
 Disallow: /api/
 
 Sitemap: https://opticskit.cn/sitemap.xml
+Sitemap: https://opticskit.cn/sitemap-articles.xml

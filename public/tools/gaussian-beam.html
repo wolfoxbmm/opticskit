@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>高斯光束传播计算器 - OpticsKit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js" crossorigin="anonymous"></script>
+<style>
+:root{--bg-root:#F3F4F6;--bg-surface:#FFFFFF;--bg-elevated:#F9FAFB;--bg-hover:#F3F4F6;--border-subtle:#E5E7EB;--text-primary:#111827;--text-secondary:#4B5563;--text-tertiary:#6B7280;--text-disabled:#9CA3AF;--accent:#2563EB;--accent-hover:#1D4ED8;--accent-light:#EFF6FF;--shadow-sm:0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.06);--radius-sm:8px;--radius-md:12px;--radius-full:9999px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg-root);color:var(--text-primary);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;letter-spacing:-0.01em;line-height:1.6}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border-subtle);border-radius:3px}::selection{background:rgba(34,139,230,0.15);color:var(--text-primary)}
+.app{max-width:1100px;margin:0 auto;padding:24px 16px}
+.hd{text-align:center;margin-bottom:16px}
+.hd h1{font-size:20px;font-weight:700;letter-spacing:-0.02em}
+.hd p{font-size:12px;color:var(--text-tertiary);margin-top:2px}
+
+/* Single-screen layout: params | chart | results */
+.main-layout{display:flex;gap:12px;align-items:stretch}
+.col-params{width:200px;flex-shrink:0;display:flex;flex-direction:column;gap:8px}
+.col-chart{flex:1;min-width:0}
+.col-results{width:180px;flex-shrink:0;display:flex;flex-direction:column;gap:8px}
+
+.card{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:14px;box-shadow:var(--shadow-sm)}
+
+.param-grp{margin-bottom:8px}
+.param-grp label{font-size:10px;font-weight:600;color:var(--text-secondary);display:block;margin-bottom:2px}
+.param-grp input{font-size:13px;padding:6px 10px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-elevated);color:var(--text-primary);outline:none;font-family:inherit;width:100%;transition:border-color .2s;-moz-appearance:textfield}
+.param-grp input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.param-grp input:focus{border-color:var(--accent);background:var(--bg-surface)}
+.param-unit{font-size:9px;color:var(--text-disabled);margin-top:1px}
+
+.btn{font-size:12px;font-weight:600;padding:6px 16px;border:none;border-radius:var(--radius-full);cursor:pointer;transition:all .2s;font-family:inherit;width:100%}
+.btn-p{background:var(--accent);color:#fff}
+.btn-p:hover{background:var(--accent-hover);box-shadow:0 2px 8px rgba(37,99,235,0.25)}
+
+.presets{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+.preset{font-size:9px;padding:3px 8px;border:1px solid var(--border-subtle);border-radius:var(--radius-full);background:var(--bg-surface);color:var(--text-secondary);cursor:pointer;transition:all .15s;font-family:inherit;line-height:1.4}
+.preset:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+
+.chart-wrap{background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:var(--radius-sm);padding:12px;box-shadow:var(--shadow-sm)}
+.chart-box{width:100%;height:420px}
+
+.r-item{border-bottom:1px solid var(--bg-hover);padding:8px 0}
+.r-item:last-child{border-bottom:none}
+.r-item .rl{font-size:9px;color:var(--text-disabled);text-transform:uppercase;letter-spacing:0.03em}
+.r-item .rv{font-size:16px;font-weight:700;color:var(--text-primary);margin-top:1px}
+.r-item .ru{font-size:9px;color:var(--text-tertiary)}
+
+.z-section{margin-top:4px}
+.z-section .z-header{font-size:10px;font-weight:600;color:var(--text-secondary);margin-bottom:6px}
+.z-slider-wrap{margin-bottom:6px}
+.z-slider{width:100%;accent-color:var(--accent);margin:0}
+.z-labels{display:flex;justify-content:space-between;font-size:8px;color:var(--text-disabled);margin-top:1px}
+
+@media(max-width:800px){
+  .main-layout{flex-direction:column}
+  .col-params,.col-results{width:100%}
+  .chart-box{min-height:300px}
+}
+
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--text-primary);color:#fff;padding:8px 20px;border-radius:var(--radius-md);font-size:12px;z-index:99;display:none;box-shadow:var(--shadow-md);font-family:inherit}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="hd">
+  <h1>高斯光束传播计算器</h1>
+  <p>基模高斯光束 · w(z) 双曲线 · 瑞利范围 · 远场发散角 · M² 修正</p>
+</div>
+
+<div class="main-layout">
+  <!-- Left: params -->
+  <div class="col-params">
+    <div class="card">
+      <div class="param-grp">
+        <label>波长 λ (nm)</label>
+        <input type="number" id="lambda" value="1064" step="any" oninput="debounceCalc()">
+      </div>
+      <div class="param-grp">
+        <label>束腰半径 w₀ (mm)</label>
+        <input type="number" id="w0" value="1" step="any" oninput="debounceCalc()">
+      </div>
+      <div class="param-grp">
+        <label>M² 因子</label>
+        <input type="number" id="m2" value="1" step="0.1" min="1" max="50" oninput="debounceCalc()">
+      </div>
+      <button class="btn btn-p" onclick="calculate()">重新计算</button>
+      <div class="presets">
+        <button class="preset" onclick="setPreset(1064,1,1)">Nd:YAG</button>
+        <button class="preset" onclick="setPreset(1030,0.5,1)">Yb:YAG</button>
+        <button class="preset" onclick="setPreset(10640,3,1)">CO₂</button>
+        <button class="preset" onclick="setPreset(532,0.3,1.2)">绿光</button>
+        <button class="preset" onclick="setPreset(1550,0.005,1)">光纤</button>
+      </div>
+    </div>
+
+    <div class="card z-section">
+      <div class="z-header">📍 查询位置 z</div>
+      <div class="z-slider-wrap">
+        <input type="range" class="z-slider" id="zSlider" min="-3" max="3" step="0.01" value="0" oninput="onSlider()">
+        <div class="z-labels"><span id="zMinLabel"></span><span id="zCurLabel" style="font-weight:600;color:var(--accent)">z=0</span><span id="zMaxLabel"></span></div>
+      </div>
+      <div style="text-align:center;margin-bottom:4px">
+        <input type="number" id="zInput" value="0" step="any" oninput="onZInput()" style="width:100%;font-size:12px;padding:4px 8px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);text-align:center;font-family:inherit;outline:none">
+        <div class="param-unit">mm（0=束腰）</div>
+      </div>
+      <div class="r-item"><div class="rl">w(z)</div><div class="rv" id="zW">—</div><div class="ru">μm</div></div>
+      <div class="r-item"><div class="rl">R(z)</div><div class="rv" id="zRc">—</div><div class="ru">mm</div></div>
+      <div class="r-item"><div class="rl">Gouy 相位</div><div class="rv" id="zGouy">—</div><div class="ru">rad</div></div>
+    </div>
+  </div>
+
+  <!-- Center: chart -->
+  <div class="col-chart">
+    <div class="chart-wrap">
+      <div class="chart-box" id="chart"><div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text-disabled);font-size:13px">加载图表中…</div></div>
+    </div>
+  </div>
+
+  <!-- Right: results -->
+  <div class="col-results">
+    <div class="card" id="resultsCard"></div>
+  </div>
+</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+let chart;
+let g={zR:0,w0:0,theta:0,m2:1,lambdaMm:0};
+let currentZ=0;
+
+function $(id){return document.getElementById(id)}
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';setTimeout(()=>{t.style.display='none'},2000)}
+
+function fmt(v,d){d=d||3;if(v===0)return'0';const av=Math.abs(v);if(av>=1e6||(av<0.0001&&av>0))return v.toExponential(d);return v.toFixed(d)}
+
+let calcTimer;
+function debounceCalc(){clearTimeout(calcTimer);calcTimer=setTimeout(calculate,300)}
+function setPreset(l,w,m){$('lambda').value=l;$('w0').value=w;$('m2').value=m;calculate()}
+
+function wOfZ(zmm,w0,zR,m2){
+  if(zR<=0)return w0;
+  return w0*Math.sqrt(1+Math.pow(m2*zmm/zR,2));
+}
+function rOfZ(zmm,zR){
+  if(Math.abs(zmm)<1e-9)return Infinity;
+  return zmm*(1+Math.pow(zR/zmm,2));
+}
+function gouy(zmm,zR){return Math.atan2(zmm,zR)}
+
+function calculate(){
+  const lNm=parseFloat($('lambda')?.value)||1064;
+  const w0mm=parseFloat($('w0')?.value)||1;
+  const m2=parseFloat($('m2')?.value)||1;
+  if(lNm<=0||w0mm<=0)return;
+
+  const lmm=lNm*1e-6;
+  const w0um=w0mm*1000;
+  const zRmm=Math.PI*w0mm*w0mm/lmm;
+  const thetaRad=lmm/(Math.PI*w0mm)*m2;
+  const thetaMrad=thetaRad*1000;
+  const dof=2*zRmm;
+
+  g={zR:zRmm,w0:w0um,theta:thetaMrad,m2,lmm};
+
+  // Results panel
+  $('resultsCard').innerHTML=`
+    <div style="font-size:11px;font-weight:650;margin-bottom:10px;color:var(--text-secondary)">📊 关键参数</div>
+    <div class="r-item"><div class="rl">瑞利长度 zR</div><div class="rv">${zRmm<0.1?fmt(zRmm,3):fmt(zRmm,1)}</div><div class="ru">mm${zRmm>1000?' ('+fmt(zRmm/1000,2)+' m)':''}</div></div>
+    <div class="r-item"><div class="rl">远场发散角 θ</div><div class="rv">${fmt(thetaMrad,3)}</div><div class="ru">mrad</div></div>
+    <div class="r-item"><div class="rl">全角发散 2θ</div><div class="rv">${fmt(thetaMrad*2,3)}</div><div class="ru">mrad</div></div>
+    <div class="r-item"><div class="rl">焦深 DOF</div><div class="rv">${fmt(dof,1)}</div><div class="ru">mm</div></div>
+    <div class="r-item"><div class="rl">束腰光斑</div><div class="rv">${fmt(w0um,1)}</div><div class="ru">μm</div></div>
+    <div class="r-item"><div class="rl">束腰面积</div><div class="rv">${fmt(Math.PI*w0um*w0um/1e6,3)}</div><div class="ru">mm²</div></div>
+    <div class="r-item" style="margin-top:6px"><div class="rl">远场条件 z ≫ zR</div><div class="rv" style="font-size:12px">${zRmm<1?'0.1 mm 以内':'~'+fmt(zRmm/10,1)+' mm'}</div><div class="ru">开始近似远场</div></div>`;
+
+  // Slider range
+  const span=3*zRmm;
+  $('zMinLabel').textContent=fmt(-span,1)+' mm';
+  $('zMaxLabel').textContent=fmt(span,1)+' mm';
+
+  // Reset z to 0
+  $('zSlider').value=0;
+  currentZ=0;
+  $('zInput').value='0';
+  updateZDisplay();
+
+  renderChart();
+}
+
+function renderChart(){
+  const dom=$('chart');
+  const ph=dom.querySelector('div');
+  if(ph)ph.style.display='none';
+  // Ensure DOM is laid out before initializing
+  requestAnimationFrame(function(){
+    if(chart)chart.dispose();
+    chart=echarts.init(dom);
+
+  const{zR,w0,theta,m2,lambdaMm}=g;
+  const span=3*zR,N=400;
+  const zs=[],ws=[],asym=[];
+  // Use lambdaMm*1e3 to get um units for w
+  for(let i=0;i<=N;i++){
+    const z=-span+2*span*i/N;
+    zs.push(z);
+    ws.push(wOfZ(z,w0,zR,m2));
+    const asymW=wOfZ(span,w0,zR,m2);
+    asym.push(asymW*Math.abs(z)/Math.max(span,0.001));
+  }
+
+  // Rayleigh zone: ±zR as markArea
+  const rayLight='rgba(37,99,235,0.06)';
+
+  // Build series array
+    var seriesArr=[
+      {name:'w(z)',type:'line',data:zs.map(function(z,i){return[z,ws[i]]}),smooth:true,symbol:'none',lineStyle:{color:'#2563EB',width:2.5},z:10,
+        markArea:{silent:true,itemStyle:{color:rayLight},data:[[{xAxis:-zR},{xAxis:zR}]],label:{show:true,position:'insideTop',fontSize:8,color:'#2563EB',formatter:'瑞利范围'}}},
+    ];
+    // Add M² comparison line when M² > 1
+    if(m2>1.001){
+      seriesArr.push({name:'w(z) M²=1 (理想)',type:'line',data:zs.map(function(z,i){return[z,wOfZ(z,w0,zR,1)]}),smooth:true,symbol:'none',lineStyle:{color:'#DC2626',width:1.5,type:'dashed'},z:5});
+    }
+    seriesArr.push(
+      {name:'渐近线',type:'line',data:zs.map(function(z,i){return[z,asym[i]]}),smooth:false,symbol:'none',lineStyle:{color:'#9CA3AF',width:1,type:'dashed'},z:1},
+      {name:'束腰 w₀',type:'scatter',data:[[0,w0]],symbolSize:10,symbol:'circle',itemStyle:{color:'#2563EB',borderColor:'#fff',borderWidth:2},z:18,label:{show:true,formatter:'w₀='+fmt(w0,1),fontSize:8,color:'#2563EB',position:'top',distance:6}},
+      {id:'zmarker',name:'当前位置',type:'scatter',data:[[currentZ,wOfZ(currentZ,w0,zR,m2)]],symbolSize:8,symbol:'circle',itemStyle:{color:'#DC2626',borderColor:'#fff',borderWidth:2},z:20,
+        markLine:{silent:true,symbol:'none',lineStyle:{color:'#DC2626',type:'dotted',width:1},data:[{xAxis:currentZ,label:{formatter:'z='+fmt(currentZ,1),fontSize:8,color:'#DC2626',position:'insideEndBottom'}}]}},
+    );
+
+  // Compute yMax with headroom
+  const yData=ws.slice(ws.length>0);
+  const yTop=Math.max(...ws)*1.25;
+
+  chart.setOption({
+    tooltip:{trigger:'axis',formatter:function(p){
+      let s='<b>z='+fmt(p[0].data[0],1)+' mm</b><br/>';
+      p.forEach(function(x){s+=x.marker+x.seriesName+': '+fmt(x.data[1],2)+' μm<br/>'});
+      return s;
+    }},
+    legend:{top:0,left:'center',textStyle:{fontSize:9,color:'#6B7280'},itemWidth:14,itemHeight:3,data:['w(z)'].concat(m2>1.001?['w(z) M²=1 (理想)']:[])},
+    grid:{left:55,right:20,top:36,bottom:40},
+    xAxis:{type:'value',name:'z (mm)',nameLocation:'center',nameGap:26,nameTextStyle:{fontSize:10,color:'#6B7280'},axisLabel:{fontSize:8,color:'#9CA3AF'},axisLine:{lineStyle:{color:'#E5E7EB'}},axisTick:{show:false},splitLine:{show:false}},
+    yAxis:{type:'value',name:'光斑半径 (μm)',nameLocation:'center',nameGap:42,nameRotate:90,nameTextStyle:{fontSize:9,color:'#6B7280'},axisLabel:{fontSize:8,color:'#9CA3AF',formatter:function(v){return v>=1000?fmt(v/1000,2)+'k':fmt(v,1)}},splitLine:{lineStyle:{color:'#F3F4F6'}},min:0,max:yTop},
+    series:seriesArr,
+  },true);
+  });
+}
+
+function updateChartMarker(){
+  if(!chart||!g.zR)return;
+  const{zR,w0,m2}=g;
+  const w=wOfZ(currentZ,w0,zR,m2);
+  // Use replaceMerge to only update the marker series
+  chart.setOption({
+    series:[{id:'zmarker',data:[[currentZ,w]],
+      markLine:{silent:true,symbol:'none',lineStyle:{color:'#DC2626',type:'dotted',width:1},data:[{xAxis:currentZ,label:{formatter:'z='+fmt(currentZ,1),fontSize:8,color:'#DC2626',position:'insideEndBottom'}}]}
+    }]
+  });
+}
+
+function updateZDisplay(){
+  if(!g.zR)return;
+  const{zR,w0,m2}=g;
+  const w=wOfZ(currentZ,w0,zR,m2);
+  const r=rOfZ(currentZ,zR);
+  const gg=gouy(currentZ,zR);
+
+  $('zW').textContent=fmt(w,2)+' μm';
+  $('zRc').textContent=isFinite(r)?fmt(r,1)+' mm':'∞';
+  $('zGouy').textContent=fmt(gg,3)+' rad';
+  var zcl=$('zCurLabel');if(zcl)zcl.textContent='z='+fmt(currentZ,2)+' mm';
+
+  updateChartMarker();
+}
+
+function onSlider(){
+  currentZ=parseFloat($('zSlider')?.value)*g.zR;
+  var zi=$('zInput');if(zi)zi.value=fmt(currentZ,2);
+  updateZDisplay();
+}
+
+function onZInput(){
+  currentZ=parseFloat($('zInput')?.value)||0;
+  if(g.zR>0){
+    var sl=$('zSlider');if(sl)sl.value=currentZ/g.zR;
+  }
+  updateZDisplay();
+}
+
+window.addEventListener('resize',function(){chart&&chart.resize()});
+setTimeout(calculate,300);
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的干涉仪条纹突然消失了，明明光源波长没错，偏振也对——问题出在哪？</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">换了一台激光器，光程差明明没变，干涉条纹却模糊了。很多工程师知道"相干长度"这个概念，却说不清楚它到底限制了啥。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">相干性到底是什么？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">相干性（Coherence）描述的是光波<strong>相位在时间和空间上保持稳定的能力</strong>。光波的相位如果能一直"手拉手"往前走，就是高度相干的；相位乱成一锅粥，就是不相干的。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">相干性分为两类：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>时间相干性（Temporal Coherence）</strong>：同一光束在<strong>不同时刻</strong>的相位关联程度，对应光的<strong>单色性</strong>——光谱越窄，相位保持越久。工程上用<strong>相干长度</strong>来量化。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>空间相干性（Spatial Coherence）</strong>：光束<strong>不同空间位置</strong>（横向截面）的相位关联程度。典型案例：杨氏双缝干涉要求光具有空间相干性——光源必须"面光源"，而非点光源。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">两者独立存在。举个例子：激光二极管（VCSEL）可以有很好的时间相干性（线宽很窄），但空间相干性很差（光束截面内相位分布不均匀）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">相干长度：计算公式与典型数值</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">相干长度的核心公式有两个，工程中根据已知参数选用：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Lc = c / (π · Δν)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">公式①：相干长度 = 真空光速 ÷（π × 线宽），适用于已知频率线宽 Δν 的情况</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Lc = λ² / Δλ</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">公式②：相干长度 = 波长² ÷ 光谱宽度，适用于已知波长和光谱宽度 Δλ 的情况（来源：Born &amp; Wolf, Principles of Optics, 7th ed., 1999）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>核心规律：线宽越窄（光谱越纯），相干长度越长。</strong>线宽每窄10倍，相干长度增加10倍。</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">激光器类型</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">典型线宽</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">相干长度（估算）</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">光学钟超稳激光器</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&lt; 1 Hz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&gt; 300,000 km</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">稳频单频固态激光器</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~10 kHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~9.5 km</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">单模连续波激光器</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~1 MHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~95 m</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">单模He-Ne激光器</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~1 GHz</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~10 cm</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">多模He-Ne激光器</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~3 nm（@632.8nm）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~13 cm</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">超连续谱光源（OCT用）</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">带宽数十nm</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">~10 μm（极短）</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">从超稳激光器到OCT光源，相干长度相差<strong>10个数量级</strong>。DFB激光器相干长度可达数十米到数公里（来源：典型DFB线宽1-10MHz对应的相干长度），LED相干长度约10-50μm（来源：典型LED光谱宽度对应值）。但注意：相干长度长并不等于"更好"，关键看应用需求。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">工程实战：干涉仪和OCT为何选了相反的光源？</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">相干长度在两个典型应用里扮演的角色截然相反——这是理解它的关键：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">① 干涉仪：需要长相干长度</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">迈克尔逊干涉仪、LIGO引力波探测器等应用，需要两臂光程差在相干长度之内才能产生清晰干涉条纹。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>踩坑案例</strong>：LIGO引力波探测器的臂长约4km，要求相干长度远超4km——这只有超稳激光器（线宽mHz级）才能满足。普通单模激光器（95m相干长度）用在4km臂长的干涉仪里，条纹根本出不来。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">② 光学相干层析（OCT）：需要短相干长度</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">OCT利用低相干干涉原理（来源：Drexler &amp; Fujimoto, Optical Coherence Tomography, 2nd ed., 2015），轴向分辨率与相干长度直接挂钩：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">Δz = (2 ln 2 / π) · (λ² / Δλ)</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">相干长度越短 → 轴向分辨率越高。医用OCT通常用带宽100nm以上的超宽带光源，相干长度约10μm，轴向分辨率可达约5~10μm，足以分辨角膜或视网膜各层结构。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">全息术、光纤传感：容易被忽视的相干性要求</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">除了干涉仪和OCT，相干长度还默默限制着很多常见系统：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>全息记录</strong>：物光与参考光的光程差必须小于相干长度，否则全息图干涉条纹无法形成。普通多模激光器（相干长度~20cm）做全息，成像范围极受限制。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>分布式光纤传感（BOTDA/BOTDR）</strong>：利用布里渊或拉曼散射的相干探测，泵浦光与探测光需在光纤内相向传播，传感距离与相干长度紧密相关。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>相干光通信</strong>：接收端本振光与信号光混频产生中频，要求两者相位在相干时间内保持稳定。光程差由光纤长度差决定，实际工程中需要严格控制。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">实测：用迈克尔逊干涉仪测量相干长度</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">实验室测量相干长度的标准方法：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">搭建迈克尔逊干涉仪，用分束器将光源分为两束。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">用位移台（或压电陶瓷）精确改变其中一臂的长度。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">记录干涉条纹可见度（对比度）随光程差的变化。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">条纹可见度从最大值下降到<strong>1/e</strong>时对应的光程差，即为相干长度。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">选光源先算相干长度：干涉仪要求L_c&gt;&gt;光程差（DFB: L_c&gt;1km适合长光程差），OCT要求L_c&lt;样品深度（SLED: L_c~20μm，轴向分辨率由Δz=0.44λ²/Δλ决定）。用错光源=条纹消失或分辨率报废。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">记住这个顺序：先确认系统的最大光程差 → 计算所需最小相干长度 → 再去选光源。不是选最贵的，而是选最匹配的。</p></div>

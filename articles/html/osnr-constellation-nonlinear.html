@@ -1,0 +1,53 @@
+<div style="max-width:677px;margin:0 auto;padding:40px 16px;font-family:-apple-system,BlinkMacSystemFont,PingFang SC,Microsoft YaHei,sans-serif;background:#ffffff;color:#333;line-height:1.8;">
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你的100G QPSK相干系统，在OSNR还没明显下降的时候，星座图的点就开始变"胖"了。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">你以为是测量误差——其实这是光纤非线性Kerr效应正在发生的第一个信号（来源：Essiambre et al., J. Lightwave Technol. 2010）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">非线性效应的演进顺序</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">光纤中的非线性Kerr效应按严重程度递增分为三个阶段，星座图是观察它们最直观的窗口：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>SPM（自相位调制）</strong>：信号自身功率引起折射率变化，产生相位噪声。最早信号：星座点沿<strong>相位方向</strong>展宽（点变胖，但质心不变）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>XPM（交叉相位调制）</strong>：相邻信道功率耦合进目标信道，引起各方向等比展宽（点变圆的概率更大）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>FWM（四波混频）</strong>：产生完全寄生频率/相位的"幽灵"点，在星座图上出现第四组点，串扰严重，难以通过均衡消除</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">为什么星座图展宽先于OSNR恶化</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">这是理解非线性早期预警的核心：<strong>OSNR测量的是功率域，非线性噪声在相位域先体现</strong>（来源：Essiambre et al., J. Lightwave Technol. 2010）。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">φ_NL = γ · P_avg · L_eff</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">非线性相位噪声 φ_NL 与光功率和光纤有效长度成正比，在相干检测中表现为相位抖动，被误判为"相位噪声"，但功率域OSNR测量完全感知不到（来源：Agrawal, Nonlinear Fiber Optics, 6th ed., 2019；ITU-T G.652）</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">换言之：SPM引入的相位抖动已经损害了QPSK/QAM的判决边界，但OSNR计算仍然基于功率统计，不包含相位信息，因此"看起来"OSNR还没问题。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">星座图展宽定量</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">SPM引入的相位抖动与星座点展宽的定量关系：</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">σ_φ² ∝ γ · P_avg · L_eff / SNR</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">相位抖动方差与非线性相位噪声成正比，与信噪比成反比（SNR越低，非线性效应越显著）</p>
+<div style="margin:0;padding:0 0 20px 0;font-size:0;line-height:0;">
+<table border="0" cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;font-size:10px;line-height:1.6;margin:0;padding:0;">
+  <thead>
+    <tr style="background:#f4f4f4;">
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">调制格式</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">展宽预警阈值（EVM）</th>
+      <th style="padding:10px 12px;text-align:left;font-weight:bold;border-bottom:2px solid #ddd;line-height:1.6;">BER显著恶化阈值</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">QPSK</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">星座点展宽 &gt; 5%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&gt; 15%</td>
+    </tr>
+    <tr style="background:#f8fafc;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">QAM16</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">星座点展宽 &gt; 3%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&gt; 10%</td>
+    </tr>
+    <tr style="background:#ffffff;">
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">QAM64</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">星座点展宽 &gt; 2%</td>
+      <td style="padding:8px 12px;border-bottom:1px solid #eee;line-height:1.6;">&gt; 6%</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>高阶调制格式对星座图展宽更敏感</strong>：QAM64在展宽&gt;2%时BER就开始显著恶化（来源：Essiambre et al., 2010）。</p>
+<h2 style="font-size:22px;font-weight:bold;color:#000;margin:0;padding:40px 0 20px 0;line-height:1.4;"><span style="border-left:4px solid #CC0000;padding-left:12px;">在OSNR下降之前发现非线性</span></h2>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>观察星座图相位分布</strong>：星座点沿相位方向展宽（而非幅度方向）是SPM的最早信号，比幅度展宽早3-5dB出现</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>测量EVM趋势</strong>：EVM（误差矢量幅度）趋势比单点OSNR更能反映非线性累积：建立EVM基线，定期对比，发现上升趋势立即告警</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;"><strong>DSP中分离线性噪声和非线性噪声</strong>：部分DSP支持非线性噪声估计模块，可从总相位噪声中分离出非线性贡献</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">结论</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">星座图展宽是非线性损伤的早期预警：当Φ_NL&gt;0.1rad时星座图开始展宽，但OSNR可能完全正常。监测星座图RMS半径比只看OSNR能提前3-5dB发现系统退化。</p>
+<p style="font-size:15px;line-height:1.8;margin:0;padding:0 0 20px 0;">OSNR好好的，星座图先变胖——那是光纤在说"功率太大了"。</p></div>
