@@ -354,17 +354,20 @@ export function jlApprox(l: number, x: number): number {
 }
 
 /**
- * 径向场函数 R_l(r)：芯内 J_l(U·r/a)，包层内 K_l(W·r/a)
- * （弱导近似下 LP 模在芯/包边界的连续已归一）
+ * 径向场函数 R_l(r)：芯内 J_l(U·r/a)，包层内 C·K_l(W·r/a)
+ * 系数 C=J_l(U)/K_l(W) 保证场在芯/包边界 r=a 处连续（物理要求）
  */
 export function radialField(l: number, U: number, W: number, a: number, r: number): number {
   if (r <= a) {
     return jlApprox(l, (U * r) / a);
   } else {
     const x = (W * r) / a;
-    if (l === 0) return besselK0(x);
-    if (l === 1) return besselK1(x);
-    return besselK0(x); // l>1 包层用 K0 近似（径向包层衰减速率相近）
+    const kU = l === 0 ? besselK0(W) : (l === 1 ? besselK1(W) : besselK0(W));
+    const jU = jlApprox(l, U);
+    const C = kU > 0 ? jU / kU : 0;
+    if (l === 0) return C * besselK0(x);
+    if (l === 1) return C * besselK1(x);
+    return C * besselK0(x); // l>1 包层用 K0 近似（径向包层衰减速率相近）
   }
 }
 
