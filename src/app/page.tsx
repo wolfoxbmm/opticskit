@@ -105,6 +105,13 @@ const tools: Tool[] = [
     color: "teal", category: "optics",
   },
   {
+    name: "光纤模式求解器",
+    desc: "阶跃光纤 LP 模式 · 模场直径 MFD · 截止波长 · 色散曲线 · 模场分布",
+    href: "/tools/fiber-mode",
+    icon: (<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" strokeDasharray="3 3"/><path d="M12 4v-2M12 22v-2M4 12H2M22 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4"/></svg>),
+    color: "blue", category: "optics",
+  },
+  {
     name: "色度分析工具",
     desc: "交互式马蹄图，点击查色坐标 / 色温 / Duv，sRGB & DCI-P3 色域叠加",
     href: "/tools/chromaticity",

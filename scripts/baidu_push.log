@@ -1,0 +1,2 @@
+[2026-08-13] 推送 10/99 条 -> 结果: {"error":400,"message":"over quota"}
+[2026-08-13] 推送失败: {"error":400,"message":"over quota"} (总待推 99，明日重试)

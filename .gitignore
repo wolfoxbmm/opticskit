@@ -38,3 +38,4 @@ data/
 *.bak
 backup
 data.backup*
+tmp-fiber-test/
