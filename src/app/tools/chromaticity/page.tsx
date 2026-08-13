@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, Suspense } from "react";
+import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import ChromaticityCanvas, { type PointInfo, type BatchPoint, computePointInfo } from "./chromaticity-canvas";
 import BatchPanel from "./batch-panel";
@@ -29,9 +29,10 @@ function ChromaticityContent() {
   const [pointInfo, setPointInfo] = useState<PointInfo | null>(null);
   const [pt1, setPt1] = useState<PointInfo | null>(null);
   const [pt2, setPt2] = useState<PointInfo | null>(null);
-  const [deltaE, setDeltaE] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<"single" | "batch">("single");
+  const [showHint, setShowHint] = useState(true);
   const [batchPoints, setBatchPoints] = useState<BatchPoint[]>([]);
+  const deltaE = useMemo(() => (pt1 && pt2 ? deltaE76(pt1.Lab, pt2.Lab) : null), [pt1, pt2]);
 
   useEffect(() => { trackPageView("chromaticity"); }, []);
 
@@ -96,20 +97,14 @@ function ChromaticityContent() {
     trackExport("chromaticity", "png");
   }, []);
 
-  useEffect(() => {
-    if (pt1 && pt2) setDeltaE(deltaE76(pt1.Lab, pt2.Lab));
-    else setDeltaE(null);
-  }, [pt1, pt2]);
-
   const handleReset = () => {
-    setPt1(null); setPt2(null); setDeltaE(null);
+    setPt1(null); setPt2(null);
     setLocateX(0); setLocateY(0); setPointInfo(null);
     setInputX("0.3127"); setInputY("0.3290");
   };
 
   const modeLabel = diagramMode === "xy" ? "CIE xy" : "CIE uv";
 
-    const [showHint, setShowHint] = useState(true);
   useEffect(() => {
     // Hide hint after 8 seconds or on click
     const t = setTimeout(() => setShowHint(false), 8000);
@@ -189,11 +184,11 @@ function ChromaticityContent() {
           <div style={sectionTitle}>坐标定位 <span style={{ fontWeight: 400 }}>({modeLabel})</span></div>
           <div style={{ display: "flex", gap: 6 }}>
             <div style={{ flex: 1 }}>
-              <label style={labelStyle}>{diagramMode === "xy" ? "x" : "u'"}</label>
+              <label style={labelStyle}>{diagramMode === "xy" ? "x" : "u′"}</label>
               <input type="number" step="0.001" value={inputX} onChange={e => setInputX(e.target.value)} style={inputStyle} />
             </div>
             <div style={{ flex: 1 }}>
-              <label style={labelStyle}>{diagramMode === "xy" ? "y" : "v'"}</label>
+              <label style={labelStyle}>{diagramMode === "xy" ? "y" : "v′"}</label>
               <input type="number" step="0.001" value={inputY} onChange={e => setInputY(e.target.value)} style={inputStyle} />
             </div>
           </div>
@@ -209,7 +204,7 @@ function ChromaticityContent() {
             )}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5px 16px", fontSize: 13 }}>
               <span style={{ color: "#888" }}>x, y</span><span style={valStyle}>{pointInfo.x.toFixed(4)}, {pointInfo.y.toFixed(4)}</span>
-              <span style={{ color: "#888" }}>u', v'</span><span style={valStyle}>{pointInfo.up.toFixed(4)}, {pointInfo.vp.toFixed(4)}</span>
+              <span style={{ color: "#888" }}>u′, v′</span><span style={valStyle}>{pointInfo.up.toFixed(4)}, {pointInfo.vp.toFixed(4)}</span>
               <span style={{ color: "#888" }}>CCT</span><span style={{ color: "#ff6b00", textAlign: "right" }}>{pointInfo.cct?.toFixed(0) ?? "-"} K</span>
               <span style={{ color: "#888" }}>Duv</span><span style={valStyle} title="Duv 表示该颜色偏离黑体轨迹的程度">{pointInfo.duv?.toFixed(5) ?? "-"}</span>
               <span style={{ color: "#888", marginTop: 6 }}>RGB</span><span style={{ ...valStyle, marginTop: 6 }}>({pointInfo.rgb.r}, {pointInfo.rgb.g}, {pointInfo.rgb.b})
