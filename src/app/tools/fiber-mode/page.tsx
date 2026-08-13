@@ -148,7 +148,9 @@ export default function FiberModePage() {
   const dispRef = useHiDPICanvas((ctx, w, h) => {
     const padL = 48, padB = 30, padT = 18, padR = 16;
     const plotW = w - padL - padR, plotH = h - padT - padB;
-    const lamMin = 1200, lamMax = 1650;
+    // 色散曲线 X 轴自适应当前工作波长（窗口 ±400nm，限幅 250-2500）
+    const lamMin = Math.max(250, lambdaNm - 400);
+    const lamMax = Math.min(2500, lambdaNm + 400);
     const curves: { mat: number[]; wg: number[]; tot: number[] } = { mat: [], wg: [], tot: [] };
     let dMin = Infinity, dMax = -Infinity;
     for (let i = 0; i <= 200; i++) {
@@ -184,7 +186,11 @@ export default function FiberModePage() {
     ctx.strokeStyle = '#9CA3AF'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(padL, padT); ctx.lineTo(padL, h - padB); ctx.lineTo(w - padR, h - padB); ctx.stroke();
     ctx.fillStyle = '#6B7280'; ctx.font = '11px sans-serif';
-    for (let lm = 1200; lm <= 1650; lm += 100) ctx.fillText(lm + 'nm', x(lm) - 14, h - padB + 14);
+    // X 轴刻度：窗口内每隔约 100nm（或按跨度自适应取整）
+    const tickStep = (lamMax - lamMin) > 1600 ? 400 : ((lamMax - lamMin) > 800 ? 200 : 100);
+    for (let lm = Math.ceil(lamMin / tickStep) * tickStep; lm <= lamMax; lm += tickStep) {
+      ctx.fillText(lm + 'nm', x(lm) - 14, h - padB + 14);
+    }
     ctx.save(); ctx.translate(12, h / 2); ctx.rotate(-Math.PI / 2);
     ctx.fillText('D [ps/(nm·km)]', 0, 0); ctx.restore();
     // 图例
@@ -218,7 +224,10 @@ export default function FiberModePage() {
               <NumField label="纤芯半径 a" unit="μm" value={coreRadiusUm} min={1} max={50} step={0.1} onChange={setCoreRadiusUm} />
               <NumField label="纤芯折射率 n₁" unit="" value={nCore} min={1.4} max={1.6} step={0.0001} onChange={setNCore} />
               <NumField label="包层折射率 n₂" unit="" value={nClad} min={1.3} max={1.55} step={0.0001} onChange={setNClad} />
-              <NumField label="工作波长 λ" unit="nm" value={lambdaNm} min={400} max={2000} step={10} onChange={setLambdaNm} />
+              <NumField label="工作波长 λ" unit="nm" value={lambdaNm} min={250} max={2500} step={10} onChange={setLambdaNm} />
+              <div className="text-xs mt-1" style={{ color: 'var(--text-tertiary, #9CA3AF)' }}>
+                波长范围 250–2500 nm（Sellmeier 色散模型有效区间，覆盖 UV/可见/通信/近红外波段）
+              </div>
             </Card>
 
             <Card>
